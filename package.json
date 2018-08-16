@@ -1,0 +1,16 @@
+{
+  "name": "double-number",
+  "version": "0.0.1",
+  "description": "Library for floating point expansions, also known as double-double arithmetic and quad-double arithmetic.",
+  "main": "double.js",
+  "scripts": {
+    "test": "node ./double.js"
+  },
+  "keywords": [
+    "double-double",
+    "quad-double",
+    "arbitrary-precision"
+  ],
+  "author": "munrocket",
+  "license": "MIT "
+}
