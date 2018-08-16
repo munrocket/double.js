@@ -1,12 +1,12 @@
-#DoubleNumber
+# DoubleNumber
 
 Library for floating point expansions, also known as double-double arithmetic and quad-double arithmetic.
 
-###Precision
+### Precision
 
 Double precision support approximatly 32 accurate decimal digits and stored as unevaluated sum of two ordinary javascript 64 bits IEEE 754 number. Note that only the sum of the two components of the result is meaningful. In particular, the high part of the result does not necessarily equal the result of operating on the high parts.
 
-###References
+### References
 
 1. Stef Graillat. *Accurate Floating Point Product and Exponentiation*. 2009 [[PDF](https://hal.archives-ouvertes.fr/hal-00164607/document)]
 2. Theodorus Dekker. *A floating-point technique for extending the available precision.* 1971

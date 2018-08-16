@@ -9,7 +9,8 @@
   "keywords": [
     "double-double",
     "quad-double",
-    "arbitrary-precision"
+    "arbitrary-precision",
+    "floating-point"
   ],
   "author": "munrocket",
   "license": "MIT "
