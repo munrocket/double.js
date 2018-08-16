@@ -1,5 +1,5 @@
-//dekkerSplitter = 2^s + 1, where s=27 in Veltkamp-Dekker splitting means that both halves of the number will fit into 26 bits.
-var dekkerSplitter = 134217729;
+//splitter = 2^s + 1, where s=27 in Veltkamp-Dekker splitting means that both halves of the number will fit into 26 bits.
+var splitter = 134217729;
 
 /* Constants */
 
@@ -27,10 +27,10 @@ function twoDiff(x, y) {
 }
 
 function twoProd(x, y) {
-  var u = dekkerSplitter * x;
+  var u = splitter * x;
   var xh = u + (x - u);
   var xl = x - xh;
-  var v = dekkerSplitter * v;
+  var v = splitter * y;
   var yh = v + (y - v);
   var yl = y - yh;
   var h = x * y;
@@ -38,7 +38,7 @@ function twoProd(x, y) {
 };
 
 function twoSqr(x) {
-  var u = dekkerSplitter * x;
+  var u = splitter * x;
   var xh = u + (x - u);
   var xl = x - xh;
   var h = x * x;
@@ -54,9 +54,8 @@ function sum21(x, y) {
 }
 
 function sub21(x, y) {
-  var sHi, sLo = twoDiff(x.hi, y);
-  var v = x.lo + sLo;
-  return fast2Sum(sHi, v);
+  var u = twoDiff(x.hi, y);
+  return fast2Sum(u.hi, x.lo + u.lo);
 }
 
 function prod21(x, y) {
@@ -67,7 +66,7 @@ function prod21(x, y) {
 
 function div21(x, y) {
   var h = x.hi / y;
-  var u = fast2Mult(h, y);
+  var u = twoProd(h, y); /////fast2Mult?
   return fast2Sum(h, ((x.hi - u.hi) - u.lo) + x.lo / y);
 }
 
@@ -89,8 +88,7 @@ function sub22(x, y) {
 
 function prod22(x, y) {
   var u = twoProd(x.hi, y.hi);
-  var v = (x.hi * y.lo + x.lo * y.hi) + u.lo;
-  return twoProd(u.hi, v);
+  return fast2Sum(u.hi, (x.hi * y.lo + x.lo * y.hi) + u.lo); //twoProd?
 }
 
 function div22(x, y) {
@@ -101,17 +99,31 @@ function div22(x, y) {
 
 /* Other operation */
 
-function greater(x, y) {
+function gt22(x, y) {
   return (x.hi > y.hi || ((x.hi == y.hi) && (x.lo > y.lo)));
+}
+
+function sqr2(x) {
+  var u = twoSqr(x.hi);
+  var v = x.hi * x.lo;
+  return fast2Sum(u.hi, (v + v) + u.lo);
 }
 
 function sqrt2(x) {
   if (x.hi === 0 && x.lo === 0) return 0;
   if (x.hi < 0) return NaN;
-
   var t = 1 / Math.sqrt(x.hi);
   var h = x.hi * t;
-  return fast2Sum(h, sub(x, { hi: h * h, lo: 0 }).hi * (t * 0.5));
+  return fast2Sum(h, sub21(x, h * h).hi * (t * 0.5));
 }
 
-console.log(sub22(pi, pi))
+console.log('sum22', sum22(pi, e))
+console.log('sub22', sub22(pi, e))
+console.log('prod22', prod22(pi, pi))
+console.log('div22', div22(pi, e))
+console.log('sum21', sum21(pi, 2.718281828459045))
+console.log('sub21', sub21(pi, 2.718281828459045))
+console.log('prod21', prod21(pi, 2.718281828459045))
+console.log('div21', div21(pi, 2.718281828459045))
+console.log('sqr2', sqr2(pi))
+console.log('sqrt2', sqrt2(pi))
