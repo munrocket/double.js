@@ -3,27 +3,32 @@ var splitter = 134217729;
 
 /* Constants */
 
-var e = { hi: 2.718281828459045, lo: 1.4456468917292502e-16 }
-var pi = { hi: 3.141592653589793, lo: 1.2246467991473532e-16 }
-var log2 = { hi: 0.6931471805599453, lo: 2.3190468138462996e-17 }
+var e = [2.718281828459045, 1.4456468917292502e-16];
+var pi = [3.141592653589793, 1.2246467991473532e-16];
+var log2 = [0.6931471805599453, 2.3190468138462996e-17];
 
 /* Core functions */
 
 function fast2Sum(x, y) {
   var h = x + y;
-  return { hi: h, lo: y - (h - x) };
+  return [h, y - (h - x)];
+}
+
+function fast2Diff(x, y) {
+  var h = x - y;
+  return [h, (x - h) - y]
 }
 
 function twoSum(x, y) {
   var h = x + y;
   var u = h - y;
-  return { hi: h, lo: (x - (h - u)) + (y - u) };
+  return [h, (x - (h - u)) + (y - u)];
 }
 
 function twoDiff(x, y) {
   var h = x - y;
-  var u = h - y;  
-  return { hi: h, lo: (x - (h - u)) - (y + u) };
+  var u = x - h;
+  return [h, (x - (h + u)) + (u - y)];
 }
 
 function twoProd(x, y) {
@@ -34,7 +39,7 @@ function twoProd(x, y) {
   var yh = v + (y - v);
   var yl = y - yh;
   var h = x * y;
-  return { hi: h, lo: ((xh * yh - h) + xh * yl + xl * yh) + xl * yl };
+  return [h, ((xh * yh - h) + xh * yl + xl * yh) + xl * yl];
 };
 
 function twoSqr(x) {
@@ -43,87 +48,92 @@ function twoSqr(x) {
   var xl = x - xh;
   var h = x * x;
   var v = xh * xl;
-  return { hi: h, lo: ((xh * xh - h) + v + v) + xl * xl };
+  return [h, ((xh * xh - h) + v + v) + xl * xl];
 };
 
-/* Arithmetic operations with double and single */
+/* Arithmetic operations with double and single component */
 
 function sum21(x, y) {
-  var s = twoSum(x.hi, y);
-  return fast2Sum(s.hi, x.lo + s.lo);
+  var s = twoSum(x[0], y);
+  return fast2Sum(s[0], x[1] + s[1]);
 }
 
 function sub21(x, y) {
-  var u = twoDiff(x.hi, y);
-  return fast2Sum(u.hi, x.lo + u.lo);
+  var u = twoDiff(x[0], y);
+  return fast2Sum(u[0], x[1] + u[1]);
 }
 
 function prod21(x, y) {
-  var u = twoProd(x.hi, y);
-  var v = fast2Sum(u.hi, x.lo * y);
-  return fast2Sum(v.hi, v.lo + u.lo);
+  var u = twoProd(x[0], y);
+  return fast2Sum(u[0], x[1] * y + u[1]);
 }
 
 function div21(x, y) {
-  var h = x.hi / y;
-  var u = twoProd(h, y); /////fast2Mult?
-  return fast2Sum(h, ((x.hi - u.hi) - u.lo) + x.lo / y);
+  var h = x[0] / y; 
+  var u = twoProd(h, y);
+  return fast2Sum(h, ((x[0] - u[0]) + (x[1] - u[1])) / y);
 }
 
 /* Arithmetic operations with two double */
 
 function sum22(x, y) {
-  var s = twoSum(x.hi, y.hi);
-  var t = twoSum(x.lo, y.lo);
-  var v = fast2Sum(s.hi, s.lo + t.hi);
-  return fast2Sum(v.hi, t.lo + v.lo);
+  var u = twoSum(x[0], y[0]);
+  var v = twoSum(x[1], y[1]);
+  var t = fast2Sum(u[0], u[1] + v[0]);
+  return fast2Sum(t[0], v[1] + t[1]);
 }
 
 function sub22(x, y) {
-  var s = twoDiff(x.hi, y.hi);
-  var t = twoDiff(x.lo, y.lo);
-  var v = fast2Sum(s.hi, s.lo + t.hi);
-  return fast2Sum(v.hi, t.lo + v.lo);
+  var u = twoDiff(x[0], y[0]);
+  var v = twoDiff(x[1], y[1]);
+  var t = fast2Sum(u[0], u[1] + v[0]);
+  return fast2Sum(t[0], v[1] + t[1]);
 }
 
 function prod22(x, y) {
-  var u = twoProd(x.hi, y.hi);
-  return fast2Sum(u.hi, (x.hi * y.lo + x.lo * y.hi) + u.lo); //twoProd?
+  var u = twoProd(x[0], y[0]);
+  return fast2Sum(u[0], (x[0] * y[1] + x[1] * y[0]) + u[1]);
 }
 
 function div22(x, y) {
-  var h = x.hi / y.hi;
+  var h = x[0] / y[0];
   var u = prod21(y, h);
-  return fast2Sum(h, (x.hi - u.hi) + (x.lo - u.lo) / y.hi);
+  return fast2Sum(h, ((x[0] - u[0]) + (x[1] - u[1])) / y[0]);
 }
 
 /* Other operation */
 
-function gt22(x, y) {
-  return (x.hi > y.hi || ((x.hi == y.hi) && (x.lo > y.lo)));
-}
+function eq21(x, y) { return (x[0] === y && x[1] === 0); }
+function ne21(x, y) { return (x[0] !== y || x[1] !== 0); }
+function gt21(x, y) { return (x[0] > y || (x[0] === y && x[1] > 0)); }
+function lt21(x, y) { return (x[0] < y || (x[0] === y && x[1] < 0)); }
+function ge21(x, y) { return (x[0] > y && (x[0] === y && x[1] >= 0)); }
+function le21(x, y) { return (x[0] < y && (x[0] === y && x[1] <= 0)); }
+function eq22(x, y) { return (x[0] === y[0] && x[1] === y[1]); }
+function ne22(x, y) { return (x[0] !== y[0] || x[1] !== y[1]); }
+function gt22(x, y) { return (x[0] > y[0] || (x[0] === y[0] && x[1] > y[1])); }
+function lt22(x, y) { return (x[0] < y[0] || (x[0] === y[0] && x[1] < y[1])); }
+function ge22(x, y) { return (x[0] > y[0] && (x[0] === y[0] && x[1] >= y[1])); }
+function le22(x, y) { return (x[0] < y[0] && (x[0] === y[0] && x[1] <= y[1])); }
 
 function sqr2(x) {
-  var u = twoSqr(x.hi);
-  var v = x.hi * x.lo;
-  return fast2Sum(u.hi, (v + v) + u.lo);
+  var u = twoSqr(x[0]);
+  var v = x[0] * x[1];
+  return fast2Sum(u[0], (v + v) + u[1]);
 }
 
+//wrong!! error = 1e-17
 function sqrt2(x) {
-  if (x.hi === 0 && x.lo === 0) return 0;
-  if (x.hi < 0) return NaN;
-  var t = 1 / Math.sqrt(x.hi);
-  var h = x.hi * t;
-  return fast2Sum(h, sub21(x, h * h).hi * (t * 0.5));
+  if (x[0] === 0 && x[1] === 0) return 0;
+  if (x[0] < 0) return NaN;
+  var t = 1 / Math.sqrt(x[0]);
+  var h = x[0] * t;
+  return fast2Sum(h, sub21(x, h * h)[0] * (t * 0.5));
 }
 
-console.log('sum22', sum22(pi, e))
-console.log('sub22', sub22(pi, e))
-console.log('prod22', prod22(pi, pi))
-console.log('div22', div22(pi, e))
-console.log('sum21', sum21(pi, 2.718281828459045))
-console.log('sub21', sub21(pi, 2.718281828459045))
-console.log('prod21', prod21(pi, 2.718281828459045))
-console.log('div21', div21(pi, 2.718281828459045))
-console.log('sqr2', sqr2(pi))
-console.log('sqrt2', sqrt2(pi))
+console.log(sub22(log2, sub22(sum22(log2, pi), pi)))
+console.log(sub22(pi, div22(prod22(pi, e), e)));
+console.log(sub22(pi, sub21(sum21(pi, e[0]), e[0])));
+console.log(sub22(pi, div21(prod21(pi, e[0]), e[0])));
+console.log(sub22(log2, div22(sqr2(log2, log2), log2)));
+console.log(sub22([0.3, 0], [0.1, 0]));

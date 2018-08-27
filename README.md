@@ -13,3 +13,4 @@ Double precision support approximatly 32 accurate decimal digits and stored as u
 3. Donald Knuth. *The Art of Computer Programming: Seminumerical Algorithms*, volume 2. 18:224–242, 1981
 4. Jonathan Shewchuk. *Adaptive Precision Floating-Point Arithmetic and Fast Robust Geometric Predicates.* 1997 [[PDF](https://people.eecs.berkeley.edu/~jrs/papers/robustr.pdf)]
 5. Yozo Hida, Xiaoye Li, David Bailey. *Library for Double-Double and Quad-Double Arithmetic.* 2000 [[PDF](http://web.mit.edu/tabbott/Public/quaddouble-debian/qd-2.3.4-old/docs/qd.pdf)]
+http://perso.ens-lyon.fr/jean-michel.muller/07118139.pdf
