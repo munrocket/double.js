@@ -1,4 +1,5 @@
-//splitter = 2^27 + 1, for IEEE double in Veltkamp-Dekker splitting
+(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+//Veltkamp-Dekker splitter = 2^27 + 1, for IEEE double
 var splitter = 134217729.0;
 
 /* Core error-free functions */
@@ -68,7 +69,7 @@ function div21(x, y) {
   return fast2Sum(h, ((x[0] - u[0]) + (x[1] - u[1])) / y);
 }
 
-/* Arithmetic operations with two double*/
+/* Arithmetic operations with two double */
 
 function sum22(x, y) {
   var u = twoSum(x[0], y[0]);
@@ -95,7 +96,25 @@ function div22(x, y) {
   return fast2Sum(h, ((x[0] - u[0]) + (x[1] - u[1])) / y[0]);
 }
 
+
+/* Comparisons */
+
+function eq21(x, y) { return (x[0] === y && x[1] === 0); }
+function ne21(x, y) { return (x[0] !== y || x[1] !== 0); }
+function gt21(x, y) { return (x[0] > y || (x[0] === y && x[1] > 0)); }
+function lt21(x, y) { return (x[0] < y || (x[0] === y && x[1] < 0)); }
+function ge21(x, y) { return (x[0] >= y && (x[0] === y && x[1] >= 0)); }
+function le21(x, y) { return (x[0] <= y && (x[0] === y && x[1] <= 0)); }
+function eq22(x, y) { return (x[0] === y[0] && x[1] === y[1]); }
+function ne22(x, y) { return (x[0] !== y[0] || x[1] !== y[1]); }
+function gt22(x, y) { return (x[0] > y[0] || (x[0] === y[0] && x[1] > y[1])); }
+function lt22(x, y) { return (x[0] < y[0] || (x[0] === y[0] && x[1] < y[1])); }
+function ge22(x, y) { return (x[0] >= y[0] && (x[0] === y[0] && x[1] >= y[1])); }
+function le22(x, y) { return (x[0] <= y[0] && (x[0] === y[0] && x[1] <= y[1])); }
+
 /* Unar operators */
+
+//2do: abs, inverse
 
 function negate2(x) {
   return [-x[0], -x[1]];
@@ -114,21 +133,6 @@ function sqrt2(x) { //rewrite! precision = 1e-17
   var h = x[0] * t;
   return fast2Sum(h, sub21(x, h * h)[0] * (t * 0.5));
 }
-
-/* Other operation */
-
-function eq21(x, y) { return (x[0] === y && x[1] === 0); }
-function ne21(x, y) { return (x[0] !== y || x[1] !== 0); }
-function gt21(x, y) { return (x[0] > y || (x[0] === y && x[1] > 0)); }
-function lt21(x, y) { return (x[0] < y || (x[0] === y && x[1] < 0)); }
-function ge21(x, y) { return (x[0] >= y && (x[0] === y && x[1] >= 0)); }
-function le21(x, y) { return (x[0] <= y && (x[0] === y && x[1] <= 0)); }
-function eq22(x, y) { return (x[0] === y[0] && x[1] === y[1]); }
-function ne22(x, y) { return (x[0] !== y[0] || x[1] !== y[1]); }
-function gt22(x, y) { return (x[0] > y[0] || (x[0] === y[0] && x[1] > y[1])); }
-function lt22(x, y) { return (x[0] < y[0] || (x[0] === y[0] && x[1] < y[1])); }
-function ge22(x, y) { return (x[0] >= y[0] && (x[0] === y[0] && x[1] >= y[1])); }
-function le22(x, y) { return (x[0] <= y[0] && (x[0] === y[0] && x[1] <= y[1])); }
 
 /* Conversation */
 
@@ -196,18 +200,41 @@ function parseDouble(str) {
 var pi = [3.141592653589793, 1.2246467991473532e-16];
 var e = [2.718281828459045, 1.4456468917292502e-16];
 var log2 = [0.6931471805599453, 2.3190468138462996e-17];
-//toDouble("3.141592653589793238462643383279502884197169399375105820974")
-//toDouble("2.718281828459045235360287471352662497757247093699959574966")
-//toDouble("0.693147180559945309417232121458176568075500134360255254120")
 
-/* Tests */
+//console.log(d.toDouble("3.141592653589793238462643383279502884197169399375105820974"));
+//console.log(d.toDouble("2.718281828459045235360287471352662497757247093699959574966"));
+//console.log(d.toDouble("0.693147180559945309417232121458176568075500134360255254120"));
 
-console.log(toDouble(1000)); //fail to parse number bigger than 1
-console.log(toNumber(sub22(pi, div22(mul22(pi, e), e))));
-console.log(toNumber(sub22(pi, mul21(mul21(pi, 0.01), 100))));
-console.log(toNumber(sub22(log2, sub22(sum22(log2, pi), pi))));
-console.log(toNumber(sub22(pi, div22(mul22(pi, e), e))));
-console.log(toNumber(sub22(pi, sub21(sum21(pi, e[0]), e[0]))));
-console.log(toNumber(sub22(pi, div21(mul21(pi, e[0]), e[0]))));
-console.log(toNumber(sub22(log2, div22(sqr2(log2, log2), log2))));
-console.log(toNumber(sub22(toDouble(0.3), toDouble(0.1))));
+
+module.exports = {
+  sum21: sum21,
+  sub21: sub21,
+  mul21: mul21,
+  div21: div21,
+  sum22: sum22,
+  sub22: sub22,
+  mul22: mul22,
+  div22: div22,
+  negate2: negate2,
+  sqr2: sqr2,
+  sqrt2: sqrt2,
+  eq21: eq21,
+  ne21: ne21,
+  gt21: gt21,
+  lt21: lt21,
+  ge21: ge21,
+  le21: le21,
+  eq22: eq22,
+  ne22: ne22,
+  gt22: gt22,
+  lt22: lt22,
+  ge22: ge22,
+  le22: le22,
+  toNumber: toNumber,
+  toDouble: toDouble,
+  parseDouble: parseDouble,
+  pi: pi,
+  e: e,
+  log2: log2
+}
+},{}]},{},[1]);

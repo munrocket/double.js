@@ -4,7 +4,8 @@
   "description": "Library for floating point expansions, also known as double-double arithmetic and quad-double arithmetic.",
   "main": "double.js",
   "scripts": {
-    "test": "node ./double.js"
+    "build": "browserify src/double.js > dist/double.js",
+    "cover": "istanbul cover ./test/test.js"
   },
   "keywords": [
     "double-double",
@@ -13,5 +14,12 @@
     "floating-point"
   ],
   "author": "munrocket",
-  "license": "MIT "
+  "license": "MIT ",
+  "devDependencies": {
+    "browserify": "^16.2.2",
+    "codecov": "^3.0.4",
+    "istanbul": "^0.4.5",
+    "tap-spec": "^5.0.0",
+    "tape": "^4.9.1"
+  }
 }
