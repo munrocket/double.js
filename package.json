@@ -1,11 +1,11 @@
 {
-  "name": "double-number",
+  "name": "double.js",
   "version": "0.0.1",
   "description": "Library for floating point expansions, also known as double-double arithmetic and quad-double arithmetic.",
   "main": "double.js",
   "scripts": {
     "build": "browserify src/double.js > dist/double.js",
-    "cover": "istanbul cover ./test/test.js"
+    "test": "istanbul cover ./test/test.js --report lcovonly -- -R spec"
   },
   "keywords": [
     "double-double",

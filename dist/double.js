@@ -9,11 +9,6 @@ function fast2Sum(x, y) {
   return [h, y - (h - x)];
 }
 
-function fast2Diff(x, y) {
-  var h = x - y;
-  return [h, (x - h) - y]
-}
-
 function twoSum(x, y) {
   var h = x + y;
   var u = h - y;
@@ -141,11 +136,13 @@ function toNumber(double) {
 }
 
 function toDouble(number) {
+  console.log("log toDouble number=", number);
   return parseDouble(number.toString());
 }
 
 function parseDouble(str) {
   try {
+    console.log("log parseDouble str=", str);
     str = str.trimStart();
   } catch (er) {
     console.error("error in parseDouble")
@@ -200,11 +197,6 @@ function parseDouble(str) {
 var pi = [3.141592653589793, 1.2246467991473532e-16];
 var e = [2.718281828459045, 1.4456468917292502e-16];
 var log2 = [0.6931471805599453, 2.3190468138462996e-17];
-
-//console.log(d.toDouble("3.141592653589793238462643383279502884197169399375105820974"));
-//console.log(d.toDouble("2.718281828459045235360287471352662497757247093699959574966"));
-//console.log(d.toDouble("0.693147180559945309417232121458176568075500134360255254120"));
-
 
 module.exports = {
   sum21: sum21,
