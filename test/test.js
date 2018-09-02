@@ -22,33 +22,55 @@ tape('classic test', function (t) {
 });
 
 tape('toDouble tests', function (t) {
-  var expected = 0.001;
-  var actual = d.toNumber(d.toDouble(0.001))
+  var expected = 12345;
+  var actual = d.toNumber(d.toDouble(12345))
   var diff = Math.abs(expected - actual);
-  t.ok(diff < eps1, "small numbers (diff=" + diff + ")");
-  expected = 1000;
-  actual = d.toNumber(d.toDouble("1000"))
+  t.ok(diff < eps2, "normal numbers (diff=" + diff + ")");
+  expected = -100;
+  actual = d.toNumber(d.toDouble(-100))
   diff = Math.abs(expected - actual);
-  t.ok(diff < eps1, "big numbers (diff=" + diff + ")");
-  expected = -10;
-  actual = d.toNumber(d.toDouble(-10))
+  t.ok(diff < eps2, "negative numbers (diff=" + diff + ")");
+  expected = 12.345;
+  actual = d.toNumber(d.toDouble("  12.345W"))
   diff = Math.abs(expected - actual);
-  t.ok(diff < eps1, "negative numbers (diff=" + diff + ")");
-  expected = Infinity;
+  t.ok(diff < eps2, "decimal numbers (diff=" + diff + ")");
+  expected = 120;
+  actual = d.toNumber(d.toDouble("12e1"))
+  diff = Math.abs(expected - actual);
+  t.ok(diff < eps2, "Exponent format (diff=" + diff + ")");
+  expected = 1.2;
+  actual = d.toNumber(d.toDouble("12e-1"))
+  diff = Math.abs(expected - actual);
+  t.ok(diff < eps1, "Negative exponent (diff=" + diff + ")");
+  expected = -0.123;
+  actual = d.toNumber(d.toDouble("-.123eW"))
+  diff = Math.abs(expected - actual);
+  t.ok(diff < eps2, "wtf numbers (diff=" + diff + ")");
+  expected = 9e300;
+  actual = d.toDouble("9e300");
+  diff = Math.abs(expected - d.toNumber(actual));
+  t.ok(diff < Infinity, "Large exponent (diff=" + diff + ", actual=[" + actual[0] + "," + actual[1] + "])");
+  expected = 0;
+  actual = d.toDouble("9e-322");
+  diff = Math.abs(expected - d.toNumber(actual));
+  t.ok(diff < eps2, "Tiny exponent (diff=" + diff + ", actual=[" + actual[0] + "," + actual[1] + "])");
+  actual = d.toNumber(d.toDouble("1e500"));
+  actual2 = d.toNumber(d.toDouble("-1e500"));
+  t.ok(actual === Infinity && actual2 === -Infinity, "Giant exponent");
+  actual = d.toNumber(d.toDouble("1e-500"));
+  actual2 = d.toNumber(d.toDouble("-1e-500"));
+  t.ok(actual === 0 && actual2 === -0, "Insignificant exponent");
   actual = d.toNumber(d.toDouble(Infinity))
-  t.ok(actual === expected, "Infinity number");
-  expected = -Infinity;
-  actual = d.toNumber(d.toDouble(-Infinity))
-  t.ok(actual === expected, "-Infinity number");
-  expected = NaN;
+  actual2 = d.toNumber(d.toDouble(-Infinity))
+  t.ok(actual === Infinity && actual2 === -Infinity, "Infinity number");
   actual = d.toNumber(d.toDouble(NaN))
-  t.ok(actual === expected, "NaN number");
+  t.ok(isNaN(actual), "NaN number");
   t.end();
 });
 
 tape('double-double operations', function (t) {
-  var expected = d.log2;
-  var actual = d.sub22(d.sum22(d.log2, d.pi), d.pi);
+  var expected = d.e;
+  var actual = d.sub22(d.sum22(d.e, d.pi), d.pi);
   var diff = absError22(expected, actual);
   t.ok(diff < eps2, "additive inverse (diff=" + diff + ")");
   expected = d.pi;
@@ -70,8 +92,8 @@ tape('double-single operations', function (t) {
   t.end();
 });
 
-tape('unar operations', function (t) {
-  var expected = 0;
+tape('unary operators', function (t) {
+  var expected = [0,0];
   var actual = d.sum22(d.log2, d.negate2(d.log2));
   var diff = absError22(expected, actual);
   t.ok(diff < eps2, "negate2 (diff=" + diff + ")");
@@ -82,11 +104,15 @@ tape('unar operations', function (t) {
   t.end();
 });
 
-tape('one hundred test', function (t) {
+tape('strange behaviour', function (t) {
   var expected = d.log2;
   var actual = d.mul21(d.mul21(d.log2, 0.01), 100);
   var diff = absError22(expected, actual);
   t.ok(diff < eps2, "one hundred test (diff=" + diff + ")");
+  expected = d.log2;
+  actual = d.sub22(d.sum22(d.log2, d.pi), d.pi);
+  diff = absError22(expected, actual);
+  t.ok(diff < eps2, "log2 sum (diff=" + diff + ")");
   t.end();
 });
 

@@ -1,25 +1,22 @@
 # double.js
-<<<<<<< Updated upstream
-----
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](https://egghead.io/courses/how-to-contribute-to-an-open-source-project-on-github) 
-![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg) [![Build Status](https://travis-ci.org/munrocket/double.js.svg?branch=master)](https://travis-ci.org/munrocket/double.js) [![dependencies Status](https://david-dm.org/munrocket/double.js/status.svg)](https://david-dm.org/munrocket/double.js)
-=======
 ---
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](https://egghead.io/courses/how-to-contribute-to-an-open-source-project-on-github) 
 ![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg)
 [![Build Status](https://travis-ci.org/munrocket/double.js.svg?branch=master)](https://travis-ci.org/munrocket/double.js)
-![Codecov](https://img.shields.io/codecov/c/github/munrocket/double.js.svg)
+[![Codecov](https://img.shields.io/codecov/c/github/munrocket/double.js.svg)](https://codecov.io/gh/munrocket/double.js)
 [![dependencies Status](https://david-dm.org/munrocket/double.js/status.svg)](https://david-dm.org/munrocket/double.js)
 
->>>>>>> Stashed changes
 
-Library for floating point expansions, also known as double-double arithmetic and quad-double arithmetic.
+Floating point expansions with 32 accurate decimal digits, also known as double-double arithmetic.
 
-### Precision
-Double precision support approximatly 32 accurate decimal digits and stored as unevaluated sum of two ordinary javascript 64 bits IEEE 754 number. Note that only the sum of the two components of the result is meaningful. In particular, the high part of the result does not necessarily equal the result of operating on the high parts.
+### Algorithm
+Number stored as unevaluated sum of two ordinary javascript IEEE 754 numbers and uses error-free arithmetic algorithms from references below. This brings accuracy and significant increase in performance in comparison with the traditional approach. Especially in javascript because it doesn't have small number types and other libraries uses strings.
 
 ### Current status
-This library under development now. Feel free to contribute.
+This library under development now, some operations not properly accurate. Note that only the sum of the two components of the result is meaningful. In particular, the high part of the result does not necessarily equal the result of operating on the high parts. Feel free to contribute.
+
+### Future improvements
+Implementing trigonometric operations and quad-double with 64 accurate decimal digits.
 
 ### References
 1. Stef Graillat. *Accurate Floating Point Product and Exponentiation.* 2009 [[PDF](https://hal.archives-ouvertes.fr/hal-00164607/document)]

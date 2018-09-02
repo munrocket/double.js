@@ -136,61 +136,66 @@ function toNumber(double) {
 }
 
 function toDouble(number) {
-  console.log("log toDouble number=", number);
   return parseDouble(number.toString());
 }
 
 function parseDouble(str) {
-  try {
-    console.log("log parseDouble str=", str);
-    str = str.trimStart();
-  } catch (er) {
-    console.error("error in parseDouble")
+  if(typeof(str) == 'number') {
+    str = str.toString();
+  } else if (typeof(str) != 'string') {
     return [NaN, NaN];
   }
-  if (strlen <= 0) return [NaN, NaN];
-  var i = 0;
   var strlen = str.length;
-  var first = str[i];
-  if (first === '-' || first === '+') {
-    i++;
-    isPositive = (first === '+');
-  } else {
-    isPositive = true;
+  if(strlen === 0) return [NaN, NaN];
+  var i = 0;
+  var ch = str[i];
+  while(/\s/.test(ch)) {
+    if(++i == strlen) return [NaN, NaN];
+    ch = str[i];
   }
-  var val = [0.0, 0.0];
+  var isPositive = true;
+  if (ch == '-' || ch == '+') {
+    isPositive = (ch == '+');
+    ch = str[++i];
+  }
+  var chcode;
   var numDigits = 0;
-  var numBeforeDec = 0;
+  var numBeforeDec = null;
   var exp = 0;
+  var result = [0.0, 0.0];
   do {
-    var ch = str[i];
-    var chcode = ch.charCodeAt(0);
+    ch = str[i];
+    chcode = ch.charCodeAt(0);
     if ('0'.charCodeAt(0) <= chcode && chcode <= '9'.charCodeAt(0)) {
-      val = sum21(mul21(val, 10), chcode - '0'.charCodeAt(0));
+      result = sum21(mul21(result, 10), chcode - '0'.charCodeAt(0));
       numDigits++;
-    } else if (ch === '.') {
+    } else if (ch == '.') {
       numBeforeDec = numDigits;
-    } else if (ch === 'e' || ch === 'E') {
-      exp = parseInt(str.slice(i));
-      if (exp === NaN) {
+    } else if (ch == 'e' || ch == 'E') {
+      if (numDigits === 0) return [NaN, NaN];
+      if (++i < strlen) exp = parseInt(str.slice(i));
+      if (isNaN(exp)) {
         exp = 0;
-      } else if (exp < 345){
+      } else if (exp < -322 - numBeforeDec) {
         return isPositive ? [0, 0] : [-0, -0];
-      } else if (exp > 308) {
+      } else if (exp > 300 - numBeforeDec) {
         return isPositive ? [Infinity, Infinity] : [-Infinity,-Infinity];
       }
       break;
     } else {
+      if (numDigits === 0) {
+        if (str.slice(i, i + 8) === "Infinity") {
+          return isPositive ? [Infinity, Infinity] : [-Infinity, -Infinity];
+        } else {
+          return [NaN, NaN];
+        }
+      }
       break;
     }
   } while (++i < strlen);
-  var numDecPlaces = numDigits - numBeforeDec - exp;
-  if (numDecPlaces > 0) {
-    val = mul21(val, Math.pow(10, -numDecPlaces));
-  } else if (numDecPlaces < 0) {
-    val = mul21(val, Math.pow(10, -numDecPlaces));
-  }
-  return isPositive ? val : negate2(val);
+  if (numBeforeDec === null) numBeforeDec = numDigits;
+  result = mul21(result, Math.pow(10, -(numDigits - numBeforeDec - exp)));
+  return isPositive ? result : negate2(result);
 }
 
 /* Constants */
@@ -224,7 +229,6 @@ module.exports = {
   le22: le22,
   toNumber: toNumber,
   toDouble: toDouble,
-  parseDouble: parseDouble,
   pi: pi,
   e: e,
   log2: log2
