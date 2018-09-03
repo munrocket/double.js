@@ -4,5 +4,4 @@ node-js:
   - 6
 script:
   - npm run test
-  - codecov
   - bash <(curl -s https://codecov.io/bash)

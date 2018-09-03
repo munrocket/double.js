@@ -7,7 +7,7 @@
 [![dependencies Status](https://david-dm.org/munrocket/double.js/status.svg)](https://david-dm.org/munrocket/double.js)
 
 
-Floating point expansions with 32 accurate decimal digits, also known as double-double arithmetic.
+Floating point expansions with 31 accurate decimal digits, also known as double-double arithmetic.
 
 ### Algorithm
 Number stored as unevaluated sum of two javascript float numbers and uses error-free arithmetic algorithms from references below. This brings accuracy and significant increase in performance in comparison to digit-wise approach, because this float arithmetic is implemented in hardware. Note that there are no theoretical limitations in javascript language since ECMAScript version 1 uses 64 bit IEEE 754 with round-to-nearest after each operations.
@@ -21,8 +21,8 @@ Implementing trigonometric operations and quad-double with 64 accurate decimal d
 ### References
 1. Theodorus Dekker. *A floating-point technique for extending the available precision.* 1971 [[Viewer](https://gdz.sub.uni-goettingen.de/id/PPN362160546_0018?tify={%22pages%22:[230],%22panX%22:0.306,%22panY%22:0.754,%22view%22:%22info%22,%22zoom%22:0.39})]
 2. Stef Graillat. *Accurate Floating Point Product and Exponentiation.* 2009 [[PDF](https://hal.archives-ouvertes.fr/hal-00164607/document)]
-3. Donald Knuth. *The Art of Computer Programming: Seminumerical Algorithms*, volume 2. chapter 4.2.3. problem 9. 1981.
-4. Jonathan Shewchuk. *Adaptive Precision Floating-Point Arithmetic and Fast Robust Geometric Predicates.* 1997 [[PDF](https://people.eecs.berkeley.edu/~jrs/papers/robustr.pdf)]
-5. Arithmetic Algorithms for Extended Precision Using Floating-Point Expansions [[PDF](http://perso.ens-lyon.fr/jean-michel.muller/07118139.pdf)]
-6. Yozo Hida, Xiaoye Li, David Bailey. *Library for Double-Double and Quad-Double Arithmetic.* 2000 [[PDF](http://web.mit.edu/tabbott/Public/quaddouble-debian/qd-2.3.4-old/docs/qd.pdf)]
-7. David Bailey. *A Thread-Safe Arbitrary Precision Computation Package MPFUN2015.* [[PDF](https://www.davidhbailey.com/dhbpapers/mpfun2015.pdf)]
+3. J.-M. Muller, N. Brisebarre, F. de Dinechin, C.-P. Jeannerod, V.Lefevre, G. Melquiond, N. Revol, D. Stehle, and S. Torres, *Handbook of Floating-Point Arithmetic.* 2010.
+3. Yozo Hida, Xiaoye Li, David Bailey. *Library for Double-Double and Quad-Double Arithmetic.* 2000 [[PDF](http://web.mit.edu/tabbott/Public/quaddouble-debian/qd-2.3.4-old/docs/qd.pdf)]
+4. David Bailey. *A Thread-Safe Arbitrary Precision Computation Package MPFUN2015.* 2018 [[PDF](https://www.davidhbailey.com/dhbpapers/mpfun2015.pdf)]
+5. Jonathan Shewchuk. *Adaptive Precision Floating-Point Arithmetic and Fast Robust Geometric Predicates.* 1997 [[PDF](https://people.eecs.berkeley.edu/~jrs/papers/robustr.pdf)]
+6. M. Joldes, O. Marty, J.-M. Muller, V. Popescu. *Arithmetic Algorithms for Extended Precision Using Floating-Point Expansions* 2016 [[PDF](http://perso.ens-lyon.fr/jean-michel.muller/07118139.pdf)]
