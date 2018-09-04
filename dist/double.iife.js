@@ -1,12 +1,12 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 
-/* Veltkamp-Dekker splitter constant for IEEE 64-bit float number */
+/* Veltkamp-Dekker splitter = 2^27 + 1 for IEEE 64-bit float number */
 
-var splitter = 134217729;  // = 2^27 + 1
+var splitter = 134217729;
 
-/* Operations with single-length numbers and result is double-length */
+/* Operations with single numbers and result is double */
 
-function fastSum11(a, b) { //assume that abs(a) > abs(b)
+function quickSum11(a, b) {
   var z = a + b;
   return [z, b - z + a];
 }
@@ -38,18 +38,14 @@ function sqr1(a) {
   return [z, ((xh * xh - z) + v + v) + xl * xl];
 };
 
-function intPow1(base, exp) {
+function npow1(base, exp) {
   var isPositive = exp > 0;
   if (!isPositive) exp = -exp;
   var n = Math.floor(Math.log(exp) / Math.log(2));
   var m = Math.floor(exp - Math.pow(2, n));
   var Z = [base, 0], Z0 = Z;
-  while (n--) {
-    Z = sqr2(Z);
-  }
-  while (m--) {
-    Z = mul22(Z, Z0);
-  }
+  while (n--) Z = sqr2(Z);
+  while (m--) Z = mul22(Z, Z0);
   return isPositive ? Z : inv2(Z);
 }
 
@@ -175,7 +171,13 @@ function toNumber(multicomp) {
 }
 
 function toDouble(number) {
-  return parseDouble(number.toString());
+  if (typeof number === 'number') {
+    return [number, 0];
+  } else if (typeof number === 'string'){
+    return parseDouble(number.toString());
+  } else {
+    return [NaN, NaN];
+  }
 }
 
 function parseDouble(str) {
@@ -194,14 +196,15 @@ function parseDouble(str) {
     ++i;
   }
   var result = [0, 0], chcode, numDigits = 0, numBeforeDec = null, exp = 0;
+  var chcode0 = '0'.charCodeAt(0), chcode9 = '9'.charCodeAt(0);
   do {
     ch = str[i];
     chcode = ch.charCodeAt(0);
-    if ('0'.charCodeAt(0) <= chcode && chcode <= '9'.charCodeAt(0)) {
-      result = sum21(mul21(result, 10), chcode - '0'.charCodeAt(0));
+    if (chcode0 <= chcode && chcode <= chcode9) {
+      result = sum21(mul21(result, 10), chcode - chcode0);
       numDigits++;
     } else if (ch == '.') {
-      if (numBeforeDec !== null) return [NaN, NaN];
+      if (numBeforeDec !== null) break;
       numBeforeDec = numDigits;
     } else if (ch == 'e' || ch == 'E') {
       if (numDigits === 0) return [NaN, NaN];
@@ -230,16 +233,71 @@ function parseDouble(str) {
   return isPositive ? result : neg2(result);
 }
 
+function parseDouble2(str) {
+  var result = [0, 0], first = str[0], isPositive = true;
+  str = str.trim();
+  if (first == '-' || first == '+') {
+    isPositive = (first == '+');
+    str = str.slice(1);
+  }
+  
+  str = str.split(".", 2);
+  intlen = str[0].length;
+  str = str[0] + str[1];
+  str = str.split(/[e|E]/, 2);
+  if (str[0].length < intlen) str[1] = str[1].slice(0, intlen - 1 - str[0].length);
+  var num = /[0-9]*/.exec(str[0])[0], exp = str[1], numlen = num.length;
+
+  hi = (numlen > 0) ? parseInt(num.slice(0, 16)) : NaN;
+  lo = (numlen > 16) ? parseFloat(num.slice(16, 16)) : NaN;
+  
+  if (isNaN(hi)) return [NaN, NaN];
+  if (isNaN(lo)) {
+    result = [hi, 0];
+    numlen = hi.toString().length;
+  } else {
+    result = quickSum11(hi * Math.pow(10, lo.length), lo);
+    numlen = num.length;
+  }
+  if (intlen > numlen) intlen = numlen;
+
+  exp = parseInt(exp);
+  if (isNaN(exp)) {
+    exp = 0;
+  } else if (exp < -322 - intlen) {
+    return isPositive ? [0, 0] : [-0, -0];
+  } else if (exp > 301 - intlen) {
+    return isPositive ? [Infinity, Infinity] : [-Infinity,-Infinity];
+  }
+
+  exp += intlen - numlen;
+  if (exp != 0) {
+    result = mul21(result, Math.pow(10, exp));
+  } 
+  return (isPositive) ? result : neg2(result);
+}
+
 /* Constants */
 
-var pi = [3.141592653589793116, 3.141592653589793116e-16];
-var x2pi = [6.283185307179586232, 2.449293598294706414e-16];
+var pi = [3.141592653589793116,  1.224646799147353207e-16];
 var e = [2.718281828459045, 1.4456468917292502e-16];
+var x2pi = [6.283185307179586232, 2.449293598294706414e-16];
 var log2 = [0.6931471805599453, 2.3190468138462996e-17];
+var phi = [1.618033988749895, -5.4321152036825055e-17];
 
 /* CommonJS module defenition */
 
 module.exports = {
+  quickSum11: quickSum11,
+  sum11: sum11,
+  mul11: mul11,
+  sqr1: sqr1,
+  npow1:npow1,
+  abs2: abs2,
+  inv2: inv2,
+  neg2: neg2,
+  sqr2: sqr2,
+  sqrt2: sqrt2,
   sum21: sum21,
   sub21: sub21,
   mul21: mul21,
@@ -248,12 +306,6 @@ module.exports = {
   sub22: sub22,
   mul22: mul22,
   div22: div22,
-  abs2: abs2,
-  inv2: inv2,
-  intPow1:intPow1,
-  neg2: neg2,
-  sqr2: sqr2,
-  sqrt2: sqrt2,
   eq21: eq21,
   ne21: ne21,
   gt21: gt21,
@@ -269,9 +321,12 @@ module.exports = {
   toNumber: toNumber,
   toDouble: toDouble,
   parseDouble: parseDouble,
+  parseDouble2: parseDouble2,
   pi: pi,
   x2pi: x2pi,
   e: e,
-  log2: log2
+  x2pi: x2pi,
+  log2: log2,
+  phi: phi
 }
 },{}]},{},[1]);

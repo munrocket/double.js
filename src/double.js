@@ -1,11 +1,11 @@
 
-/* Veltkamp-Dekker splitter constant for IEEE 64-bit float number */
+/* Veltkamp-Dekker splitter = 2^27 + 1 for IEEE 64-bit float number */
 
-var splitter = 134217729;  // = 2^27 + 1
+var splitter = 134217729;
 
-/* Operations with single-length numbers and result is double-length */
+/* Operations with single numbers and result is double */
 
-function fastSum11(a, b) { //assume that abs(a) > abs(b)
+function quickSum11(a, b) {
   var z = a + b;
   return [z, b - z + a];
 }
@@ -37,18 +37,14 @@ function sqr1(a) {
   return [z, ((xh * xh - z) + v + v) + xl * xl];
 };
 
-function intPow1(base, exp) {
+function npow1(base, exp) {
   var isPositive = exp > 0;
   if (!isPositive) exp = -exp;
   var n = Math.floor(Math.log(exp) / Math.log(2));
   var m = Math.floor(exp - Math.pow(2, n));
   var Z = [base, 0], Z0 = Z;
-  while (n--) {
-    Z = sqr2(Z);
-  }
-  while (m--) {
-    Z = mul22(Z, Z0);
-  }
+  while (n--) Z = sqr2(Z);
+  while (m--) Z = mul22(Z, Z0);
   return isPositive ? Z : inv2(Z);
 }
 
@@ -174,7 +170,13 @@ function toNumber(multicomp) {
 }
 
 function toDouble(number) {
-  return parseDouble(number.toString());
+  if (typeof number === 'number') {
+    return [number, 0];
+  } else if (typeof number === 'string'){
+    return parseDouble(number.toString());
+  } else {
+    return [NaN, NaN];
+  }
 }
 
 function parseDouble(str) {
@@ -193,14 +195,15 @@ function parseDouble(str) {
     ++i;
   }
   var result = [0, 0], chcode, numDigits = 0, numBeforeDec = null, exp = 0;
+  var chcode0 = '0'.charCodeAt(0), chcode9 = '9'.charCodeAt(0);
   do {
     ch = str[i];
     chcode = ch.charCodeAt(0);
-    if ('0'.charCodeAt(0) <= chcode && chcode <= '9'.charCodeAt(0)) {
-      result = sum21(mul21(result, 10), chcode - '0'.charCodeAt(0));
+    if (chcode0 <= chcode && chcode <= chcode9) {
+      result = sum21(mul21(result, 10), chcode - chcode0);
       numDigits++;
     } else if (ch == '.') {
-      if (numBeforeDec !== null) return [NaN, NaN];
+      if (numBeforeDec !== null) break;
       numBeforeDec = numDigits;
     } else if (ch == 'e' || ch == 'E') {
       if (numDigits === 0) return [NaN, NaN];
@@ -229,16 +232,63 @@ function parseDouble(str) {
   return isPositive ? result : neg2(result);
 }
 
+function parseDouble2(str) {
+  var first = str[0], isPositive = true;
+  str = /^\s*([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)/.exec(str);
+  if (!str || str.length < 2) return [NaN, NaN]
+  str = str[1];
+  if (first == '-' || first == '+') {
+    isPositive = (first == '+');
+    str = str.slice(1);
+  }
+
+  str = str.split(/[eE]/, 2);
+  var exp = (str.length > 1) ? parseInt(str[1]) : NaN;
+  str = str[0].split(".", 2);
+  var digits = (str.length > 1) ? str[0] + str[1] : str[0];
+  var numBeforeDec = str[0].length;
+  var numDigits = digits.length;
+  if (!numDigits) return [NaN, NaN];
+
+  if (isNaN(exp)) {
+    exp = 0;
+  } else if (exp < -322 - numBeforeDec) {
+    return isPositive ? [0, 0] : [-0, -0];
+  } else if (exp > 301 - numBeforeDec) {
+    return isPositive ? [Infinity, Infinity] : [-Infinity,-Infinity];
+  }
+
+  var hi = parseInt(digits.slice(0, 16));
+  var lo = parseInt(digits.slice(16, 16));
+  var result = (numDigits < 17) ? [hi, 0] : sum11(hi * Math.pow(10, Math.min(16, numDigits - 16)), lo);
+
+  console.log(result, exp, numBeforeDec, numDigits);
+  exp += numBeforeDec - numDigits;
+  if (exp != 0) result = mul21(result, Math.pow(10, exp));
+  return (isPositive) ? result : neg2(result);
+}
+
 /* Constants */
 
-var pi = [3.141592653589793116, 3.141592653589793116e-16];
-var x2pi = [6.283185307179586232, 2.449293598294706414e-16];
+var pi = [3.141592653589793116,  1.224646799147353207e-16];
 var e = [2.718281828459045, 1.4456468917292502e-16];
+var x2pi = [6.283185307179586232, 2.449293598294706414e-16];
 var log2 = [0.6931471805599453, 2.3190468138462996e-17];
+var phi = [1.618033988749895, -5.4321152036825055e-17];
 
 /* CommonJS module defenition */
 
 module.exports = {
+  quickSum11: quickSum11,
+  sum11: sum11,
+  mul11: mul11,
+  sqr1: sqr1,
+  npow1:npow1,
+  abs2: abs2,
+  inv2: inv2,
+  neg2: neg2,
+  sqr2: sqr2,
+  sqrt2: sqrt2,
   sum21: sum21,
   sub21: sub21,
   mul21: mul21,
@@ -247,12 +297,6 @@ module.exports = {
   sub22: sub22,
   mul22: mul22,
   div22: div22,
-  abs2: abs2,
-  inv2: inv2,
-  intPow1:intPow1,
-  neg2: neg2,
-  sqr2: sqr2,
-  sqrt2: sqrt2,
   eq21: eq21,
   ne21: ne21,
   gt21: gt21,
@@ -268,8 +312,11 @@ module.exports = {
   toNumber: toNumber,
   toDouble: toDouble,
   parseDouble: parseDouble,
+  parseDouble2: parseDouble2,
   pi: pi,
   x2pi: x2pi,
   e: e,
-  log2: log2
+  x2pi: x2pi,
+  log2: log2,
+  phi: phi
 }
