@@ -26,7 +26,7 @@ function mul11(a, b) {
   var q = ah * bl + al * bh;
   var z = p + q;
   return [z, p - z + q + al * bl];
-};
+}
 
 function sqr1(a) {
   var u = a * splitter;
@@ -35,9 +35,11 @@ function sqr1(a) {
   var z = a * a;
   var v = xh * xl;
   return [z, ((xh * xh - z) + v + v) + xl * xl];
-};
+}
 
-function npow1(base, exp) {
+function pow11n(base, exp) {
+  if (exp === 0) return [1, 0];
+  if (exp == 1) return [base, 0];
   var isPositive = exp > 0;
   if (!isPositive) exp = -exp;
   var n = Math.floor(Math.log(exp) / Math.log(2));
@@ -165,106 +167,35 @@ function le22(X, Y) { return (X[0] <= Y[0] && (X[0] === Y[0] && X[1] <= Y[1])); 
 
 /* Different convertation */
 
-function toNumber(multicomp) {
-  return multicomp.reduce(function (sum, component) { return sum += component }, 0);
+function toNumber(double) {
+  return double.reduce(function (sum, component) { return sum += component }, 0);
 }
 
 function toDouble(number) {
-  if (typeof number === 'number') {
-    return [number, 0];
-  } else if (typeof number === 'string'){
-    return parseDouble(number.toString());
-  } else {
-    return [NaN, NaN];
-  }
+  if (typeof number == 'number' || typeof number == 'string') return parseDouble(number.toString());
+  else return [NaN, NaN];
 }
 
-function parseDouble(str) {
-  if(typeof(str) == 'number') {
-    str = str.toString();
-  } else if (typeof(str) != 'string') {
-    return [NaN, NaN];
-  }
-  var isPositive = true, i = 0, ch = str[i], strlen = str.length;
-  while(/\s/.test(ch) && ++i < strlen) {
-    ch = str[i];
-  }
-  if (i === strlen) return [NaN, NaN];
-  if (ch == '-' || ch == '+') {
-    isPositive = (ch == '+');
-    ++i;
-  }
-  var result = [0, 0], chcode, numDigits = 0, numBeforeDec = null, exp = 0;
-  var chcode0 = '0'.charCodeAt(0), chcode9 = '9'.charCodeAt(0);
-  do {
-    ch = str[i];
-    chcode = ch.charCodeAt(0);
-    if (chcode0 <= chcode && chcode <= chcode9) {
-      result = sum21(mul21(result, 10), chcode - chcode0);
-      numDigits++;
-    } else if (ch == '.') {
-      if (numBeforeDec !== null) break;
-      numBeforeDec = numDigits;
-    } else if (ch == 'e' || ch == 'E') {
-      if (numDigits === 0) return [NaN, NaN];
-      if (++i < strlen) exp = parseInt(str.slice(i));
-      if (isNaN(exp)) {
-        exp = 0;
-      } else if (exp < -322 - numBeforeDec) {
-        return isPositive ? [0, 0] : [-0, -0];
-      } else if (exp > 300 - numBeforeDec) {
-        return isPositive ? [Infinity, Infinity] : [-Infinity,-Infinity];
-      }
-      break;
-    } else {
-      if (numDigits === 0) {
-        if (str.slice(i, i + 8) === "Infinity") {
-          return isPositive ? [Infinity, Infinity] : [-Infinity, -Infinity];
-        } else {
-          return [NaN, NaN];
-        }
-      }
-      break;
-    }
-  } while (++i < strlen);
-  exp += (numBeforeDec === null) ? 0 : numBeforeDec - numDigits;
-  if (exp != 0) result = mul21(result, Math.pow(10, exp));
-  return isPositive ? result : neg2(result);
-}
+function parseDouble(string) {
+  var isPositive = (/^\s*-/.exec(string) === null);
+  var str = string.replace(/^\s*[+-]?/, '');
+  if (/Infinity.*/.exec(str) !== null) return (isPositive) ? [Infinity, Infinity] : [-Infinity, -Infinity];
+  str = /^([0-9]*\.?[0-9]+)(?:[eE]([-+]?[0-9]+))?/.exec(str);
+  if (!str) return [NaN, NaN];
 
-function parseDouble2(str) {
-  var first = str[0], isPositive = true;
-  str = /^\s*([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)/.exec(str);
-  if (!str || str.length < 2) return [NaN, NaN]
-  str = str[1];
-  if (first == '-' || first == '+') {
-    isPositive = (first == '+');
-    str = str.slice(1);
+  var digits = str[1].replace('.', '');
+  var exp = (str[2] !== undefined) ? parseInt(str[2]) : 0;
+  var dotId = str[0].indexOf('.');
+  if (dotId == -1) dotId = digits.length;
+  if (exp + dotId - 1 < -300) return isPositive ? [0, 0] : [-0, -0];
+  if (exp + dotId - 1 > 300) return isPositive ? [Infinity, Infinity] : [-Infinity, -Infinity];
+
+  var nextDigs, shift, result = [0, 0];
+  for (var i = 0; i < digits.length; i += 16) {
+    nextDigs = digits.slice(i, i + 16);
+    shift = Math.pow(10, exp + dotId - i - nextDigs.length);
+    result = sum22(result, mul11(shift, parseInt(nextDigs)));
   }
-
-  str = str.split(/[eE]/, 2);
-  var exp = (str.length > 1) ? parseInt(str[1]) : NaN;
-  str = str[0].split(".", 2);
-  var digits = (str.length > 1) ? str[0] + str[1] : str[0];
-  var numBeforeDec = str[0].length;
-  var numDigits = digits.length;
-  if (!numDigits) return [NaN, NaN];
-
-  if (isNaN(exp)) {
-    exp = 0;
-  } else if (exp < -322 - numBeforeDec) {
-    return isPositive ? [0, 0] : [-0, -0];
-  } else if (exp > 301 - numBeforeDec) {
-    return isPositive ? [Infinity, Infinity] : [-Infinity,-Infinity];
-  }
-
-  var hi = parseInt(digits.slice(0, 16));
-  var lo = parseInt(digits.slice(16, 16));
-  var result = (numDigits < 17) ? [hi, 0] : sum11(hi * Math.pow(10, Math.min(16, numDigits - 16)), lo);
-
-  console.log(result, exp, numBeforeDec, numDigits);
-  exp += numBeforeDec - numDigits;
-  if (exp != 0) result = mul21(result, Math.pow(10, exp));
   return (isPositive) ? result : neg2(result);
 }
 
@@ -283,7 +214,7 @@ module.exports = {
   sum11: sum11,
   mul11: mul11,
   sqr1: sqr1,
-  npow1:npow1,
+  pow11n:pow11n,
   abs2: abs2,
   inv2: inv2,
   neg2: neg2,
@@ -312,11 +243,9 @@ module.exports = {
   toNumber: toNumber,
   toDouble: toDouble,
   parseDouble: parseDouble,
-  parseDouble2: parseDouble2,
   pi: pi,
   x2pi: x2pi,
   e: e,
-  x2pi: x2pi,
   log2: log2,
   phi: phi
 }
