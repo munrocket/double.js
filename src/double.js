@@ -1,7 +1,7 @@
 
 /* Veltkamp-Dekker splitter = 2^27 + 1 for IEEE 64-bit float number */
 
-var splitter = 134217729;
+var _splitter = 134217729;
 
 /* Operations with single numbers and result is double */
 
@@ -18,9 +18,9 @@ function sum11(a, b) {
 }
 
 function mul11(a, b) {
-  var p = a * splitter;
+  var p = a * _splitter;
   var ah = a - p + p; var al = a - ah;
-  p = b * splitter;
+  p = b * _splitter;
   var bh = b - p + p; var bl = b - bh;
   p = ah * bh;
   var q = ah * bl + al * bh;
@@ -29,25 +29,12 @@ function mul11(a, b) {
 }
 
 function sqr1(a) {
-  var u = a * splitter;
+  var u = a * _splitter;
   var xh = u + (a - u);
   var xl = a - xh;
   var z = a * a;
   var v = xh * xl;
   return [z, ((xh * xh - z) + v + v) + xl * xl];
-}
-
-function pow11n(base, exp) {
-  if (exp === 0) return [1, 0];
-  if (exp == 1) return [base, 0];
-  var isPositive = exp > 0;
-  if (!isPositive) exp = -exp;
-  var n = Math.floor(Math.log(exp) / Math.log(2));
-  var m = Math.floor(exp - Math.pow(2, n));
-  var Z = [base, 0], Z0 = Z;
-  while (n--) Z = sqr2(Z);
-  while (m--) Z = mul22(Z, Z0);
-  return isPositive ? Z : inv2(Z);
 }
 
 /* Unar operators with double */
@@ -86,6 +73,39 @@ function sqrt2(X) {
   return [zf, zh - zf + zl];
 }
 
+function ln2(X) {
+  if (le21(X, 0)) return [NaN, NaN];
+  if (eq21(X, 1)) return [0, 0];
+  var Z = toDouble(Math.log(X[0]));
+  return  sub21(sum22(Z, mul22(X, exp2(neg2(Z)))), 1);
+}
+
+function exp2(X) {
+  if (le21(X, 0)) return [1, 0];
+  if (eq21(X, 1)) return E;
+  if (le21(X, -709)) return [0, 0];
+  if (ge21(X, 709)) return [Infinity, Infinity];
+  var n = Math.floor(X[0] + 0.5);
+  var X0 = sub21(X, n), U = X0, V = X0, i, cLen;
+  var coeffs = [156, 12012, 600600, 21621600, 588107520, 12350257920, 201132771840, 2514159648000, 23465490048000, 154872234316800, 647647525324800, 1295295050649600];
+  for (i = 0, cLen = coeffs.length; i < cLen; i += 2) U = sum21(mul22(sum21(U, coeffs[i]), X0), coeffs[i + 1]);
+  for (i = 0, cLen = coeffs.length; i < cLen; i += 2) V = sum21(mul22(sub21(V, coeffs[i]), X0), coeffs[i + 1]);
+  return mul22(pow21n(E, n), div22(U, V));
+}
+
+function pow21n(base, exp) {
+  if (exp === 0) return [1, 0];
+  if (exp == 1) return base;
+  var isPositive = exp > 0;
+  if (!isPositive) exp = -exp;
+  var n = Math.floor(Math.log(exp) / Math.log(2));
+  var m = Math.floor(exp - Math.pow(2, n));
+  var Z = base, Z0 = Z;
+  while (n--) Z = sqr2(Z);
+  while (m--) Z = mul22(Z, Z0);
+  return isPositive ? Z : inv2(Z);
+}
+
 /* Arithmetic operations with double and single */
 
 function sum21(X, b) {
@@ -108,6 +128,7 @@ function mul21(X, b) {
   var zf = Z[0] + Z[1];
   return [zf, Z[0] - zf + Z[1]];
 }
+// function mul21pow2(X, b) { X[0] *= b; X[1] *= b; return X; }
 
 function div21(X, b) {
   var zh = X[0] / b; 
@@ -175,6 +196,15 @@ function toDouble(number) {
   if (typeof number == 'number' || typeof number == 'string') return parseDouble(number.toString());
   else return [NaN, NaN];
 }
+  
+// function toExponential(double, precision = 31) {
+//   var result = (double[0] < 0) ? '-' : '';
+//   if (isNaN(double[0])) return 'NaN';
+//   if (!isFinite(double[0])) return result + 'Infinity';
+//   if (toNumber(double) == 0) return '0e+0';
+  
+//   return result;
+// }
 
 function parseDouble(string) {
   var isPositive = (/^\s*-/.exec(string) === null);
@@ -201,11 +231,11 @@ function parseDouble(string) {
 
 /* Constants */
 
-var pi = [3.141592653589793116,  1.224646799147353207e-16];
-var e = [2.718281828459045, 1.4456468917292502e-16];
-var x2pi = [6.283185307179586232, 2.449293598294706414e-16];
-var log2 = [0.6931471805599453, 2.3190468138462996e-17];
-var phi = [1.618033988749895, -5.4321152036825055e-17];
+var Pi = [3.141592653589793116,  1.224646799147353207e-16];
+var X2Pi = [6.283185307179586232, 2.449293598294706414e-16];
+var E = [2.718281828459045, 1.4456468917292502e-16];
+var Log2 = [0.6931471805599453, 2.3190468138462996e-17];
+var Phi = [1.618033988749895, -5.4321152036825055e-17];
 
 /* CommonJS module defenition */
 
@@ -214,12 +244,14 @@ module.exports = {
   sum11: sum11,
   mul11: mul11,
   sqr1: sqr1,
-  pow11n:pow11n,
   abs2: abs2,
   inv2: inv2,
   neg2: neg2,
   sqr2: sqr2,
   sqrt2: sqrt2,
+  pow21n:pow21n,
+  ln2: ln2,
+  exp2: exp2,
   sum21: sum21,
   sub21: sub21,
   mul21: mul21,
@@ -242,10 +274,11 @@ module.exports = {
   le22: le22,
   toNumber: toNumber,
   toDouble: toDouble,
+  //toExponential: toExponential,
   parseDouble: parseDouble,
-  pi: pi,
-  x2pi: x2pi,
-  e: e,
-  log2: log2,
-  phi: phi
+  Pi: Pi,
+  X2Pi: X2Pi,
+  E: E,
+  Log2: Log2,
+  Phi: Phi
 }

@@ -9,7 +9,7 @@ tape.createStream()
 var eps1 = 1e-15;
 var eps2 = 1e-30;
 var abs = Math.abs;
-var expected, diff, actual, actual2, actual3;
+var diff, diff2, expected, expected2, actual, actual2, actual3;
 
 function absError22(expected, actual) {
   return abs(d.toNumber(d.sub22(expected, actual)));
@@ -25,47 +25,48 @@ tape('classic test', function (t) {
 
 tape('unary operators with double', function (t) {
   expected = [1, 0];
-  actual = d.mul22(d.log2, d.inv2(d.log2));
+  actual = d.mul22(d.Log2, d.inv2(d.Log2));
   diff = absError22(actual, expected);
   t.ok(diff < eps2, 'inv2 (diff=' + diff + ')');
   expected = [0, 0];
-  actual = d.sum22(d.log2, d.neg2(d.log2));
+  actual = d.sum22(d.Log2, d.neg2(d.Log2));
   diff = absError22(expected, actual);
   t.ok(diff < eps2, 'neg2 (diff=' + diff + ')');
-  expected = d.log2;
-  actual = d.sqrt2(d.sqr2(d.log2));
+  expected = d.Log2;
+  actual = d.sqrt2(d.sqr2(d.Log2));
   diff = absError22(expected, actual);
   t.ok(diff < eps2, 'sqr2 / sqrt2 (diff=' + diff + ')');
-  expected = 1e20;
-  actual = d.toNumber(d.pow11n(10, 20));
+  expected = 1e20; expected2 = 1e-20;
+  actual = d.toNumber(d.pow21n([10, 0], 20)); actual2 = d.toNumber(d.pow21n([10, 0], -20));
+  diff = abs(actual - expected); diff2 = abs(actual2 - expected2);
+  t.ok(diff < eps1 && diff2 < eps1,'pow21n (diff=' + diff + ', diff2=' + diff2 + ')');
+  expected = Math.pow(Math.E, Math.PI);
+  actual = d.toNumber(d.exp2(d.Pi));
+  console.log(d.exp2(d.Pi));
   diff = abs(actual - expected);
-  t.ok(diff < eps1, 'pow11n with positive exp (diff=' + diff + ')');
-  expected = 1e-20;
-  actual = d.toNumber(d.pow11n(10, -20));
-  diff = abs(actual - expected);
-  t.ok(diff < eps1, 'pow11n with negative exp (diff=' + diff + ')');
+  t.ok(diff < eps1,'exp2 (diff=' + diff + ')');
   t.end();
 });
 
 tape('double-single operations', function (t) {
-  expected = d.neg2(d.log2);
-  actual = d.sub21(d.sum21(d.neg2(d.log2), d.e[0]), d.e[0]);
+  expected = d.neg2(d.Log2);
+  actual = d.sub21(d.sum21(d.neg2(d.Log2), d.E[0]), d.E[0]);
   diff = absError22(expected, actual);
   t.ok(diff < eps2, 'additive inverse (diff=' + diff + ')');
-  expected = d.e;
-  actual = d.div21(d.mul21(d.e, d.pi[0]), d.pi[0]);
+  expected = d.E;
+  actual = d.div21(d.mul21(d.E, d.Pi[0]), d.Pi[0]);
   diff = absError22(expected, actual);
   t.ok(diff < eps2, 'multiplicative inverse (diff=' + diff + ')');
   t.end();
 });
 
 tape('double-double operations', function (t) {
-  expected = d.log2;
-  actual = d.sub22(d.sum22(d.log2, d.e), d.e);
+  expected = d.Log2;
+  actual = d.sub22(d.sum22(d.Log2, d.E), d.E);
   diff = absError22(expected, actual);
   t.ok(diff < eps2, 'additive inverse (diff=' + diff + ')');
-  expected = d.pi;
-  actual = d.div22(d.mul22(d.pi, d.log2), d.log2);
+  expected = d.Pi;
+  actual = d.div22(d.mul22(d.Pi, d.Log2), d.Log2);
   diff = absError22(expected, actual);
   t.ok(diff < eps2, 'multiplicative inverse (diff=' + diff + ')');
   t.end();
@@ -149,28 +150,28 @@ tape('parseDouble tests', function (t) {
   actual3 = d.toNumber(d.parseDouble('  '));
   t.ok(isNaN(actual) && isNaN(actual2) && isNaN(actual3), 'NaN number');
   actual = d.parseDouble('3.141592653589793238462643383279502884197169399375105820974');
-  expected = d.pi;
-  t.ok(absError22(actual, expected) < eps1, 'parse pi (diff=' + diff + ')');
+  expected = d.Pi;
+  t.ok(absError22(actual, expected) < eps1, 'parse Pi (diff=' + diff + ')');
   actual = d.parseDouble('2.718281828459045235360287471352662497757247093699959574966');
-  expected = d.e;
-  t.ok(absError22(actual, expected) < eps1, 'parse e (diff=' + diff + ')');
+  expected = d.E;
+  t.ok(absError22(actual, expected) < eps1, 'parse E (diff=' + diff + ')');
   t.end();
 });
 
 // tape('extendend tests', function (t) {
-//   expected = d.pi;
-//   actual = d.sum21(d.sum21(d.pi, 1000), -1000);
+//   expected = d.Pi;
+//   actual = d.sum21(d.sum21(d.Pi, 1000), -1000);
 //   diff = absError22(expected, actual);
 //   t.ok(diff < eps2, 'sum21 with inverted (diff=' + diff + ')');
-//   expected = d.pi;
-//   actual = d.sub21(d.sub21(d.pi, 1000), -1000);
+//   expected = d.Pi;
+//   actual = d.sub21(d.sub21(d.Pi, 1000), -1000);
 //   diff = absError22(expected, actual);
 //   t.ok(diff < eps2, 'sub21 with inverted (diff=' + diff + ')');
-//   expected = d.pi;
-//   actual = d.mul21(d.mul21(d.pi, 0.001), 1000);
+//   expected = d.Pi;
+//   actual = d.mul21(d.mul21(d.Pi, 0.001), 1000);
 //   diff = absError22(expected, actual);
 //   t.ok(diff < eps2, 'mul21 with inverted (diff=' + diff + ')');
-//   actual = d.div21(d.div21(d.pi, 0.001), 1000);
+//   actual = d.div21(d.div21(d.Pi, 0.001), 1000);
 //   diff = absError22(expected, actual);
 //   t.ok(diff < eps2, 'div21 with inverted (diff=' + diff + ')');
 //   t.end();

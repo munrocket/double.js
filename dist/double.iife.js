@@ -1,4 +1,4 @@
-(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+(function(){function r(E,n,t){function o(i,f){if(!n[i]){if(!E[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};E[i][0].call(p.exports,function(r){var n=E[i][1][r];return o(n||r)},p,p.exports,r,E,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 
 /* Veltkamp-Dekker splitter = 2^27 + 1 for IEEE 64-bit float number */
 
@@ -202,10 +202,10 @@ function parseDouble(string) {
 
 /* Constants */
 
-var pi = [3.141592653589793116,  1.224646799147353207e-16];
-var e = [2.718281828459045, 1.4456468917292502e-16];
+var Pi = [3.141592653589793116,  1.224646799147353207e-16];
+var E = [2.718281828459045, 1.4456468917292502e-16];
 var x2pi = [6.283185307179586232, 2.449293598294706414e-16];
-var log2 = [0.6931471805599453, 2.3190468138462996e-17];
+var Log2 = [0.6931471805599453, 2.3190468138462996e-17];
 var phi = [1.618033988749895, -5.4321152036825055e-17];
 
 /* CommonJS module defenition */
@@ -244,10 +244,10 @@ module.exports = {
   toNumber: toNumber,
   toDouble: toDouble,
   parseDouble: parseDouble,
-  pi: pi,
+  Pi: Pi,
   x2pi: x2pi,
-  e: e,
-  log2: log2,
+  E: E,
+  Log2: Log2,
   phi: phi
 }
 },{}]},{},[1]);
