@@ -27,19 +27,15 @@ tape('unary operators with double', function (t) {
   expected = [1, 0];
   actual = d.mul22(d.Log2, d.inv2(d.Log2));
   diff = absError22(actual, expected);
-  t.ok(diff < eps2, 'inv2 (diff=' + diff + ')');
+  t.ok(diff < eps2, 'x * inv2(x) (diff=' + diff + ')');
   expected = [0, 0];
   actual = d.sum22(d.Log2, d.neg2(d.Log2));
   diff = absError22(expected, actual);
-  t.ok(diff < eps2, 'neg2 (diff=' + diff + ')');
+  t.ok(diff < eps2, 'x + neg2(x) (diff=' + diff + ')');
   expected = d.Log2;
   actual = d.sqrt2(d.sqr2(d.Log2));
   diff = absError22(expected, actual);
-  t.ok(diff < eps2, 'sqr2 / sqrt2 (diff=' + diff + ')');
-  expected = 1e20; expected2 = 1e-20;
-  actual = d.toNumber(d.pow21n([10, 0], 20)); actual2 = d.toNumber(d.pow21n([10, 0], -20));
-  diff = abs(actual - expected); diff2 = abs(actual2 - expected2);
-  t.ok(diff < eps1 && diff2 < eps1,'pow21n (diff=' + diff + ', diff2=' + diff2 + ')');
+  t.ok(diff < eps2, 'sqr2 (sqrt2 (x)) (diff=' + diff + ')');
   expected = d.toDouble('23.14069263277926900572908');
   actual = d.exp2(d.Pi);
   diff = absError22(actual, expected);
@@ -47,7 +43,7 @@ tape('unary operators with double', function (t) {
   expected = d.Pi;
   actual = d.exp2(d.ln2(d.Pi));
   diff = absError22(actual, expected);
-  t.ok(diff < eps1,'exp2 / ln2 (diff=' + diff + ')');
+  t.ok(diff < eps1,'exp2( ln2 (x)) (diff=' + diff + ')');
   t.end();
 });
 
@@ -60,6 +56,10 @@ tape('double-single operations', function (t) {
   actual = d.div21(d.mul21(d.E, d.Pi[0]), d.Pi[0]);
   diff = absError22(expected, actual);
   t.ok(diff < eps2, 'multiplicative inverse (diff=' + diff + ')');
+  expected = 1e20; expected2 = 1e-20;
+  actual = d.toNumber(d.pow21n([10, 0], 20)); actual2 = d.toNumber(d.pow21n([10, 0], -20));
+  diff = abs(actual - expected); diff2 = abs(actual2 - expected2);
+  t.ok(diff < eps1 && diff2 < eps1,'pow21n (diff=' + diff + ', diff2=' + diff2 + ')');
   t.end();
 });
 
@@ -72,6 +72,10 @@ tape('double-double operations', function (t) {
   actual = d.div22(d.mul22(d.Pi, d.Log2), d.Log2);
   diff = absError22(expected, actual);
   t.ok(diff < eps2, 'multiplicative inverse (diff=' + diff + ')');
+  expected = d.Pi;
+  actual = d.pow22(d.pow22(d.Pi, d.E), d.inv2(d.E));
+  diff = absError22(expected, actual);
+  t.ok(diff < eps2, 'pow22 (diff=' + diff + ')');
   t.end();
 });
 

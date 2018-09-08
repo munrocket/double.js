@@ -87,24 +87,12 @@ function exp2(X) {
   if (ge21(X, 709)) return [Infinity, Infinity];
   var n = Math.floor(X[0] / Log2[0] + 0.5);
   var R = sub22(X, mul21(Log2, n)), U = [1, 0], V = [1, 0], i, cLen;
-  var padeCoef = [1, 272, 36720, 3255840, 211629600, 10666131840, 430200650880, 14135164243200, 381649434566400, 8481098545920000, 154355993535744030,
-    2273242813890047700, 26521166162050560000, 236650405753681870000, 1.5213240369879552e+21, 6.288139352883548e+21, 1.2576278705767096e+22 ];
+  var padeCoef = [1, 272, 36720, 3255840, 211629600, 10666131840, 430200650880, 14135164243200,
+    381649434566400, 8481098545920000, 154355993535744030, 2273242813890047700, 26521166162050560000,
+    236650405753681870000, 1.5213240369879552e+21, 6.288139352883548e+21, 1.2576278705767096e+22 ];
   for (i = 0, cLen = padeCoef.length; i < cLen; i++) U = sum21(mul22(U, R), padeCoef[i]);
   for (i = 0, cLen = padeCoef.length; i < cLen; i++) V = sum21(mul22(V, R), padeCoef[i] * Math.pow(-1, i % 2));
   return mul21pow2(div22(U, V), Math.pow(2, n));
-}
-
-function pow21n(base, exp) {
-  if (exp === 0) return [1, 0];
-  if (exp == 1) return base;
-  var isPositive = exp > 0;
-  if (!isPositive) exp = -exp;
-  var n = Math.floor(Math.log(exp) / Math.log(2));
-  var m = Math.floor(exp - Math.pow(2, n));
-  var Z = base, Z0 = Z;
-  while (n--) Z = sqr2(Z);
-  while (m--) Z = mul22(Z, Z0);
-  return isPositive ? Z : inv2(Z);
 }
 
 /* Arithmetic operations with double and single */
@@ -130,14 +118,27 @@ function mul21(X, b) {
   return [zf, Z[0] - zf + Z[1]];
 }
 
-function mul21pow2(X, b) { return [X[0] * b, X[1] * b]; }
-
 function div21(X, b) {
   var zh = X[0] / b; 
   var T = mul11(zh, b);
   var zl = (X[0] - T[0] - T[1] + X[1]) / b;
   var zf = zh + zl;
   return [zf, zh - zf + zl];
+}
+
+function mul21pow2(X, b) { return [X[0] * b, X[1] * b]; }
+
+function pow21n(base, exp) {
+  if (exp === 0) return [1, 0];
+  if (exp == 1) return base;
+  var isPositive = exp > 0;
+  if (!isPositive) exp = -exp;
+  var n = Math.floor(Math.log(exp) / Math.log(2));
+  var m = Math.floor(exp - Math.pow(2, n));
+  var Z = base, Z0 = Z;
+  while (n--) Z = sqr2(Z);
+  while (m--) Z = mul22(Z, Z0);
+  return isPositive ? Z : inv2(Z);
 }
 
 /* Arithmetic operations with two double */
@@ -171,6 +172,10 @@ function div22(X, Y) {
   var zl = (X[0] - T[0] - T[1] + X[1] - zh * Y[1]) / Y[0];
   var zf = zh + zl;
   return [zf, zh - zf + zl];
+}
+
+function pow22(base, ex) {
+  return exp2(mul22(ex, ln2(base)));
 }
 
 /* Different comparisons */
@@ -263,6 +268,7 @@ module.exports = {
   sub22: sub22,
   mul22: mul22,
   div22: div22,
+  pow22: pow22,
   eq21: eq21,
   ne21: ne21,
   gt21: gt21,
