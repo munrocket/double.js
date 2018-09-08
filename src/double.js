@@ -85,12 +85,13 @@ function exp2(X) {
   if (eq21(X, 1)) return E;
   if (le21(X, -709)) return [0, 0];
   if (ge21(X, 709)) return [Infinity, Infinity];
-  var n = Math.floor(X[0] + 0.5);
-  var X0 = sub21(X, n), U = X0, V = X0, i, cLen;
-  var coeffs = [156, 12012, 600600, 21621600, 588107520, 12350257920, 201132771840, 2514159648000, 23465490048000, 154872234316800, 647647525324800, 1295295050649600];
-  for (i = 0, cLen = coeffs.length; i < cLen; i += 2) U = sum21(mul22(sum21(U, coeffs[i]), X0), coeffs[i + 1]);
-  for (i = 0, cLen = coeffs.length; i < cLen; i += 2) V = sum21(mul22(sub21(V, coeffs[i]), X0), coeffs[i + 1]);
-  return mul22(pow21n(E, n), div22(U, V));
+  var n = Math.floor(X[0] / Log2[0] + 0.5);
+  var R = sub22(X, mul21(Log2, n)), U = [1, 0], V = [1, 0], i, cLen;
+  var padeCoef = [1, 272, 36720, 3255840, 211629600, 10666131840, 430200650880, 14135164243200, 381649434566400, 8481098545920000, 154355993535744030,
+    2273242813890047700, 26521166162050560000, 236650405753681870000, 1.5213240369879552e+21, 6.288139352883548e+21, 1.2576278705767096e+22 ];
+  for (i = 0, cLen = padeCoef.length; i < cLen; i++) U = sum21(mul22(U, R), padeCoef[i]);
+  for (i = 0, cLen = padeCoef.length; i < cLen; i++) V = sum21(mul22(V, R), padeCoef[i] * Math.pow(-1, i % 2));
+  return mul21pow2(div22(U, V), Math.pow(2, n));
 }
 
 function pow21n(base, exp) {
@@ -128,7 +129,8 @@ function mul21(X, b) {
   var zf = Z[0] + Z[1];
   return [zf, Z[0] - zf + Z[1]];
 }
-// function mul21pow2(X, b) { X[0] *= b; X[1] *= b; return X; }
+
+function mul21pow2(X, b) { return [X[0] * b, X[1] * b]; }
 
 function div21(X, b) {
   var zh = X[0] / b; 
@@ -255,6 +257,7 @@ module.exports = {
   sum21: sum21,
   sub21: sub21,
   mul21: mul21,
+  mul21pow2: mul21pow2,
   div21: div21,
   sum22: sum22,
   sub22: sub22,

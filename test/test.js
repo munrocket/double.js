@@ -40,11 +40,14 @@ tape('unary operators with double', function (t) {
   actual = d.toNumber(d.pow21n([10, 0], 20)); actual2 = d.toNumber(d.pow21n([10, 0], -20));
   diff = abs(actual - expected); diff2 = abs(actual2 - expected2);
   t.ok(diff < eps1 && diff2 < eps1,'pow21n (diff=' + diff + ', diff2=' + diff2 + ')');
-  expected = Math.pow(Math.E, Math.PI);
-  actual = d.toNumber(d.exp2(d.Pi));
-  console.log(d.exp2(d.Pi));
-  diff = abs(actual - expected);
+  expected = d.toDouble('23.14069263277926900572908');
+  actual = d.exp2(d.Pi);
+  diff = absError22(actual, expected);
   t.ok(diff < eps1,'exp2 (diff=' + diff + ')');
+  expected = d.Pi;
+  actual = d.exp2(d.ln2(d.Pi));
+  diff = absError22(actual, expected);
+  t.ok(diff < eps1,'exp2 / ln2 (diff=' + diff + ')');
   t.end();
 });
 
@@ -155,6 +158,7 @@ tape('parseDouble tests', function (t) {
   actual = d.parseDouble('2.718281828459045235360287471352662497757247093699959574966');
   expected = d.E;
   t.ok(absError22(actual, expected) < eps1, 'parse E (diff=' + diff + ')');
+  //0.693147180559945309417232121458176568075500134360255254120
   t.end();
 });
 
