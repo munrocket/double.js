@@ -91,7 +91,7 @@ function exp2(X) {
     381649434566400, 8481098545920000, 154355993535744030, 2273242813890047700, 26521166162050560000,
     236650405753681870000, 1.5213240369879552e+21, 6.288139352883548e+21, 1.2576278705767096e+22 ];
   for (i = 0, cLen = padeCoef.length; i < cLen; i++) U = sum21(mul22(U, R), padeCoef[i]);
-  for (i = 0, cLen = padeCoef.length; i < cLen; i++) V = sum21(mul22(V, R), padeCoef[i] * Math.pow(-1, i % 2));
+  for (i = 0, cLen = padeCoef.length; i < cLen; i++) V = sum21(mul22(V, R), padeCoef[i] * ((i % 2) ? -1 : 1));
   return mul21pow2(div22(U, V), Math.pow(2, n));
 }
 
@@ -204,14 +204,26 @@ function toDouble(number) {
   else return [NaN, NaN];
 }
   
-// function toExponential(double, precision = 31) {
-//   var result = (double[0] < 0) ? '-' : '';
-//   if (isNaN(double[0])) return 'NaN';
-//   if (!isFinite(double[0])) return result + 'Infinity';
-//   if (toNumber(double) == 0) return '0e+0';
-  
-//   return result;
-// }
+function toExponential(double, precision) {
+  if (precision === undefined) precision = 31;
+  var val = double, result = (val[0] < 0) ? '-' : '';
+  if (isNaN(val[0])) return 'NaN';
+  if (!isFinite(val[0])) return result + 'Infinity';
+  if (toNumber(val) == 0) return '0e+0';
+
+  var str, nextDigs, shift, isPositive;
+  for (var i = 0; i < precision; i += 15) {
+    str = val[0].toExponential().split('e');
+    isPositive = (str[0][0] != '-');
+    nextDigs = str[0].replace(/^0\.|\./, '').slice(0, 15);
+    if (!isPositive) nextDigs = nextDigs.slice(1);
+    shift = Math.floor(parseInt(str[1]) - 14);
+    val = sub22(val, mul11(parseInt(nextDigs) * ((isPositive) ? 1 : -1), Math.pow(10, shift)))
+    nextDigs = nextDigs.slice(0, precision - i);
+    result += (i != 0) ? nextDigs : nextDigs.slice(0, 1) + '.' + nextDigs.slice(1);
+  }
+  return result + 'e' + double[0].toExponential().split('e')[1];
+}
 
 function parseDouble(string) {
   var isPositive = (/^\s*-/.exec(string) === null);
@@ -283,7 +295,7 @@ module.exports = {
   le22: le22,
   toNumber: toNumber,
   toDouble: toDouble,
-  //toExponential: toExponential,
+  toExponential: toExponential,
   parseDouble: parseDouble,
   Pi: Pi,
   X2Pi: X2Pi,

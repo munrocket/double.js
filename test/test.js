@@ -27,11 +27,11 @@ tape('unary operators with double', function (t) {
   expected = [1, 0];
   actual = d.mul22(d.Log2, d.inv2(d.Log2));
   diff = absError22(actual, expected);
-  t.ok(diff < eps2, 'x * inv2(x) (diff=' + diff + ')');
+  t.ok(diff < eps2, 'inv2(x) * x (diff=' + diff + ')');
   expected = [0, 0];
   actual = d.sum22(d.Log2, d.neg2(d.Log2));
   diff = absError22(expected, actual);
-  t.ok(diff < eps2, 'x + neg2(x) (diff=' + diff + ')');
+  t.ok(diff < eps2, 'neg2(x) + x (diff=' + diff + ')');
   expected = d.Log2;
   actual = d.sqrt2(d.sqr2(d.Log2));
   diff = absError22(expected, actual);
@@ -92,7 +92,15 @@ tape('golden ratio equation test', function(t) {
   t.end();
 });
 
-tape('parseDouble tests', function (t) {
+tape('toExponential', function(t) {
+  expected = d.Pi;
+  actual = d.toDouble(d.toExponential(d.Pi));
+  diff = absError22(expected, actual);
+  t.ok(diff < eps1, 'double -> string -> double (diff=' + diff + ')');
+  t.end();
+});
+
+tape('parseDouble', function (t) {
   expected = 123456789;
   actual = d.toNumber(d.toDouble('123456789Q'));
   diff = abs(expected - actual);
@@ -158,11 +166,12 @@ tape('parseDouble tests', function (t) {
   t.ok(isNaN(actual) && isNaN(actual2) && isNaN(actual3), 'NaN number');
   actual = d.parseDouble('3.141592653589793238462643383279502884197169399375105820974');
   expected = d.Pi;
-  t.ok(absError22(actual, expected) < eps1, 'parse Pi (diff=' + diff + ')');
+  diff = absError22(actual, expected);
+  t.ok(diff < eps1, 'parse Pi (diff=' + diff + ')');
   actual = d.parseDouble('2.718281828459045235360287471352662497757247093699959574966');
   expected = d.E;
-  t.ok(absError22(actual, expected) < eps1, 'parse E (diff=' + diff + ')');
-  //0.693147180559945309417232121458176568075500134360255254120
+  diff = absError22(actual, expected);
+  t.ok(diff < eps1, 'parse E (diff=' + diff + ')');
   t.end();
 });
 
