@@ -5,12 +5,7 @@ var D = (function (exports) {
 
   let splitter = 134217729;
 
-  /* Operations with single numbers and result is double */
-
-  function quickSum11(a, b) {
-    let z = a + b;
-    return [z, b - z + a];
-  }
+  /* Operations with single-length numbers and result is double */
 
   function sum11(a, b) {
     let z = a + b;
@@ -95,6 +90,16 @@ var D = (function (exports) {
     for (i = 0, cLen = padeCoef.length; i < cLen; i++) U = sum21(mul22(U, R), padeCoef[i]);
     for (i = 0, cLen = padeCoef.length; i < cLen; i++) V = sum21(mul22(V, R), padeCoef[i] * ((i % 2) ? -1 : 1));
     return mul21pow2(div22(U, V), Math.pow(2, n));
+  }
+
+  function sinh2(X) {
+    var exp = exp2(X);
+    return mul21pow2(sub22(exp, inv2(exp)), 0.5);
+  }
+
+  function cosh2(X) {
+    var exp = exp2(X);
+    return mul21pow2(sum22(exp, inv2(exp)), 0.5);
   }
 
   /* Arithmetic operations with double and single */
@@ -258,7 +263,6 @@ var D = (function (exports) {
   let Log2 = [0.6931471805599453, 2.3190468138462996e-17];
   let Phi = [1.618033988749895, -5.4321152036825055e-17];
 
-  exports.quickSum11 = quickSum11;
   exports.sum11 = sum11;
   exports.mul11 = mul11;
   exports.sqr1 = sqr1;
@@ -269,6 +273,8 @@ var D = (function (exports) {
   exports.sqrt2 = sqrt2;
   exports.ln2 = ln2;
   exports.exp2 = exp2;
+  exports.sinh2 = sinh2;
+  exports.cosh2 = cosh2;
   exports.sum21 = sum21;
   exports.sub21 = sub21;
   exports.mul21 = mul21;

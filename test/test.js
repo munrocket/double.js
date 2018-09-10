@@ -32,6 +32,10 @@ tape('unary operators with double', function (t) {
   actual = D.sum22(D.Log2, D.neg2(D.Log2));
   diff = absError22(expected, actual);
   t.ok(diff < eps2, 'neg2(x) + x (diff=' + diff + ')');
+  expected = D.Pi;
+  actual = D.abs2(D.neg2(D.Pi));
+  diff = absError22(expected, actual);
+  t.ok(diff < eps2, 'abs2(x) (diff=' + diff + ')');
   expected = D.Log2;
   actual = D.sqrt2(D.sqr2(D.Log2));
   diff = absError22(expected, actual);
@@ -40,10 +44,14 @@ tape('unary operators with double', function (t) {
   actual = D.exp2(D.Pi);
   diff = absError22(actual, expected);
   t.ok(diff < eps1,'exp2 (diff=' + diff + ')');
-  expected = D.Pi;
-  actual = D.exp2(D.ln2(D.Pi));
+  expected = D.Log2;
+  actual = D.exp2(D.ln2(D.Log2));
   diff = absError22(actual, expected);
-  t.ok(diff < eps1,'exp2( ln2 (x)) (diff=' + diff + ')');
+  t.ok(diff < eps2,'exp2( ln2 (x)) (diff=' + diff + ')');
+  expected = [1, 0];
+  actual = D.sub22(D.sqr2(D.cosh2(D.Log2)), D.sqr2(D.sinh2(D.Log2)));
+  diff = absError22(actual, expected);
+  t.ok(diff < eps2,'cosh(x)² - sinh(x)² = 1 (diff=' + diff + ')');
   t.end();
 });
 

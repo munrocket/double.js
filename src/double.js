@@ -1,14 +1,10 @@
+'use strict';
 
 /* Veltkamp-Dekker splitter = 2^27 + 1 for IEEE 64-bit float number */
 
 let splitter = 134217729;
 
-/* Operations with single numbers and result is double */
-
-export function quickSum11(a, b) {
-  let z = a + b;
-  return [z, b - z + a];
-}
+/* Operations with single-length numbers and result is double */
 
 export function sum11(a, b) {
   let z = a + b;
@@ -93,6 +89,16 @@ export function exp2(X) {
   for (i = 0, cLen = padeCoef.length; i < cLen; i++) U = sum21(mul22(U, R), padeCoef[i]);
   for (i = 0, cLen = padeCoef.length; i < cLen; i++) V = sum21(mul22(V, R), padeCoef[i] * ((i % 2) ? -1 : 1));
   return mul21pow2(div22(U, V), Math.pow(2, n));
+}
+
+export function sinh2(X) {
+  var exp = exp2(X);
+  return mul21pow2(sub22(exp, inv2(exp)), 0.5);
+}
+
+export function cosh2(X) {
+  var exp = exp2(X);
+  return mul21pow2(sum22(exp, inv2(exp)), 0.5);
 }
 
 /* Arithmetic operations with double and single */
