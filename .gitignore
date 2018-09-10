@@ -1,3 +1,4 @@
 node_modules
 coverage
 .eslintrc
+dist/double.cjs.js
