@@ -1,4 +1,3 @@
-'use strict';
 
 /* Veltkamp-Dekker splitter = 2^27 + 1 for IEEE 64-bit float number */
 

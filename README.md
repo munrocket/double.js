@@ -12,10 +12,13 @@ Floating point expansions with 31 accurate decimal digits, also known as double-
 Number stored as unevaluated sum of two javascript float numbers and uses error-free arithmetic algorithms from references below. This brings accuracy and significant increase in performance in comparison to digit-wise approach, because this float arithmetic is implemented in hardware. Note that there are no theoretical limitations in javascript language since ECMAScript version 1 uses 64 bit IEEE 754 with round-to-nearest after each operations.
 
 ### Current status
-This library under development now, basic arithmetic operation is working but mult21 and div21 not properly accurate. Feel free to contribute.
+This library under development now, basic arithmetic operation is stable but mult21/div21 and parseDouble/toString not properly accurate. You can check passed unit tests in travis. Feel free to contribute.
 
 ### Future improvements
-Implementing trigonometric operations and quad-double with 64 accurate decimal digits, proper cheking for Infinity and NaN.
+Implementing trigonometric operations and quad-double with 63 accurate decimal digits, proper cheking for Infinity and NaN.
+
+### Benchmark
+![double.js](https://i.imgur.com/aR082qE.png)
 
 ### References
 1. Theodorus Dekker. *A floating-point technique for extending the available precision.* 1971 [[Viewer](https://gdz.sub.uni-goettingen.de/id/PPN362160546_0018?tify={%22pages%22:[230],%22panX%22:0.306,%22panY%22:0.754,%22view%22:%22info%22,%22zoom%22:0.39})]
