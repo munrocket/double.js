@@ -35,6 +35,17 @@ function withDecimalJs(bufer, target, i, j) {
   }
   colorizer(bufer, iteration - 1, xx.add(yy).toNumber());
 }
+function withBigNumberJs(bufer, target, i, j) {
+  let iteration = 0, x = new BigNumber(0), y = new BigNumber(0), xx = new BigNumber(0), xy = new BigNumber(0), yy = new BigNumber(0);
+  let tx = new BigNumber(target.x), ty = new BigNumber(target.y), tdx = new BigNumber(target.dx), tdy = new BigNumber(target.dy);
+  let cx = tx.minus(tdx).plus(tdx.times(2 * i).div(bufer.width));
+  let cy = ty.plus(tdy).minus(tdy.times(2 * j).div(bufer.height));
+  while (iteration++ < maxIteration && xx.plus(yy).toString() < 4) {
+    x = xx.minus(yy).plus(cx); y = xy.plus(xy).plus(cy);
+    xx = x.times(x); yy = y.times(y); xy = x.times(y);
+  }
+  colorizer(bufer, iteration - 1, xx.plus(yy).toString()); 
+}
 function withBigJs(bufer, target, i, j) {
   let iteration = 0, x = new Big(0), y = new Big(0), xx = new Big(0), xy = new Big(0), yy = new Big(0);
   let tx = new Big(target.x), ty = new Big(target.y), tdx = new Big(target.dx), tdy = new Big(target.dy);
@@ -94,9 +105,9 @@ function drawSplitTest(calc1, calc2, target) {
 /* initialization */
 
 window.onload = function() {
-  Big.DP = 31; Decimal.set({precision: 31, rounding: 4});
-  maxIteration = 1000; var target = { x: -1.7490863748149414, y: -1e-25, dx: 3e-16, dy: 2e-16};
-  var start, end, calculators = [withFloat, withDoubleJs, withDecimalJs];//, withBigJs]
+  Big.DP = 31; Decimal.set({precision: 31}); BigNumber.set({DECIMAL_PLACES: 31});
+  maxIteration = 7; var target = { x: -1.7490863748149414, y: -1e-25, dx: 3e-15, dy: 2e-15};
+  var start, end, calculators = [withFloat, withDoubleJs, withDecimalJs, withBigNumberJs, withBigJs]
   calculators.forEach(function(calculator) {
     start = new Date(); draw(calculator, target); end = new Date();
     calculator.benchmark = end - start;
@@ -107,7 +118,7 @@ window.onload = function() {
     options: { responsive: false, legend: false, title: { display: true, text: 'Mandelbrot benchmark' } }
   });
   setTimeout(function() {
-    target.dy *= 10; target.dx *= 10;
+    maxIteration = 1000; target.dx = 3e-15; target.dy = 2e-15;
     drawSplitTest(withDoubleJs, withFloat, target);
   }, 100);
 }
