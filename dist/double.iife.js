@@ -16,6 +16,10 @@ var D = (function () {
       else this.arr = arr;
     }
       
+    static clone(X) {
+      return new Double([X.arr[0], X.arr[1]]);
+    }
+
     static fromSum11(a, b) {
       let z = a + b;
       let w = z - a;
@@ -71,10 +75,6 @@ var D = (function () {
       return (isPositive) ? result : Double.neg2(result);
     }
 
-    static clone(X) {
-      return new Double([X.arr[0], X.arr[1]]);
-    }
-
     /* Convertations */
 
     toNumber() {
@@ -83,12 +83,12 @@ var D = (function () {
 
     toExponential(precision) {
       if (precision === undefined) precision = 31;
-      let exp = this.arr[1].toExponential().split('e')[1];
       let result = (this.arr[0] < 0) ? '-' : '';
       if (isNaN(this.arr[0])) return 'NaN';
       if (!isFinite(this.arr[0])) return result + 'Infinity';
       if (this.toNumber() == 0) return '0e+0';
-
+      let exp = this.arr[0].toExponential().split('e')[1];
+      
       let str, nextDigs, shift, isPositive;
       for (let i = 0; i < precision; i += 15) {
         str = this.arr[0].toExponential().split('e');
@@ -101,59 +101,6 @@ var D = (function () {
         result += (i != 0) ? nextDigs : nextDigs.slice(0, 1) + '.' + nextDigs.slice(1);
       }
       return result + 'e' + exp;
-    }
-
-    /* Instance methods */
-
-    add(other) {
-      if (other instanceof Double) return Double.add22(this, other);
-      else if (typeof other == 'number') return Double.add21(this, other);
-    }
-    sub(other) {
-      if (other instanceof Double) return Double.sub22(this, other);
-      else if (typeof other == 'number') return Double.sub21(this, other);
-    }
-    mul(other) {
-      if (other instanceof Double) return Double.mul22(this, other);
-      else if (typeof other == 'number') return Double.mul21(this, other);
-    }
-    div(other) {
-      if (other instanceof Double) return Double.div22(this, other);
-      else if (typeof other == 'number') return Double.div21(this, other);
-    }
-    pow(exp) { return Double.pow22(this, exp)}
-    abs() { return Double.abs2(this); }
-    neg() { return Double.neg2(this); }
-    inv() { return Double.inv2(this); }
-    sqr() { return Double.sqr2(this); }
-    sqrt() { return Double.sqrt2(this); }
-    exp() { return Double.exp2(this); }
-    ln() { return Double.ln2(this); }
-    sinh() { return Double.sinh2(this); }
-    cosh() { return Double.cosh2(this); }
-    eq(other) {
-      if (other instanceof Double) return Double.eq22(this, other);
-      else if (typeof other == 'number') return Double.eq21(this, other);
-    }
-    ne(other) {
-      if (other instanceof Double) return Double.ne22(this, other);
-      else if (typeof other == 'number') return Double.ne21(this, other);
-    }
-    gt(other) {
-      if (other instanceof Double) return Double.gt22(this, other);
-      else if (typeof other == 'number') return Double.gt21(this, other);
-    }
-    lt(other) {
-      if (other instanceof Double) return Double.lt22(this, other);
-      else if (typeof other == 'number') return Double.lt21(this, other);
-    }
-    ge(other) {
-      if (other instanceof Double) return Double.ge22(this, other);
-      else if (typeof other == 'number') return Double.ge21(this, other);
-    }
-    le(other) {
-      if (other instanceof Double) return Double.le22(this, other);
-      else if (typeof other == 'number') return Double.le21(this, other);
     }
 
     /* Arithmetic operations with two double */
@@ -256,7 +203,7 @@ var D = (function () {
         236650405753681870000, 1.5213240369879552e+21, 6.288139352883548e+21, 1.2576278705767096e+22 ];
       for (let i = 0, cLen = padeCoef.length; i < cLen; i++) Double.add21(Double.mul22(U, X), padeCoef[i]);
       for (let i = 0, cLen = padeCoef.length; i < cLen; i++) Double.add21(Double.mul22(V, X), padeCoef[i] * ((i % 2) ? -1 : 1));
-      X = Double.ldexp21(Double.div22(U, V), n);
+      X = Double.mul21pow2(Double.div22(U, V), Math.pow(2, n));
       return X;
     }
 
@@ -270,54 +217,54 @@ var D = (function () {
 
     static sinh2(X) {
       var exp = Double.exp2(X);
-      X = Double.ldexp21(Double.sub22(Double.clone(exp), Double.inv2(exp)), -1);
+      X = Double.mul21pow2(Double.sub22(Double.clone(exp), Double.inv2(exp)), 0.5);
       return X;
     }
 
     static cosh2(X) {
       var exp = Double.exp2(X);
-      X = Double.ldexp21(Double.add22(Double.clone(exp), Double.inv2(exp)), -1);
+      X = Double.mul21pow2(Double.add22(Double.clone(exp), Double.inv2(exp)), 0.5);
       return X;
     }
 
     /* Arithmetic operations with double and single */
 
-    static add21(X, b) {
-      let Z = Double.fromSum11(X.arr[0], b);
+    static add21(X, a) {
+      let Z = Double.fromSum11(X.arr[0], a);
       Z.arr[1] += X.arr[1];
       X.arr[0] = Z.arr[0] + Z.arr[1];
       X.arr[1] = Z.arr[0] - X.arr[0] + Z.arr[1];
       return X;
     }
 
-    static sub21(X, b) {
-      let Z = Double.fromSum11(X.arr[0], -b);
+    static sub21(X, a) {
+      let Z = Double.fromSum11(X.arr[0], -a);
       Z.arr[1] += X.arr[1];
       X.arr[0] = Z.arr[0] + Z.arr[1];
       X.arr[1] = Z.arr[0] - X.arr[0] + Z.arr[1];
       return X;
     }
 
-    static mul21(X, b) {
-      let Z = Double.fromMul11(X.arr[0], b);
-      Z.arr[1] += X.arr[1] * b;
+    static mul21(X, a) {
+      let Z = Double.fromMul11(X.arr[0], a);
+      Z.arr[1] += X.arr[1] * a;
       X.arr[0] = Z.arr[0] + Z.arr[1];
       X.arr[1] = Z.arr[0] - X.arr[0] + Z.arr[1];
       return X;
     }
 
-    static div21(X, b) {
-      let zh = X.arr[0] / b; 
-      let T = Double.fromMul11(zh, b);
-      let zl = (X.arr[0] - T.arr[0] - T.arr[1] + X.arr[1]) / b;
+    static div21(X, a) {
+      let zh = X.arr[0] / a; 
+      let T = Double.fromMul11(zh, a);
+      let zl = (X.arr[0] - T.arr[0] - T.arr[1] + X.arr[1]) / a;
       X.arr[0] = zh + zl;
       X.arr[1] = zh - X.arr[0] + zl;
       return X;
     }
 
-    static ldexp21(X, b) {
-      X.arr[0] = X.arr[0] * Math.pow(2, b);
-      X.arr[1] = X.arr[1] * Math.pow(2, b);
+    static mul21pow2(X, a) {
+      X.arr[0] = X.arr[0] * a;
+      X.arr[1] = X.arr[1] * a;
       return X;
     }
 
@@ -342,12 +289,12 @@ var D = (function () {
     static lt22(X, Y) { return (X.arr[0] < Y.arr[0] || (X.arr[0] === Y.arr[0] && X.arr[1] < Y.arr[1])); }
     static ge22(X, Y) { return (X.arr[0] >= Y.arr[0] && (X.arr[0] === Y.arr[0] && X.arr[1] >= Y.arr[1])); }
     static le22(X, Y) { return (X.arr[0] <= Y.arr[0] && (X.arr[0] === Y.arr[0] && X.arr[1] <= Y.arr[1])); }
-    static eq21(X, b) { return (X.arr[0] === b && X.arr[1] === 0); }
-    static ne21(X, b) { return (X.arr[0] !== b || X.arr[1] !== 0); }
-    static gt21(X, b) { return (X.arr[0] > b || (X.arr[0] === b && X.arr[1] > 0)); }
-    static lt21(X, b) { return (X.arr[0] < b || (X.arr[0] === b && X.arr[1] < 0)); }
-    static ge21(X, b) { return (X.arr[0] >= b && (X.arr[0] === b && X.arr[1] >= 0)); }
-    static le21(X, b) { return (X.arr[0] <= b && (X.arr[0] === b && X.arr[1] <= 0)); }
+    static eq21(X, a) { return (X.arr[0] === a && X.arr[1] === 0); }
+    static ne21(X, a) { return (X.arr[0] !== a || X.arr[1] !== 0); }
+    static gt21(X, a) { return (X.arr[0] > a || (X.arr[0] === a && X.arr[1] > 0)); }
+    static lt21(X, a) { return (X.arr[0] < a || (X.arr[0] === a && X.arr[1] < 0)); }
+    static ge21(X, a) { return (X.arr[0] >= a && (X.arr[0] === a && X.arr[1] >= 0)); }
+    static le21(X, a) { return (X.arr[0] <= a && (X.arr[0] === a && X.arr[1] <= 0)); }
 
     /* Double constants */
 
@@ -360,6 +307,59 @@ var D = (function () {
     static get E() { return new Double([2.718281828459045, 1.4456468917292502e-16]); }
     static get Log2() { return new Double([0.6931471805599453, 2.3190468138462996e-17]); }
     static get Phi() { return new Double([1.618033988749895, -5.4321152036825055e-17]); }
+    
+    /* Repeating static methods to instance */
+
+    add(other) {
+      if (other instanceof Double) return Double.add22(Double.clone(this), other);
+      else if (typeof other == 'number') return Double.add21(Double.clone(this), other);
+    }
+    sub(other) {
+      if (other instanceof Double) return Double.sub22(Double.clone(this), other);
+      else if (typeof other == 'number') return Double.sub21(Double.clone(this), other);
+    }
+    mul(other) {
+      if (other instanceof Double) return Double.mul22(Double.clone(this), other);
+      else if (typeof other == 'number') return Double.mul21(Double.clone(this), other);
+    }
+    div(other) {
+      if (other instanceof Double) return Double.div22(Double.clone(this), other);
+      else if (typeof other == 'number') return Double.div21(Double.clone(this), other);
+    }
+    pow(exp) { return Double.pow22(Double.clone(this), exp)}
+    abs() { return Double.abs2(Double.clone(this)); }
+    neg() { return Double.neg2(Double.clone(this)); }
+    inv() { return Double.inv2(Double.clone(this)); }
+    sqr() { return Double.sqr2(Double.clone(this)); }
+    sqrt() { return Double.sqrt2(Double.clone(this)); }
+    exp() { return Double.exp2(Double.clone(this)); }
+    ln() { return Double.ln2(Double.clone(this)); }
+    sinh() { return Double.sinh2(Double.clone(this)); }
+    cosh() { return Double.cosh2(Double.clone(this)); }
+    eq(other) {
+      if (other instanceof Double) return Double.eq22(Double.clone(this), other);
+      else if (typeof other == 'number') return Double.eq21(Double.clone(this), other);
+    }
+    ne(other) {
+      if (other instanceof Double) return Double.ne22(Double.clone(this), other);
+      else if (typeof other == 'number') return Double.ne21(Double.clone(this), other);
+    }
+    gt(other) {
+      if (other instanceof Double) return Double.gt22(Double.clone(this), other);
+      else if (typeof other == 'number') return Double.gt21(Double.clone(this), other);
+    }
+    lt(other) {
+      if (other instanceof Double) return Double.lt22(Double.clone(this), other);
+      else if (typeof other == 'number') return Double.lt21(Double.clone(this), other);
+    }
+    ge(other) {
+      if (other instanceof Double) return Double.ge22(Double.clone(this), other);
+      else if (typeof other == 'number') return Double.ge21(Double.clone(this), other);
+    }
+    le(other) {
+      if (other instanceof Double) return Double.le22(Double.clone(this), other);
+      else if (typeof other == 'number') return Double.le21(Double.clone(this), other);
+    }
   }
 
   return Double;

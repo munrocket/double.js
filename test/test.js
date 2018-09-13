@@ -159,12 +159,12 @@ tape('fromNumber', function (t) {
   actual = D.fromString('1e-500').toNumber();
   actual2 = D.fromString('-1e-500').toNumber();
   t.ok(actual === 0 && actual2 === 0, 'Insignificant exponent');
-  actual = D.fromString(0).toNumber();
+  actual = D.Zero.toNumber();
   t.ok(actual === 0, 'Zero number');
-  actual = D.fromString(Infinity).toNumber();
-  actual2 = D.fromString(-Infinity).toNumber();
+  actual = D.fromNumber(Infinity).toNumber();
+  actual2 = D.fromNumber(-Infinity).toNumber();
   t.ok(actual === Infinity && actual2 === -Infinity, 'Infinity number');
-  actual = D.fromString(NaN).toNumber();
+  actual = D.NaN.toNumber();
   actual2 = D.fromNumber('SDLFK').toNumber();
   actual3 = D.fromNumber('  ').toNumber();
   t.ok(isNaN(actual) && isNaN(actual2) && isNaN(actual3), 'NaN number');

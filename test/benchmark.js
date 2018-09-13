@@ -1,4 +1,3 @@
-
 var maxIteration, pixelId;
 
 /* different calculators */
@@ -14,15 +13,26 @@ function withFloat(bufer, target, i, j) {
   colorizer(bufer, iteration - 1, xx + yy)
 }
 function withDoubleJs(bufer, target, i, j) {
-  let iteration = 0, x = [0, 0], y = [0, 0], xx = [0, 0], xy = [0, 0], yy = [0, 0];
-  let tx = [target.x, 0], ty = [target.y, 0], tdx = [target.dx, 0], tdy = [target.dy,0];
-  let cx = D.sum22(D.sub22(tx, tdx), D.div21(D.mul21(tdx, 2 * i), bufer.width));
-  let cy = D.sub22(D.sum22(ty, tdy), D.div21(D.mul21(tdy, 2 * j), bufer.height));
-  while (iteration++ < maxIteration && D.lt21(D.sum22(xx, yy), 4)) {
-    x = D.sum22(D.sub22(xx, yy), cx); y = D.sum22(D.mul21pow2(xy, 2), cy);
-    xx = D.sqr2(x); yy = D.sqr2(y); xy = D.mul22(x, y);
+  let iteration = 0, x = D.Zero, y = D.Zero, xx = D.Zero, xy = D.Zero, yy = D.Zero;
+  let tx = new D([target.x, 0]), ty = new D([target.y, 0]), tdx = new D([target.dx, 0]), tdy = new D([target.dy,0]);
+  let cx = D.add22(D.sub22(tx, tdx), D.div21(D.mul21(tdx, 2 * i), bufer.width));
+  let cy = D.sub22(D.add22(ty, tdy), D.div21(D.mul21(tdy, 2 * j), bufer.height));
+  while (iteration++ < maxIteration && D.lt21(D.add22(D.clone(xx), yy), 4)) {
+    x = D.add22(D.sub22(xx, yy), cx); y = D.add22(D.add22(xy, xy), cy);
+    xx = D.sqr2(D.clone(x)); yy = D.sqr2(D.clone(y)); xy = D.mul22(x, y);
   }
-  colorizer(bufer, iteration - 1, D.toNumber(D.sum22(xx, yy)));
+  colorizer(bufer, iteration - 1, D.add22(xx, yy).toNumber());
+}
+function withDoubleJs_(bufer, target, i, j) {
+  let iteration = 0, x = D.Zero, y = D.Zero, xx = D.Zero, xy = D.Zero, yy = D.Zero;
+  let tx = new D([target.x, 0]), ty = new D([target.y, 0]), tdx = new D([target.dx, 0]), tdy = new D([target.dy,0]);
+  let cx = tx.sub(tdx).add(tdx.mul(2 * i).div(bufer.width));
+  let cy = ty.add(tdy).sub(tdy.mul(2 * j).div(bufer.height));
+  while (iteration++ < maxIteration && xx.add(yy).lt(4)) {
+    x = xx.sub(yy).add(cx); y = xy.add(xy).add(cy);
+    xx = x.sqr(); yy = y.sqr(); xy = x.mul(y);
+  }
+  colorizer(bufer, iteration - 1, xx.add(yy).toNumber());
 }
 function withDecimalJs(bufer, target, i, j) {
   let iteration = 0, x = new Decimal(0), y = new Decimal(0), xx = new Decimal(0), xy = new Decimal(0), yy = new Decimal(0);
@@ -106,12 +116,14 @@ function drawSplitTest(calc1, calc2, target) {
 
 window.onload = function() {
   Big.DP = 31; Decimal.set({precision: 31}); BigNumber.set({DECIMAL_PLACES: 31});
-  maxIteration = 7; var target = { x: -1.7490863748149414, y: -1e-25, dx: 3e-15, dy: 2e-15};
-  var start, end, calculators = [withFloat, withDoubleJs, withDecimalJs, withBigNumberJs, withBigJs]
-  calculators.forEach(function(calculator) {
-    start = new Date(); draw(calculator, target); end = new Date();
-    calculator.benchmark = end - start;
-  });
+  maxIteration = 2000; var target = { x: -1.7490863748149414, y: -1e-25, dx: 3e-15, dy: 2e-15};
+  var start, end, calculators = [withFloat, withDoubleJs, withDoubleJs_, withDecimalJs];//, withBigNumberJs]//, withBigJs]
+  for (var i = 0; i < 5; i++) {
+    calculators.forEach(function(calculator) {
+      start = new Date(); draw(calculator, target); end = new Date();
+      calculator.benchmark = end - start;
+    })
+  }
   var barChart = new Chart(document.getElementById('barChart').getContext('2d'), {
     type: 'horizontalBar',
     data: { labels: calculators.map(x => x.name.slice(4)), datasets: [{borderWidth: 1, data: calculators.map(x => x.benchmark)}]},
