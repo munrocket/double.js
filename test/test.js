@@ -175,6 +175,16 @@ tape('fromNumber', function (t) {
   t.end();
 });
 
+tape('comparisons', function(t) {
+  t.ok(D.Pi.eq(D.Pi.mul(D.One)) && D.Pi.ne(D.Log2) && D.Zero.eq(0) && D.One.ne(2), 'eq, ne (true)');
+  t.ok(!D.Pi.eq(D.Log2) && !D.Pi.ne(D.Pi) && !D.Zero.eq(D.Log2) && !D.One.ne(1), 'eq, ne (false)');
+  t.ok(D.Pi.lt(D.X2Pi) && D.Pi.le(D.X2Pi) && D.Pi.lt(4) && D.Pi.le(4), 'lt, le (true)');
+  t.ok(!D.Pi.lt(D.Pi) && !D.Pi.le(D.One) && !D.One.lt(1) && !D.Pi.le(1), 'lt, le (false)');
+  t.ok(D.X2Pi.gt(D.Pi) && D.X2Pi.ge(D.Pi) && D.Pi.gt(2) && D.Pi.ge(2), 'gt, ge (true)');
+  t.ok(!D.One.gt(D.One) && !D.Pi.ge(4) && !D.Zero.gt(0) && !D.Pi.ge(4), 'gt, ge (false)');
+  t.end();
+});
+
 // tape('extendend tests', function (t) {
 //   expected = D.Pi;
 //   actual = D.add21(D.add21(D.Pi, 1000), -1000);

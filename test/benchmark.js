@@ -157,7 +157,7 @@ window.onload = function() {
     for (var i = 0; i < 2; i++) {
       calculators.forEach(function(calculator) {
         start = new Date(); draw(calculator, target); end = new Date();
-        calculator.benchmark = Math.round((end - start) * 3000 / 6); //maxInteration not 3000 (!)
+        calculator.benchmark = Math.round((end - start) * 3000 / 6); //because maxInteration is not 3000
       })
     }
     new Chart(document.getElementById('barChart2').getContext('2d'), {

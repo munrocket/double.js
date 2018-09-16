@@ -192,10 +192,10 @@ class Double {
   }
 
   static exp2(X) {
-    if (Double.le21(X, 0)) return Double.One;
+    if (Double.eq21(X, 0)) return Double.One;
     if (Double.eq21(X, 1)) return Double.E;
-    if (Double.le21(X, -709)) return Double.Zero;
-    if (Double.ge21(X, 709)) return Double.Infinity;
+    if (Double.lt21(X, -709)) return Double.Zero;
+    if (Double.gt21(X, 709)) return Double.Infinity;
     let n = Math.floor(X.arr[0] / Double.Log2.arr[0] + 0.5);
     Double.sub22(X, Double.mul21(Double.Log2, n));
     let U = Double.One, V = Double.One;
@@ -270,7 +270,7 @@ class Double {
   }
 
   static pow21n(X, exp) {
-    if (exp === 0) return [1, 0];
+    if (exp === 0) return Double.One;
     if (exp == 1) return X;
     let isPositive = exp > 0;
     if (!isPositive) exp = -exp;
@@ -288,14 +288,14 @@ class Double {
   static ne22(X, Y) { return (X.arr[0] !== Y.arr[0] || X.arr[1] !== Y.arr[1]); }
   static gt22(X, Y) { return (X.arr[0] > Y.arr[0] || (X.arr[0] === Y.arr[0] && X.arr[1] > Y.arr[1])); }
   static lt22(X, Y) { return (X.arr[0] < Y.arr[0] || (X.arr[0] === Y.arr[0] && X.arr[1] < Y.arr[1])); }
-  static ge22(X, Y) { return (X.arr[0] >= Y.arr[0] && (X.arr[0] === Y.arr[0] && X.arr[1] >= Y.arr[1])); }
-  static le22(X, Y) { return (X.arr[0] <= Y.arr[0] && (X.arr[0] === Y.arr[0] && X.arr[1] <= Y.arr[1])); }
+  static ge22(X, Y) { return (X.arr[0] > Y.arr[0] || (X.arr[0] === Y.arr[0] && X.arr[1] >= Y.arr[1])); }
+  static le22(X, Y) { return (X.arr[0] < Y.arr[0] || (X.arr[0] === Y.arr[0] && X.arr[1] <= Y.arr[1])); }
   static eq21(X, a) { return (X.arr[0] === a && X.arr[1] === 0); }
   static ne21(X, a) { return (X.arr[0] !== a || X.arr[1] !== 0); }
   static gt21(X, a) { return (X.arr[0] > a || (X.arr[0] === a && X.arr[1] > 0)); }
   static lt21(X, a) { return (X.arr[0] < a || (X.arr[0] === a && X.arr[1] < 0)); }
-  static ge21(X, a) { return (X.arr[0] >= a && (X.arr[0] === a && X.arr[1] >= 0)); }
-  static le21(X, a) { return (X.arr[0] <= a && (X.arr[0] === a && X.arr[1] <= 0)); }
+  static ge21(X, a) { return (X.arr[0] > a || (X.arr[0] === a && X.arr[1] >= 0)); }
+  static le21(X, a) { return (X.arr[0] < a || (X.arr[0] === a && X.arr[1] <= 0)); }
 
   /* Double constants */
 

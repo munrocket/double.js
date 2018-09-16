@@ -336,10 +336,10 @@ var D = (function () {
     }, {
       key: 'exp2',
       value: function exp2(X) {
-        if (Double.le21(X, 0)) return Double.One;
+        if (Double.eq21(X, 0)) return Double.One;
         if (Double.eq21(X, 1)) return Double.E;
-        if (Double.le21(X, -709)) return Double.Zero;
-        if (Double.ge21(X, 709)) return Double.Infinity;
+        if (Double.lt21(X, -709)) return Double.Zero;
+        if (Double.gt21(X, 709)) return Double.Infinity;
         var n = Math.floor(X.arr[0] / Double.Log2.arr[0] + 0.5);
         Double.sub22(X, Double.mul21(Double.Log2, n));
         var U = Double.One,
@@ -425,7 +425,7 @@ var D = (function () {
     }, {
       key: 'pow21n',
       value: function pow21n(X, exp) {
-        if (exp === 0) return [1, 0];
+        if (exp === 0) return Double.One;
         if (exp == 1) return X;
         var isPositive = exp > 0;
         if (!isPositive) exp = -exp;
@@ -464,12 +464,12 @@ var D = (function () {
     }, {
       key: 'ge22',
       value: function ge22(X, Y) {
-        return X.arr[0] >= Y.arr[0] && X.arr[0] === Y.arr[0] && X.arr[1] >= Y.arr[1];
+        return X.arr[0] > Y.arr[0] || X.arr[0] === Y.arr[0] && X.arr[1] >= Y.arr[1];
       }
     }, {
       key: 'le22',
       value: function le22(X, Y) {
-        return X.arr[0] <= Y.arr[0] && X.arr[0] === Y.arr[0] && X.arr[1] <= Y.arr[1];
+        return X.arr[0] < Y.arr[0] || X.arr[0] === Y.arr[0] && X.arr[1] <= Y.arr[1];
       }
     }, {
       key: 'eq21',
@@ -494,12 +494,12 @@ var D = (function () {
     }, {
       key: 'ge21',
       value: function ge21(X, a) {
-        return X.arr[0] >= a && X.arr[0] === a && X.arr[1] >= 0;
+        return X.arr[0] > a || X.arr[0] === a && X.arr[1] >= 0;
       }
     }, {
       key: 'le21',
       value: function le21(X, a) {
-        return X.arr[0] <= a && X.arr[0] === a && X.arr[1] <= 0;
+        return X.arr[0] < a || X.arr[0] === a && X.arr[1] <= 0;
       }
 
       /* Double constants */
