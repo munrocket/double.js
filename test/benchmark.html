@@ -4,25 +4,32 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Benchmark</title>
+  <title>Benchmark (precision=31)</title>
 </head>
 <body>
   <div style="display: none">
     <span>debug:</span>
     <canvas id="withFloat" width="6" height="4"></canvas>
     <canvas id="withDoubleJs" width="6" height="4"></canvas>
-    <canvas id="withDoubleJs_" width="6" height="4"></canvas>
+    <canvas id="withDoubleJs_IM" width="6" height="4"></canvas>
     <canvas id="withDecimalJs" width="6" height="4"></canvas>
     <canvas id="withBigNumberJs" width="6" height="4"></canvas>
     <canvas id="withBigJs" width="6" height="4"></canvas>
+    <canvas id="withBigFloat" width="6" height="4"></canvas>
   </div>
   <canvas id="splitTest" width="400" height="200" style="padding-left: 40px"></canvas>
-  <canvas id="barChart" width="400" height="200" style="float:left"></canvas>
+  <canvas id="barChart" width="400" height="200" style="float:left; padding-left:12px"></canvas>
+  <canvas id="barChart2" width="865" height="120"></canvas>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+
 <script src="../dist/double.iife.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/decimal.js/10.0.1/decimal.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bignumber.js/7.2.1/bignumber.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/big.js/5.1.2/big.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bigfloat@0.0.4/dist/index.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/systemjs/0.21.4/system.js"></script>
+
 <script src="./benchmark.js"></script>
 </html>

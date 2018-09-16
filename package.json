@@ -1,14 +1,18 @@
 {
   "name": "double.js",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Floating point expansions with 32 accurate decimal digits, also known as double-double arithmetic.",
-  "main": "src/double.js",
+  "main": "dist/double.cjs.js",
+  "types": "dist/double.d.ts",
   "scripts": {
     "build": "rollup -c",
     "test": "istanbul cover ./test/test.js --report lcovonly -- -R spec",
     "bnt": "npm run build && npm run test"
   },
-  "eslintIgnore": ["dist"],
+  "eslintIgnore": [
+    "dist",
+    "test"
+  ],
   "keywords": [
     "double-double",
     "quad-double",
@@ -18,10 +22,14 @@
   "author": "munrocket",
   "license": "MIT ",
   "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0",
     "codecov": "^3.0.4",
     "istanbul": "^0.4.5",
-    "rollup": "^0.65.2",
+    "rollup": "^0.63.5",
+    "rollup-plugin-babel": "^3.0.7",
     "tap-spec": "^5.0.0",
     "tape": "^4.9.1"
-  }
+  },
+  "dependencies": {}
 }

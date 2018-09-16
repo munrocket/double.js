@@ -1,4 +1,7 @@
+#common
 node_modules
 coverage
+
+#particular case
+wiki
 .eslintrc
-dist/double.cjs.js

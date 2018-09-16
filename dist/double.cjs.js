@@ -1,15 +1,17 @@
+'use strict';
+
 /* Veltkamp-Dekker splitter = 2^27 + 1 for IEEE 64-bit float number */
 
 const splitter = 134217729;
 
 /* Main class for double-length float number*/
 
-export default class Double {
+class Double {
 
   /* Constructors */
 
   constructor(val) {
-    if (Array.isArray(val)) this.arr = val
+    if (Array.isArray(val)) this.arr = val;
     else if (typeof val === 'number') this.arr = Double.fromNumber(val).arr;
     else if (typeof val === 'string') this.arr = Double.fromString(val).arr;
     else if (val instanceof Double) this.arr = Double.clone(val).arr;
@@ -95,7 +97,7 @@ export default class Double {
       nextDigs = str[0].replace(/^0\.|\./, '').slice(0, 15);
       if (!isPositive) nextDigs = nextDigs.slice(1);
       shift = Math.floor(parseInt(str[1]) - 14);
-      Double.sub22(this, Double.fromMul11(parseInt(nextDigs) * ((isPositive) ? 1 : -1), Math.pow(10, shift)))
+      Double.sub22(this, Double.fromMul11(parseInt(nextDigs) * ((isPositive) ? 1 : -1), Math.pow(10, shift)));
       nextDigs = nextDigs.slice(0, precision - i);
       result += (i != 0) ? nextDigs : nextDigs.slice(0, 1) + '.' + nextDigs.slice(1);
     }
@@ -118,7 +120,7 @@ export default class Double {
     let zh = x + y;
     let zl = (Math.abs(x) > Math.abs(y)) ? x - zh + y + yl + xl : y - zh + x + xl + yl;
     X.arr[0] = zh + zl;
-    X.arr[1] = zh - X.arr[0] + zl
+    X.arr[1] = zh - X.arr[0] + zl;
     return X;
   }
 
@@ -360,3 +362,5 @@ export default class Double {
     else if (typeof other == 'number') return Double.le21(Double.clone(this), other);
   }
 }
+
+module.exports = Double;
