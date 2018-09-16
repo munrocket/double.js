@@ -15,7 +15,7 @@ Number stored as unevaluated sum of two javascript float numbers and uses error-
 Include double.iife.js script to webpage or install npm package. Most of all functions have static and instance methods. Instance methods more handy. Static methods are faster but you need to control memory allocation by yourself. Result of static methods always returned in first variable, that's why they mutate it. If you want to avoid mutation you need to clone it before usage. Details you can find in [wiki](https://github.com/munrocket/double.js/wiki) page. Also you can play with library in [sandbox](https://runkit.com/munrocket/double.js-example/1.0.0).
 
 ### Current status
-All presented operations are stable but mult21/div21 and parseDouble/toString not properly accurate.
+All presented operations are stable but mult21/div21 and parseDouble/toString not properly accurate with back and forth operation. Anyway it works. Give me feedback if you think that this library is useful.
 
 ### Benchmark
 ![double.js](https://i.imgur.com/gA0Jzcq.png)
