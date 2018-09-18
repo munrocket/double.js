@@ -1,10 +1,36 @@
 'use strict';
 
-/* Veltkamp-Dekker splitter = 2^27 + 1 for IEEE 64-bit float number */
+/* Basic error-free algorithms */
 
-const splitter = 134217729;
+const splitter = 134217729; //2^27+1 for 64-bit float
 
-/* Main class for double-length float number*/
+let twoSum = function(a, b) {
+  let s = a + b;
+  let a1 = s - b;
+  let db = a1 - s + b;
+  return [s, a - a1 + db];
+};
+
+let twoMult = function(a, b) {
+  let p = a * splitter;
+  let ah = a - p + p, al = a - ah;
+  p = b * splitter;
+  let bh = b - p + p, bl = b - bh;
+  p = ah * bh;
+  let q = ah * bl + al * bh, s = p + q;
+  return [s, p - s + q + al * bl];
+};
+
+let oneSqr = function(a) {
+  let p = a * splitter;
+  let ah = a - p + p, al = a - ah;
+  p = ah * ah;
+  let q = ah * al; q += q;
+  let s = p + q;
+  return [s, p - s + q + al * al];
+};
+
+/* Main class for double-length float number */
 
 class Double {
 
@@ -17,36 +43,10 @@ class Double {
     else if (val instanceof Double) this.arr = Double.clone(val).arr;
   }
     
-  static clone(X) {
-    return new Double([X.arr[0], X.arr[1]]);
-  }
-
-  static fromSum11(a, b) {
-    let z = a + b;
-    let w = z - a;
-    let z2 = z - w - a;
-    return new Double([z, b - w - z2]);
-  }
-
-  static fromMul11(a, b) {
-    let p = a * splitter;
-    let ah = a - p + p; let al = a - ah;
-    p = b * splitter;
-    let bh = b - p + p; let bl = b - bh;
-    p = ah * bh;
-    let q = ah * bl + al * bh;
-    let z = p + q;
-    return new Double([z, p - z + q + al * bl]);
-  }
-
-  static fromSqr1(a) {
-    let u = a * splitter;
-    let xh = u + (a - u);
-    let xl = a - xh;
-    let v = xh * xl;
-    let z = a * a;
-    return new Double([z, (xh * xh - z + v + v) + xl * xl]);
-  }
+  static clone(X) { return new Double([X.arr[0], X.arr[1]]); }
+  static fromSum11(a, b) { return new Double(twoSum(a, b)); }
+  static fromMul11(a, b) { return new Double(twoMult(a, b)); }
+  static fromSqr1(a) { return new Double(oneSqr(a)); }
 
   static fromNumber(number) {
     if (typeof number == 'number') return new Double([number, 0]);
@@ -107,37 +107,41 @@ class Double {
   /* Arithmetic operations with two double */
 
   static add22(X, Y) {
-    let x = X.arr[0], xl = X.arr[1], y = Y.arr[0], yl = Y.arr[1];
-    let zh = x + y;
-    let zl = (Math.abs(x) > Math.abs(y)) ? x - zh + y + yl + xl : y - zh + x + xl + yl;
-    X.arr[0] = zh + zl;
-    X.arr[1] = zh - X.arr[0] + zl;
+    let S = twoSum(X.arr[0], Y.arr[0]);
+    let E = twoSum(X.arr[1], Y.arr[1]);
+    let c = S[1] + E[0];
+    let sh  = S[0] + c, sl = S[0] - sh + c;
+    let w = sl + E[1];
+    X.arr[0] = sh + w;
+    X.arr[1] = sh - X.arr[0] + w;
     return X;
   }
 
   static sub22(X, Y) {
-    let x = X.arr[0], xl = X.arr[1], y = -Y.arr[0], yl = -Y.arr[1];
-    let zh = x + y;
-    let zl = (Math.abs(x) > Math.abs(y)) ? x - zh + y + yl + xl : y - zh + x + xl + yl;
-    X.arr[0] = zh + zl;
-    X.arr[1] = zh - X.arr[0] + zl;
+    let S = twoSum(X.arr[0], -Y.arr[0]);
+    let E = twoSum(X.arr[1], -Y.arr[1]);
+    let c = S[1] + E[0];
+    let sh  = S[0] + c, sl = S[0] - sh + c;
+    let w = sl + E[1];
+    X.arr[0] = sh + w;
+    X.arr[1] = sh - X.arr[0] + w;
     return X;
   }
 
   static mul22(X, Y) {
-    let Z = Double.fromMul11(X.arr[0], Y.arr[0]);
-    Z.arr[1] += X.arr[0] * Y.arr[1] + X.arr[1] * Y.arr[0];
-    X.arr[0] = Z.arr[0] + Z.arr[1];
-    X.arr[1] = Z.arr[0] - X.arr[0] + Z.arr[1];
+    let S = twoMult(X.arr[0], Y.arr[0]);
+    S[1] += X.arr[0] * Y.arr[1] + X.arr[1] * Y.arr[0];
+    X.arr[0] = S[0] + S[1];
+    X.arr[1] = S[0] - X.arr[0] + S[1];
     return X;
   }
 
   static div22(X, Y) {
-    let zh = X.arr[0] / Y.arr[0];
-    let T = Double.fromMul11(zh, Y.arr[0]);
-    let zl = (X.arr[0] - T.arr[0] - T.arr[1] + X.arr[1] - zh * Y.arr[1]) / Y.arr[0];
-    X.arr[0] = zh + zl;
-    X.arr[1] = zh - X.arr[0]+ zl;
+    let s = X.arr[0] / Y.arr[0];
+    let T = twoMult(s, Y.arr[0]);
+    let e = (X.arr[0] - T[0] - T[1] + X.arr[1] - s * Y.arr[1]) / Y.arr[0];
+    X.arr[0] = s + e;
+    X.arr[1] = s - X.arr[0]+ e;
     return X;
   }
 
@@ -163,32 +167,30 @@ class Double {
 
   static inv2(X) {
     var xh = X.arr[0];
-    let zh = 1 / xh;
-    Double.mul21(X, zh);
+    let s = 1 / xh;
+    Double.mul21(X, s);
     let zl = (1 - X.arr[0] - X.arr[1]) / xh;
-    X.arr[0] = zh + zl;
-    X.arr[1] = zh - X.arr[0] + zl;
+    X.arr[0] = s + zl;
+    X.arr[1] = s - X.arr[0] + zl;
     return X;
   }
 
   static sqr2(X) {
-    let Z = Double.fromSqr1(X.arr[0]);
+    let S = oneSqr(X.arr[0]);
     let c = X.arr[0] * X.arr[1];
-    Z.arr[1] += c + c;
-    X.arr[0] = Z.arr[0] + Z.arr[1];
-    X.arr[1] = Z.arr[0] - X.arr[0] + Z.arr[1];
-    return X
+    S[1] += c + c;
+    X.arr[0] = S[0] + S[1];
+    X.arr[1] = S[0] - X.arr[0] + S[1];
+    return X;
   }
 
   static sqrt2(X) {
-    if (X.arr[0] < 0) return Double.NaN;
-    if (X.arr[0] === 0) return Double.Zero;
-    let zh = Math.sqrt(X.arr[0]);
-    let T = Double.fromMul11(zh, zh);
-    let zl = (X.arr[0] - T.arr[0] - T.arr[1] + X.arr[1]) * 0.5 / zh;
-    X.arr[0] = zh + zl;
-    X.arr[1] = zh - X.arr[0] + zl;
-    return X
+    let s = Math.sqrt(X.arr[0]);
+    let T = oneSqr(s);
+    let e = (X.arr[0] - T[0] - T[1] + X.arr[1]) * 0.5 / s;
+    X.arr[0] = s + e;
+    X.arr[1] = s - X.arr[0] + e;
+    return X;
   }
 
   static exp2(X) {
@@ -204,7 +206,7 @@ class Double {
       236650405753681870000, 1.5213240369879552e+21, 6.288139352883548e+21, 1.2576278705767096e+22 ];
     for (let i = 0, cLen = padeCoef.length; i < cLen; i++) Double.add21(Double.mul22(U, X), padeCoef[i]);
     for (let i = 0, cLen = padeCoef.length; i < cLen; i++) Double.add21(Double.mul22(V, X), padeCoef[i] * ((i % 2) ? -1 : 1));
-    X = Double.mul21pow2(Double.div22(U, V), Math.pow(2, n));
+    X = Double.mul21pow2(Double.div22(U, V), n);
     return X;
   }
 
@@ -218,54 +220,56 @@ class Double {
 
   static sinh2(X) {
     var exp = Double.exp2(X);
-    X = Double.mul21pow2(Double.sub22(Double.clone(exp), Double.inv2(exp)), 0.5);
+    X = Double.mul21pow2(Double.sub22(Double.clone(exp), Double.inv2(exp)), -1);
     return X;
   }
 
   static cosh2(X) {
     var exp = Double.exp2(X);
-    X = Double.mul21pow2(Double.add22(Double.clone(exp), Double.inv2(exp)), 0.5);
+    X = Double.mul21pow2(Double.add22(Double.clone(exp), Double.inv2(exp)), -1);
     return X;
   }
 
   /* Arithmetic operations with double and single */
 
   static add21(X, a) {
-    let Z = Double.fromSum11(X.arr[0], a);
-    Z.arr[1] += X.arr[1];
-    X.arr[0] = Z.arr[0] + Z.arr[1];
-    X.arr[1] = Z.arr[0] - X.arr[0] + Z.arr[1];
+    let S = twoSum(X.arr[0], a);
+    S[1] += X.arr[1];
+    X.arr[0] = S[0] + S[1];
+    X.arr[1] = S[0] - X.arr[0] + S[1];
     return X;
   }
 
   static sub21(X, a) {
-    let Z = Double.fromSum11(X.arr[0], -a);
-    Z.arr[1] += X.arr[1];
-    X.arr[0] = Z.arr[0] + Z.arr[1];
-    X.arr[1] = Z.arr[0] - X.arr[0] + Z.arr[1];
+    let S = twoSum(X.arr[0], -a);
+    S[1] += X.arr[1];
+    X.arr[0] = S[0] + S[1];
+    X.arr[1] = S[0] - X.arr[0] + S[1];
     return X;
   }
 
   static mul21(X, a) {
-    let Z = Double.fromMul11(X.arr[0], a);
-    Z.arr[1] += X.arr[1] * a;
-    X.arr[0] = Z.arr[0] + Z.arr[1];
-    X.arr[1] = Z.arr[0] - X.arr[0] + Z.arr[1];
+    let S = twoMult(X.arr[0], a);
+    S[1] += X.arr[1] * a;
+    X.arr[0] = S[0] + S[1];
+    X.arr[1] = S[0] - X.arr[0] + S[1];
     return X;
   }
 
   static div21(X, a) {
-    let zh = X.arr[0] / a; 
-    let T = Double.fromMul11(zh, a);
-    let zl = (X.arr[0] - T.arr[0] - T.arr[1] + X.arr[1]) / a;
-    X.arr[0] = zh + zl;
-    X.arr[1] = zh - X.arr[0] + zl;
+    let s = X.arr[0] / a; 
+    let T = twoMult(s, a);
+    let e = (X.arr[0] - T[0] - T[1] + X.arr[1]) / a;
+    X.arr[0] = s + e;
+    X.arr[1] = s - X.arr[0] + e;
     return X;
   }
 
-  static mul21pow2(X, a) {
-    X.arr[0] = X.arr[0] * a;
-    X.arr[1] = X.arr[1] * a;
+  static mul21pow2(X, n) {
+    let c = 1 << Math.abs(n);
+    if (n < 0) c = 1 / c;
+    X.arr[0] = X.arr[0] * c;
+    X.arr[1] = X.arr[1] * c;
     return X;
   }
 
@@ -275,7 +279,7 @@ class Double {
     let isPositive = exp > 0;
     if (!isPositive) exp = -exp;
     let n = Math.floor(Math.log(exp) / Math.log(2));
-    let m = Math.floor(exp - Math.pow(2, n));
+    let m = Math.floor(exp - (1 << n));
     let X0 = Double.clone(X);
     while (n--) Double.sqr2(X);
     while (m--) Double.mul22(X, X0);

@@ -5,11 +5,41 @@ var D = (function () {
 
   function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-  /* Veltkamp-Dekker splitter = 2^27 + 1 for IEEE 64-bit float number */
+  /* Basic error-free algorithms */
 
-  var splitter = 134217729;
+  var splitter = 134217729; //2^27+1 for 64-bit float
 
-  /* Main class for double-length float number*/
+  var twoSum = function twoSum(a, b) {
+    var s = a + b;
+    var a1 = s - b;
+    var db = a1 - s + b;
+    return [s, a - a1 + db];
+  };
+
+  var twoMult = function twoMult(a, b) {
+    var p = a * splitter;
+    var ah = a - p + p,
+        al = a - ah;
+    p = b * splitter;
+    var bh = b - p + p,
+        bl = b - bh;
+    p = ah * bh;
+    var q = ah * bl + al * bh,
+        s = p + q;
+    return [s, p - s + q + al * bl];
+  };
+
+  var oneSqr = function oneSqr(a) {
+    var p = a * splitter;
+    var ah = a - p + p,
+        al = a - ah;
+    p = ah * ah;
+    var q = ah * al;q += q;
+    var s = p + q;
+    return [s, p - s + q + al * al];
+  };
+
+  /* Main class for double-length float number */
 
   var Double = function () {
 
@@ -173,32 +203,17 @@ var D = (function () {
     }, {
       key: 'fromSum11',
       value: function fromSum11(a, b) {
-        var z = a + b;
-        var w = z - a;
-        var z2 = z - w - a;
-        return new Double([z, b - w - z2]);
+        return new Double(twoSum(a, b));
       }
     }, {
       key: 'fromMul11',
       value: function fromMul11(a, b) {
-        var p = a * splitter;
-        var ah = a - p + p;var al = a - ah;
-        p = b * splitter;
-        var bh = b - p + p;var bl = b - bh;
-        p = ah * bh;
-        var q = ah * bl + al * bh;
-        var z = p + q;
-        return new Double([z, p - z + q + al * bl]);
+        return new Double(twoMult(a, b));
       }
     }, {
       key: 'fromSqr1',
       value: function fromSqr1(a) {
-        var u = a * splitter;
-        var xh = u + (a - u);
-        var xl = a - xh;
-        var v = xh * xl;
-        var z = a * a;
-        return new Double([z, xh * xh - z + v + v + xl * xl]);
+        return new Double(oneSqr(a));
       }
     }, {
       key: 'fromNumber',
@@ -234,46 +249,46 @@ var D = (function () {
     }, {
       key: 'add22',
       value: function add22(X, Y) {
-        var x = X.arr[0],
-            xl = X.arr[1],
-            y = Y.arr[0],
-            yl = Y.arr[1];
-        var zh = x + y;
-        var zl = Math.abs(x) > Math.abs(y) ? x - zh + y + yl + xl : y - zh + x + xl + yl;
-        X.arr[0] = zh + zl;
-        X.arr[1] = zh - X.arr[0] + zl;
+        var S = twoSum(X.arr[0], Y.arr[0]);
+        var E = twoSum(X.arr[1], Y.arr[1]);
+        var c = S[1] + E[0];
+        var sh = S[0] + c,
+            sl = S[0] - sh + c;
+        var w = sl + E[1];
+        X.arr[0] = sh + w;
+        X.arr[1] = sh - X.arr[0] + w;
         return X;
       }
     }, {
       key: 'sub22',
       value: function sub22(X, Y) {
-        var x = X.arr[0],
-            xl = X.arr[1],
-            y = -Y.arr[0],
-            yl = -Y.arr[1];
-        var zh = x + y;
-        var zl = Math.abs(x) > Math.abs(y) ? x - zh + y + yl + xl : y - zh + x + xl + yl;
-        X.arr[0] = zh + zl;
-        X.arr[1] = zh - X.arr[0] + zl;
+        var S = twoSum(X.arr[0], -Y.arr[0]);
+        var E = twoSum(X.arr[1], -Y.arr[1]);
+        var c = S[1] + E[0];
+        var sh = S[0] + c,
+            sl = S[0] - sh + c;
+        var w = sl + E[1];
+        X.arr[0] = sh + w;
+        X.arr[1] = sh - X.arr[0] + w;
         return X;
       }
     }, {
       key: 'mul22',
       value: function mul22(X, Y) {
-        var Z = Double.fromMul11(X.arr[0], Y.arr[0]);
-        Z.arr[1] += X.arr[0] * Y.arr[1] + X.arr[1] * Y.arr[0];
-        X.arr[0] = Z.arr[0] + Z.arr[1];
-        X.arr[1] = Z.arr[0] - X.arr[0] + Z.arr[1];
+        var S = twoMult(X.arr[0], Y.arr[0]);
+        S[1] += X.arr[0] * Y.arr[1] + X.arr[1] * Y.arr[0];
+        X.arr[0] = S[0] + S[1];
+        X.arr[1] = S[0] - X.arr[0] + S[1];
         return X;
       }
     }, {
       key: 'div22',
       value: function div22(X, Y) {
-        var zh = X.arr[0] / Y.arr[0];
-        var T = Double.fromMul11(zh, Y.arr[0]);
-        var zl = (X.arr[0] - T.arr[0] - T.arr[1] + X.arr[1] - zh * Y.arr[1]) / Y.arr[0];
-        X.arr[0] = zh + zl;
-        X.arr[1] = zh - X.arr[0] + zl;
+        var s = X.arr[0] / Y.arr[0];
+        var T = twoMult(s, Y.arr[0]);
+        var e = (X.arr[0] - T[0] - T[1] + X.arr[1] - s * Y.arr[1]) / Y.arr[0];
+        X.arr[0] = s + e;
+        X.arr[1] = s - X.arr[0] + e;
         return X;
       }
     }, {
@@ -304,33 +319,31 @@ var D = (function () {
       key: 'inv2',
       value: function inv2(X) {
         var xh = X.arr[0];
-        var zh = 1 / xh;
-        Double.mul21(X, zh);
+        var s = 1 / xh;
+        Double.mul21(X, s);
         var zl = (1 - X.arr[0] - X.arr[1]) / xh;
-        X.arr[0] = zh + zl;
-        X.arr[1] = zh - X.arr[0] + zl;
+        X.arr[0] = s + zl;
+        X.arr[1] = s - X.arr[0] + zl;
         return X;
       }
     }, {
       key: 'sqr2',
       value: function sqr2(X) {
-        var Z = Double.fromSqr1(X.arr[0]);
+        var S = oneSqr(X.arr[0]);
         var c = X.arr[0] * X.arr[1];
-        Z.arr[1] += c + c;
-        X.arr[0] = Z.arr[0] + Z.arr[1];
-        X.arr[1] = Z.arr[0] - X.arr[0] + Z.arr[1];
+        S[1] += c + c;
+        X.arr[0] = S[0] + S[1];
+        X.arr[1] = S[0] - X.arr[0] + S[1];
         return X;
       }
     }, {
       key: 'sqrt2',
       value: function sqrt2(X) {
-        if (X.arr[0] < 0) return Double.NaN;
-        if (X.arr[0] === 0) return Double.Zero;
-        var zh = Math.sqrt(X.arr[0]);
-        var T = Double.fromMul11(zh, zh);
-        var zl = (X.arr[0] - T.arr[0] - T.arr[1] + X.arr[1]) * 0.5 / zh;
-        X.arr[0] = zh + zl;
-        X.arr[1] = zh - X.arr[0] + zl;
+        var s = Math.sqrt(X.arr[0]);
+        var T = oneSqr(s);
+        var e = (X.arr[0] - T[0] - T[1] + X.arr[1]) * 0.5 / s;
+        X.arr[0] = s + e;
+        X.arr[1] = s - X.arr[0] + e;
         return X;
       }
     }, {
@@ -349,7 +362,7 @@ var D = (function () {
           Double.add21(Double.mul22(U, X), padeCoef[i]);
         }for (var _i = 0, _cLen = padeCoef.length; _i < _cLen; _i++) {
           Double.add21(Double.mul22(V, X), padeCoef[_i] * (_i % 2 ? -1 : 1));
-        }X = Double.mul21pow2(Double.div22(U, V), Math.pow(2, n));
+        }X = Double.mul21pow2(Double.div22(U, V), n);
         return X;
       }
     }, {
@@ -365,14 +378,14 @@ var D = (function () {
       key: 'sinh2',
       value: function sinh2(X) {
         var exp = Double.exp2(X);
-        X = Double.mul21pow2(Double.sub22(Double.clone(exp), Double.inv2(exp)), 0.5);
+        X = Double.mul21pow2(Double.sub22(Double.clone(exp), Double.inv2(exp)), -1);
         return X;
       }
     }, {
       key: 'cosh2',
       value: function cosh2(X) {
         var exp = Double.exp2(X);
-        X = Double.mul21pow2(Double.add22(Double.clone(exp), Double.inv2(exp)), 0.5);
+        X = Double.mul21pow2(Double.add22(Double.clone(exp), Double.inv2(exp)), -1);
         return X;
       }
 
@@ -381,45 +394,47 @@ var D = (function () {
     }, {
       key: 'add21',
       value: function add21(X, a) {
-        var Z = Double.fromSum11(X.arr[0], a);
-        Z.arr[1] += X.arr[1];
-        X.arr[0] = Z.arr[0] + Z.arr[1];
-        X.arr[1] = Z.arr[0] - X.arr[0] + Z.arr[1];
+        var S = twoSum(X.arr[0], a);
+        S[1] += X.arr[1];
+        X.arr[0] = S[0] + S[1];
+        X.arr[1] = S[0] - X.arr[0] + S[1];
         return X;
       }
     }, {
       key: 'sub21',
       value: function sub21(X, a) {
-        var Z = Double.fromSum11(X.arr[0], -a);
-        Z.arr[1] += X.arr[1];
-        X.arr[0] = Z.arr[0] + Z.arr[1];
-        X.arr[1] = Z.arr[0] - X.arr[0] + Z.arr[1];
+        var S = twoSum(X.arr[0], -a);
+        S[1] += X.arr[1];
+        X.arr[0] = S[0] + S[1];
+        X.arr[1] = S[0] - X.arr[0] + S[1];
         return X;
       }
     }, {
       key: 'mul21',
       value: function mul21(X, a) {
-        var Z = Double.fromMul11(X.arr[0], a);
-        Z.arr[1] += X.arr[1] * a;
-        X.arr[0] = Z.arr[0] + Z.arr[1];
-        X.arr[1] = Z.arr[0] - X.arr[0] + Z.arr[1];
+        var S = twoMult(X.arr[0], a);
+        S[1] += X.arr[1] * a;
+        X.arr[0] = S[0] + S[1];
+        X.arr[1] = S[0] - X.arr[0] + S[1];
         return X;
       }
     }, {
       key: 'div21',
       value: function div21(X, a) {
-        var zh = X.arr[0] / a;
-        var T = Double.fromMul11(zh, a);
-        var zl = (X.arr[0] - T.arr[0] - T.arr[1] + X.arr[1]) / a;
-        X.arr[0] = zh + zl;
-        X.arr[1] = zh - X.arr[0] + zl;
+        var s = X.arr[0] / a;
+        var T = twoMult(s, a);
+        var e = (X.arr[0] - T[0] - T[1] + X.arr[1]) / a;
+        X.arr[0] = s + e;
+        X.arr[1] = s - X.arr[0] + e;
         return X;
       }
     }, {
       key: 'mul21pow2',
-      value: function mul21pow2(X, a) {
-        X.arr[0] = X.arr[0] * a;
-        X.arr[1] = X.arr[1] * a;
+      value: function mul21pow2(X, n) {
+        var c = 1 << Math.abs(n);
+        if (n < 0) c = 1 / c;
+        X.arr[0] = X.arr[0] * c;
+        X.arr[1] = X.arr[1] * c;
         return X;
       }
     }, {
@@ -430,7 +445,7 @@ var D = (function () {
         var isPositive = exp > 0;
         if (!isPositive) exp = -exp;
         var n = Math.floor(Math.log(exp) / Math.log(2));
-        var m = Math.floor(exp - Math.pow(2, n));
+        var m = Math.floor(exp - (1 << n));
         var X0 = Double.clone(X);
         while (n--) {
           Double.sqr2(X);
