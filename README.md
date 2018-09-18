@@ -18,7 +18,7 @@ Include double.iife.js script to webpage or install npm package. Most of all fun
 All presented operations are stable but mult21/div21 and parseDouble/toString not properly accurate with back and forth operation. Anyway it works. Give me feedback if you think that this library is useful.
 
 ### Benchmark
-![double.js](https://i.imgur.com/gA0Jzcq.png)
+![double.js](https://i.imgur.com/kcl8iki.png)
 
 ### References
 1. Theodorus Dekker. *A floating-point technique for extending the available precision.* 1971 [[Viewer](https://gdz.sub.uni-goettingen.de/id/PPN362160546_0018?tify={%22pages%22:[230],%22panX%22:0.306,%22panY%22:0.754,%22view%22:%22info%22,%22zoom%22:0.39})]

@@ -12,7 +12,7 @@ function withFloat(bufer, target, i, j) {
   }
   colorizer(bufer, iteration - 1)
 }
-function withDoubleJs(bufer, target, i, j) {
+function withDoubleJs_ST(bufer, target, i, j) {
   let iteration = 0, x = D.Zero, y = D.Zero, xx = D.Zero, xy = D.Zero, yy = D.Zero;
   let tx = new D([target.x, 0]), ty = new D([target.y, 0]), tdx = new D([target.dx, 0]), tdy = new D([target.dy,0]);
   let cx = D.add22(D.sub22(tx, tdx), D.div21(D.mul21(tdx, 2 * i), bufer.width));
@@ -23,14 +23,14 @@ function withDoubleJs(bufer, target, i, j) {
   }
   colorizer(bufer, iteration - 1);
 }
-function withDoubleJs_IM(bufer, target, i, j) {
+function withDoubleJs(bufer, target, i, j) {
   let iteration = 0, x = D.Zero, y = D.Zero, xx = D.Zero, xy = D.Zero, yy = D.Zero;
   let tx = new D(target.x), ty = new D(target.y), tdx = new D(target.dx), tdy = new D(target.dy);
   let cx = tx.sub(tdx).add(tdx.mul(2 * i).div(bufer.width));
   let cy = ty.add(tdy).sub(tdy.mul(2 * j).div(bufer.height));
   while (iteration++ < maxIteration && xx.add(yy).lt(4)) {
     x = xx.sub(yy).add(cx); y = xy.add(xy).add(cy);
-    xx = x.sqr(); yy = y.sqr(); xy = x.mul(y);
+    xx = x.mul(x); yy = y.mul(y); xy = x.mul(y);
   }
   colorizer(bufer, iteration - 1);
 }
@@ -52,7 +52,7 @@ function withBigNumberJs(bufer, target, i, j) {
   let cy = ty.plus(tdy).minus(tdy.times(2 * j).div(bufer.height));
   while (iteration++ < maxIteration && xx.plus(yy).toString() < 4) {
     x = xx.minus(yy).plus(cx); y = xy.plus(xy).plus(cy);
-    xx = x.times(x); yy = y.times(y); xy = x.times(y);
+    xx = x.times(x).dp(31); yy = y.times(y).dp(31); xy = x.times(y).dp(31);
   }
   colorizer(bufer, iteration - 1); 
 }
@@ -63,7 +63,7 @@ function withBigJs(bufer, target, i, j) {
   let cy = ty.add(tdy).sub(tdy.mul(2 * j).div(bufer.height));
   while (iteration++ < maxIteration && xx.add(yy).toString() < 4) {
     x = xx.sub(yy).add(cx); y = xy.add(xy).add(cy);
-    xx = x.mul(x); yy = y.mul(y); xy = x.mul(y);
+    xx = x.mul(x).round(31); yy = y.mul(y).round(31); xy = x.mul(y).round(31);
   }
   colorizer(bufer, iteration - 1); 
 }
@@ -129,15 +129,16 @@ window.onload = function() {
   //set proper precision
   Big.DP = 31; Decimal.set({precision: 31}); BigNumber.set({DECIMAL_PLACES: 31});
 
-  //barChart1
-  maxIteration = 3000; var target = { x: -1.7490863748149414, y: -1e-25, dx: 3e-15, dy: 2e-15};
-  var start, end, calculators = [withFloat, withDoubleJs, withDecimalJs]; //withDoubleJs_IM
-  for (var i = 0; i < 2; i++) {
+  //barChart
+  maxIteration = 5000; var target = { x: -1.7490863748149414, y: -1e-25, dx: 3e-15, dy: 2e-15};
+  var start, end, calculators = [withFloat, withDoubleJs_ST, withDoubleJs, withBigNumberJs, withDecimalJs, withBigJs]; //withBigFloat
+  for (var i = 0; i < 3; i++) {
     calculators.forEach(function(calculator) {
       start = new Date(); draw(calculator, target); end = new Date();
       calculator.benchmark = end - start;
     })
   }
+  document.getElementsByTagName('p')[0].style.display = 'block';
   new Chart(document.getElementById('barChart').getContext('2d'), {
     type: 'horizontalBar',
     data: { labels: calculators.map(x => x.name.slice(4)), datasets: [{borderWidth: 1, data: calculators.map(x => x.benchmark)}]},
@@ -149,21 +150,4 @@ window.onload = function() {
     maxIteration = 1000; target.dx = 3e-15; target.dy = 2e-15;
     drawSplitTest(withDoubleJs, withFloat, target);
   }, 100);
-  
-  //barChart2
-  setTimeout(function() {
-    maxIteration = 6; 
-    var start, end, calculators = [withBigNumberJs, withBigJs]; //withDecimalJs, withBigFloat
-    for (var i = 0; i < 2; i++) {
-      calculators.forEach(function(calculator) {
-        start = new Date(); draw(calculator, target); end = new Date();
-        calculator.benchmark = Math.round((end - start) * 3000 / 6); //because maxInteration is not 3000
-      })
-    }
-    new Chart(document.getElementById('barChart2').getContext('2d'), {
-      type: 'horizontalBar',
-      data: { labels: calculators.map(x => x.name.slice(4)), datasets: [{borderWidth: 1, data: calculators.map(x => x.benchmark)}]},
-      options: { responsive: false, legend: false, title: { display: false, text: 'Another scale' } }
-    });
-  }, 200);
 }
