@@ -52,6 +52,14 @@ tape('double-single operations', function (t) {
   actual = D.Log2.add(D.E.arr[0]).sub(D.E.arr[0]);
   diff = expected.sub(actual).abs().toNumber();
   t.ok(diff < eps2, 'additive inverse (diff=' + diff + ')');
+  expected = D.Pi;
+  actual = D.Pi.add(1000).add(-1000);
+  diff = expected.sub(actual).abs().toNumber();
+  t.ok(diff < eps2, 'add21 with inverted (diff=' + diff + ')');
+  expected = D.Pi;
+  actual = D.Pi.sub(1000).sub(-1000);
+  diff = expected.sub(actual).abs().toNumber();
+  t.ok(diff < eps2, 'sub21 with inverted (diff=' + diff + ')');
   expected = D.E;
   actual = D.E.mul(D.Pi.arr[0]).div(D.Pi.arr[0]);
   diff = expected.sub(actual).abs().toNumber();
@@ -187,18 +195,10 @@ tape('comparisons', function(t) {
 
 // tape('extendend tests', function (t) {
 //   expected = D.Pi;
-//   actual = D.add21(D.add21(D.Pi, 1000), -1000);
-//   diff = expected.sub(actual).abs().toNumber();
-//   t.ok(diff < eps2, 'add21 with inverted (diff=' + diff + ')');
-//   expected = D.Pi;
-//   actual = D.sub21(D.sub21(D.Pi, 1000), -1000);
-//   diff = expected.sub(actual).abs().toNumber();
-//   t.ok(diff < eps2, 'sub21 with inverted (diff=' + diff + ')');
-//   expected = D.Pi;
-//   actual = D.mul21(D.mul21(D.Pi, 0.001), 1000);
+//   actual = D.mul21(D.mul21(D.Pi, 0.1), 10);
 //   diff = expected.sub(actual).abs().toNumber();
 //   t.ok(diff < eps2, 'mul21 with inverted (diff=' + diff + ')');
-//   actual = D.div21(D.div21(D.Pi, 0.001), 1000);
+//   actual = D.div22(D.div22(D.Pi, new D('10')), new D('0.1'));
 //   diff = expected.sub(actual).abs().toNumber();
 //   t.ok(diff < eps2, 'div21 with inverted (diff=' + diff + ')');
 //   t.end();

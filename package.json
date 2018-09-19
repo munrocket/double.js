@@ -6,8 +6,9 @@
   "types": "dist/double.d.ts",
   "scripts": {
     "build": "rollup -c",
-    "test": "istanbul cover ./test/test.js --report lcovonly -- -R spec",
-    "bnt": "npm run build && npm run test"
+    "test": "npm run build && npm run coverage",
+    "coverage": "istanbul cover ./test/test.js --report lcovonly -- -R spec",
+    "paranoia": "node ./test/paranoia.js"
   },
   "eslintIgnore": [
     "dist",

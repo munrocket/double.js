@@ -14,7 +14,7 @@ function withFloat(bufer, target, i, j) {
 }
 function withDoubleJs_ST(bufer, target, i, j) {
   let iteration = 0, x = D.Zero, y = D.Zero, xx = D.Zero, xy = D.Zero, yy = D.Zero;
-  let tx = new D([target.x, 0]), ty = new D([target.y, 0]), tdx = new D([target.dx, 0]), tdy = new D([target.dy,0]);
+  let tx = new D(target.x), ty = new D(target.y), tdx = new D(target.dx), tdy = new D(target.dy);
   let cx = D.add22(D.sub22(tx, tdx), D.div21(D.mul21(tdx, 2 * i), bufer.width));
   let cy = D.sub22(D.add22(ty, tdy), D.div21(D.mul21(tdy, 2 * j), bufer.height));
   while (iteration++ < maxIteration && D.lt21(D.add22(D.clone(xx), yy), 4)) {

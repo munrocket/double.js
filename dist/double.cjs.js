@@ -110,10 +110,10 @@ class Double {
     let S = twoSum(X.arr[0], Y.arr[0]);
     let E = twoSum(X.arr[1], Y.arr[1]);
     let c = S[1] + E[0];
-    let sh  = S[0] + c, sl = S[0] - sh + c;
-    let w = sl + E[1];
-    X.arr[0] = sh + w;
-    X.arr[1] = sh - X.arr[0] + w;
+    let vh  = S[0] + c, vl = S[0] - vh + c;
+    let w = vl + E[1];
+    X.arr[0] = vh + w;
+    X.arr[1] = vh - X.arr[0] + w;
     return X;
   }
 
@@ -121,10 +121,10 @@ class Double {
     let S = twoSum(X.arr[0], -Y.arr[0]);
     let E = twoSum(X.arr[1], -Y.arr[1]);
     let c = S[1] + E[0];
-    let sh  = S[0] + c, sl = S[0] - sh + c;
-    let w = sl + E[1];
-    X.arr[0] = sh + w;
-    X.arr[1] = sh - X.arr[0] + w;
+    let vh  = S[0] + c, vl = S[0] - vh + c;
+    let w = vl + E[1];
+    X.arr[0] = vh + w;
+    X.arr[1] = vh - X.arr[0] + w;
     return X;
   }
 
@@ -247,19 +247,20 @@ class Double {
     X.arr[1] = S[0] - X.arr[0] + S[1];
     return X;
   }
-
+  
   static mul21(X, a) {
     let S = twoMult(X.arr[0], a);
-    S[1] += X.arr[1] * a;
-    X.arr[0] = S[0] + S[1];
-    X.arr[1] = S[0] - X.arr[0] + S[1];
+    let m = X.arr[1] * a;
+    let th = S[0] + m, tl = S[0] - th + m + S[1];
+    X.arr[0] = th + tl;
+    X.arr[1] = th - X.arr[0] + tl;
     return X;
   }
 
   static div21(X, a) {
     let s = X.arr[0] / a; 
     let T = twoMult(s, a);
-    let e = (X.arr[0] - T[0] - T[1] + X.arr[1]) / a;
+    let e = (X.arr[0] - T[0] + (X.arr[1] - T[1])) / a;
     X.arr[0] = s + e;
     X.arr[1] = s - X.arr[0] + e;
     return X;
