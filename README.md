@@ -12,13 +12,15 @@ Floating point expansions with 31 accurate decimal digits, also known as double-
 Number stored as unevaluated sum of two javascript float numbers and uses error-free arithmetic algorithms from references below. This brings accuracy and significant increase in performance in comparison to digit-wise approach, because this float arithmetic is implemented in hardware. Note that there are no theoretical limitations to javascript language since ECMAScript version 1 uses 64 bit IEEE 754 with round-to-nearest-even after each operations.
 
 ### Usage
-Include double.iife.js script to webpage or install npm package. Most of all functions have static and instance methods. Instance methods more handy. Static methods are faster but you need to control memory allocation by yourself. Result of static methods always returned in first variable, that's why they mutate it. If you want to avoid mutation you need to clone it before usage. Details you can find in [wiki](https://github.com/munrocket/double.js/wiki) page. Also you can play with library in [sandbox](https://runkit.com/munrocket/double.js-example/1.0.0).
+Include double.iife.js script to webpage or install npm package. Most of all functions have static and instance methods. Instance methods more handy. Static methods are faster but you need to control memory allocation by yourself. Result of static methods always returned in first variable, that's why they mutate it. If you want to avoid mutation you need to clone it before usage. Details you can find in [wiki](https://github.com/munrocket/double.js/wiki) page. Also you can play with library in [sandbox](https://runkit.com/munrocket/double.js-example/1.1.0).
 
 ### Current status
 All presented operations are stable but mult21/div21 and parseDouble/toString not properly accurate with back and forth operation. Anyway it works. Give me feedback if you think that this library is useful.
 
 ### Benchmark
 ![double.js](https://i.imgur.com/kcl8iki.png)
+
+You can check calculation [time and quality](https://cdn.rawgit.com/munrocket/double.js/c16be8c0/test/benchmark.html) of different libraries in your browser.
 
 ### References
 1. Theodorus Dekker. *A floating-point technique for extending the available precision*, 1971. [[Viewer](https://gdz.sub.uni-goettingen.de/id/PPN362160546_0018?tify={%22pages%22:[230],%22panX%22:0.306,%22panY%22:0.754,%22view%22:%22info%22,%22zoom%22:0.39})]

@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Benchmark</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 </head>
 <body>
   <div style="display: none">
@@ -19,10 +20,10 @@
   </div>
   <canvas id="splitTest" width="400" height="200" style="padding-left: 40px"></canvas>
   <canvas id="barChart" width="400" height="200" style="float:left"></canvas>
-  <p style="display: none">
+  <p style="display: none; font-family: 'Open Sans', sans-serif;">
     All libraries except native float setted to precision with 31 decimal digits. <br/>
     To increase DoubleJs_ST performance we used static methods and .sqr() insted of .mul() in some places. <br/>
-    To increase BigJs and BigNumberJs we used .round(31) and .dp(31) after each multiplication.<br/>
+    To increase BigJs and BigNumberJs we used .round(31) and .dp(31) after each multiplication without this they become x1000 slower (lul).<br/>
   </p>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
