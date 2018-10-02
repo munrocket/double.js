@@ -6,7 +6,7 @@
   "types": "dist/double.d.ts",
   "scripts": {
     "build": "rollup -c",
-    "test": "npm run build && npm run coverage",
+    "ci": "npm run build && npm run coverage",
     "coverage": "istanbul cover ./test/test.js --report lcovonly -- -R spec",
     "paranoia": "node ./test/paranoia.js"
   },
