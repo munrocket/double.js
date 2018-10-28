@@ -3,6 +3,7 @@
 ![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg)
 [![Build Status](https://travis-ci.org/munrocket/double.js.svg?branch=master)](https://travis-ci.org/munrocket/double.js)
 [![Codecov](https://img.shields.io/codecov/c/github/munrocket/double.js.svg)](https://codecov.io/gh/munrocket/double.js)
+[![install size](https://packagephobia.now.sh/badge?p=double.js)](https://packagephobia.now.sh/result?p=double.js)
 [![dependencies Status](https://david-dm.org/munrocket/double.js/status.svg)](https://david-dm.org/munrocket/double.js)
 
 
