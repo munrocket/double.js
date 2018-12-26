@@ -247,13 +247,12 @@ class Double {
     X.arr[1] = S[0] - X.arr[0] + S[1];
     return X;
   }
-  
+
   static mul21(X, a) {
     let S = twoMult(X.arr[0], a);
-    let m = X.arr[1] * a;
-    let th = S[0] + m, tl = S[0] - th + m + S[1];
-    X.arr[0] = th + tl;
-    X.arr[1] = th - X.arr[0] + tl;
+    S[1] += X.arr[1] * a;
+    X.arr[0] = S[0] + S[1];
+    X.arr[1] = S[0] - X.arr[0] + S[1];
     return X;
   }
 

@@ -7,10 +7,10 @@
 [![dependencies Status](https://david-dm.org/munrocket/double.js/status.svg)](https://david-dm.org/munrocket/double.js)
 
 
-Floating point expansions with 31 accurate decimal digits, also known as double-double arithmetic. This library can be useful for numerically unstable algorithms like finding the correct differentials, inverting matrix, performing triangulation, polygon clipping. Also it is extremely helpful when you need fast computation with extended precision.
+Floating point expansions with 31 accurate decimal digits, also known as double-double arithmetic. This library can be useful for fast calculation with extended precision. For example in computational geometry and numerically unstable algorithms such as performing triangulation, polygon clipping, inverting matrix and finding differentials.
 
 ### Algorithm
-Number stored as unevaluated sum of two javascript float numbers and uses error-free arithmetic algorithms from references below. This brings accuracy and significant increase in performance in comparison to digit-wise approach, because this float arithmetic is implemented in hardware. Note that there are no theoretical limitations to javascript language since ECMAScript version 1 uses 64 bit IEEE 754 with round-to-nearest-even after each operations.
+Number stored as unevaluated sum of two javascript float numbers and uses error-free arithmetic algorithms from references below. This brings accuracy and significant increase in performance in comparison to digit-wise approach, because this float arithmetic is implemented in hardware. Note that there are no theoretical limitations to javascript language since ECMAScript version 1 uses 64 bit IEEE 754 with round-to-nearest after each operations.
 
 ### Usage
 Include double.iife.js script to webpage or install npm package. Most of all functions have static and instance methods. Instance methods more handy. Static methods are faster but you need to control memory allocation by yourself. Result of static methods always returned in first variable, that's why they mutate it. If you want to avoid mutation you need to clone it before usage. Details you can find in [wiki](https://github.com/munrocket/double.js/wiki) page. Also you can play with library in [sandbox](https://runkit.com/munrocket/double.js-example/1.1.0).
