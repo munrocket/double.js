@@ -1,6 +1,6 @@
 {
   "name": "double.js",
-  "version": "0.0.5",
+  "version": "0.0.7",
   "description": "Floating point expansions with 32 accurate decimal digits, also known as double-double arithmetic.",
   "main": "dist/double.cjs.js",
   "types": "dist/double.d.ts",
@@ -17,23 +17,24 @@
   ],
   "keywords": [
     "double-double",
-    "quad-double",
     "arbitrary-precision",
     "floating-point",
     "double",
+    "quadruple",
     "float128"
   ],
   "author": "munrocket",
   "license": "MIT",
+  "dependencies": {},
   "devDependencies": {
-    "babel-core": "^6.26.3",
-    "babel-preset-env": "^1.7.0",
-    "codecov": "^3.0.4",
+    "@babel/core": "^7.2.2",
+    "@babel/preset-env": "^7.3.1",
+    "codecov": "^3.1.0",
     "istanbul": "^0.4.5",
-    "rollup": "^0.63.5",
-    "rollup-plugin-babel": "^3.0.7",
+    "lodash": "^4.17.11",
+    "rollup": "^1.1.2",
+    "rollup-plugin-babel": "^4.3.2",
     "tap-spec": "^5.0.0",
-    "tape": "^4.9.1"
-  },
-  "dependencies": {}
+    "tape": "^4.10.0"
+  }
 }
