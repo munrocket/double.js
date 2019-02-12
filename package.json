@@ -1,6 +1,6 @@
 {
   "name": "double.js",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Floating point expansions with 32 accurate decimal digits, also known as double-double arithmetic.",
   "main": "dist/double.cjs.js",
   "types": "dist/double.d.ts",
