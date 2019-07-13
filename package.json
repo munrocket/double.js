@@ -27,14 +27,14 @@
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
-    "@babel/core": "^7.2.2",
-    "@babel/preset-env": "^7.3.1",
-    "codecov": "^3.1.0",
+    "@babel/core": "^7.5.4",
+    "@babel/preset-env": "^7.5.4",
+    "codecov": "^3.5.0",
     "istanbul": "^0.4.5",
-    "lodash": "^4.17.11",
-    "rollup": "^1.1.2",
-    "rollup-plugin-babel": "^4.3.2",
+    "lodash": "^4.17.14",
+    "rollup": "^1.16.7",
+    "rollup-plugin-babel": "^4.3.3",
     "tap-spec": "^5.0.0",
-    "tape": "^4.10.0"
+    "tape": "^4.11.0"
   }
 }
