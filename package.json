@@ -18,11 +18,13 @@
   "keywords": [
     "double-double",
     "arbitrary-precision",
+    "bigfloat",
+    "gmp",
+    "mpfr",
     "floating-point",
     "double",
     "quadruple",
-    "float128",
-    "bigfloat"
+    "float128"
   ],
   "author": "munrocket",
   "license": "MIT",

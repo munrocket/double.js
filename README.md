@@ -22,7 +22,7 @@ All presented operations are stable but mult21/div21 and parseDouble/toString no
 ### Benchmark
 ![double.js](https://i.imgur.com/kcl8iki.png)
 
-You can check calculation [time and quality](https://cdn.rawgit.com/munrocket/double.js/c16be8c0/test/benchmark.html) of different libraries in your browser.
+You can check calculation [time and quality](https://munrocket.github.io/double.js/) of different libraries in your browser.
 
 ### Special thanks
 To [Jeffrey Sarnoff](https://github.com/JeffreySarnoff) for help me with books and algorithm.
