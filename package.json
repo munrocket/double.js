@@ -21,7 +21,8 @@
     "floating-point",
     "double",
     "quadruple",
-    "float128"
+    "float128",
+    "bigfloat"
   ],
   "author": "munrocket",
   "license": "MIT",
