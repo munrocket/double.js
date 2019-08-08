@@ -13,8 +13,9 @@ function withFloat(bufer, target, i, j) {
   colorizer(bufer, iteration - 1)
 }
 function withDoubleJs(bufer, target, i, j) {
-  let iteration = 0, x = Double.Zero, y = Double.Zero, xx = Double.Zero, xy = Double.Zero, yy = Double.Zero;
-  let tx = new Double(target.x), ty = new Double(target.y), tdx = new Double(target.dx), tdy = new Double(target.dy);
+  let D = Double;
+  let iteration = 0, x = D.Zero, y = D.Zero, xx = D.Zero, xy = D.Zero, yy = D.Zero;
+  let tx = new D(target.x), ty = new D(target.y), tdx = new D(target.dx), tdy = new D(target.dy);
   let cx = tx.sub(tdx).add(tdx.mul(2 * i).div(bufer.width));
   let cy = ty.add(tdy).sub(tdy.mul(2 * j).div(bufer.height));
   while (iteration++ < maxIteration && xx.add(yy).lt(4)) {
@@ -35,17 +36,6 @@ function withDoubleJs_Static(bufer, target, i, j) {
   }
   colorizer(bufer, iteration - 1);
 }
-// function withBigFloat32(bufer, target, i, j) {
-//   let iteration = 0, x = new BigFloat32(0), y = new BigFloat32(0), xx = new BigFloat32(0), xy = new BigFloat32(0), yy = new BigFloat32(0);
-//   let tx = new BigFloat32(target.x), ty = new BigFloat32(target.y), tdx = new BigFloat32(target.dx), tdy = new BigFloat32(target.dy);
-//   let cx = tx.sub(tdx).add(tdx.mul(2 * i).div(bufer.width));
-//   let cy = ty.add(tdy).sub(tdy.mul(2 * j).div(bufer.height));
-//   while (iteration++ < maxIteration && xx.add(yy).toString() < 4) {
-//     x = xx.sub(yy).add(cx); y = xy.add(xy).add(cy);
-//     xx = x.mul(x).round(31); yy = y.mul(y).round(31); xy = x.mul(y).round(31);
-//   }
-//   colorizer(bufer, iteration - 1);
-// }
 function withDecimalJs(bufer, target, i, j) {
   let iteration = 0, x = new Decimal(0), y = new Decimal(0), xx = new Decimal(0), xy = new Decimal(0), yy = new Decimal(0);
   let tx = new Decimal(target.x), ty = new Decimal(target.y), tdx = new Decimal(target.dx), tdy = new Decimal(target.dy);
@@ -60,8 +50,8 @@ function withDecimalJs(bufer, target, i, j) {
 function withBigNumberJs(bufer, target, i, j) {
   let iteration = 0, x = new BigNumber(0), y = new BigNumber(0), xx = new BigNumber(0), xy = new BigNumber(0), yy = new BigNumber(0);
   let tx = new BigNumber(target.x), ty = new BigNumber(target.y), tdx = new BigNumber(target.dx), tdy = new BigNumber(target.dy);
-  let cx = tx.minus(tdx).plus(tdx.times(2 * i).div(bufer.width));
-  let cy = ty.plus(tdy).minus(tdy.times(2 * j).div(bufer.height));
+  let cx = tx.minus(tdx).plus(tdx.times(2 * i).div(bufer.width)).dp(31);
+  let cy = ty.plus(tdy).minus(tdy.times(2 * j).div(bufer.height)).dp(31);
   while (iteration++ < maxIteration && xx.plus(yy).toString() < 4) {
     x = xx.minus(yy).plus(cx); y = xy.plus(xy).plus(cy);
     xx = x.times(x).dp(31); yy = y.times(y).dp(31); xy = x.times(y).dp(31);
@@ -71,13 +61,37 @@ function withBigNumberJs(bufer, target, i, j) {
 function withBigJs(bufer, target, i, j) {
   let iteration = 0, x = new Big(0), y = new Big(0), xx = new Big(0), xy = new Big(0), yy = new Big(0);
   let tx = new Big(target.x), ty = new Big(target.y), tdx = new Big(target.dx), tdy = new Big(target.dy);
-  let cx = tx.sub(tdx).add(tdx.mul(2 * i).div(bufer.width));
-  let cy = ty.add(tdy).sub(tdy.mul(2 * j).div(bufer.height));
+  let cx = tx.sub(tdx).add(tdx.mul(2 * i).div(bufer.width)).round(31);
+  let cy = ty.add(tdy).sub(tdy.mul(2 * j).div(bufer.height)).round(31);
   while (iteration++ < maxIteration && xx.add(yy).toString() < 4) {
     x = xx.sub(yy).add(cx); y = xy.add(xy).add(cy);
     xx = x.mul(x).round(31); yy = y.mul(y).round(31); xy = x.mul(y).round(31);
   }
   colorizer(bufer, iteration - 1); 
+}
+function withBigFloat32(bufer, target, i, j) {
+  let BF = bigfloat.BigFloat32;
+  let iteration = 0, x = new BF(0), y = new BF(0), xx = new BF(0), xy = new BF(0), yy = new BF(0);
+  let tx = new BF(target.x), ty = new BF(target.y), tdx = new BF(target.dx), tdy = new BF(target.dy);
+  let cx = tx.sub(tdx).add(tdx.mul(2 * i).mul(1/bufer.width)).round(31);
+  let cy = ty.add(tdy).sub(tdy.mul(2 * j).mul(1/bufer.height)).round(31);
+  while (iteration++ < maxIteration && xx.add(yy).toString() < 4) {
+    x = xx.sub(yy).add(cx); y = xy.add(xy).add(cy);
+    xx = x.mul(x).round(31); yy = y.mul(y).round(31); xy = x.mul(y).round(31);
+  }
+  colorizer(bufer, iteration - 1);
+}
+function withBigFloat53(bufer, target, i, j) {
+  let Big = bigfloat.BigFloat53;
+  let iteration = 0, x = new Big(0), y = new Big(0), xx = new Big(0), xy = new Big(0), yy = new Big(0);
+  let tx = new Big(target.x), ty = new Big(target.y), tdx = new Big(target.dx), tdy = new Big(target.dy);
+  let cx = tx.sub(tdx).add(tdx.mul(2 * i).mul(1/bufer.width)).round(31);
+  let cy = ty.add(tdy).sub(tdy.mul(2 * j).mul(1/bufer.height)).round(31);
+  while (iteration++ < maxIteration && xx.add(yy).toString() < 4) {
+    x = xx.sub(yy).add(cx); y = xy.add(xy).add(cy);
+    xx = x.mul(x).round(31); yy = y.mul(y).round(31); xy = x.mul(y).round(31);
+  }
+  colorizer(bufer, iteration - 1);
 }
 
 /* mandelbrot drawing */
@@ -131,8 +145,8 @@ window.onload = function() {
   Big.DP = 31; Decimal.set({precision: 31}); BigNumber.set({DECIMAL_PLACES: 31});
 
   //barChart
-  maxIteration = 5000; var target = { x: -1.7490863748149414, y: -1e-25, dx: 3e-15, dy: 2e-15};
-  var start, end, calculators = [withFloat, withDoubleJs_Static, withDoubleJs, withBigNumberJs, withDecimalJs, withBigJs];// withBigFloat53];
+  maxIteration = 8000; var target = { x: -1.7490863748149414, y: -1e-25, dx: 3e-15, dy: 2e-15};
+  var start, end, calculators = [withFloat, withDoubleJs_Static, withDoubleJs, withBigNumberJs, withDecimalJs, withBigJs, withBigFloat32 ]; //withBigFloat53
   for (var i = 0; i < 3; i++) {
     calculators.forEach(function(calculator) {
       start = new Date(); draw(calculator, target); end = new Date();
