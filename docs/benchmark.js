@@ -149,8 +149,8 @@ window.onload = function() {
   var start, end, calculators = [withFloat, withDoubleJs_Static, withDoubleJs, withBigNumberJs, withDecimalJs, withBigJs, withBigFloat32 ]; //withBigFloat53
   for (var i = 0; i < 3; i++) {
     calculators.forEach(function(calculator) {
-      start = new Date(); draw(calculator, target); end = new Date();
-      calculator.benchmark = end - start;
+      start = (performance) ? performance.now() : Date.now(); draw(calculator, target);
+      calculator.benchmark = (performance) ? performance.now() : Date.now() - start;
     })
   }
   document.getElementsByTagName('p')[0].style.display = 'block';
