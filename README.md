@@ -17,7 +17,7 @@ Include double.iife.js script to webpage or install npm package. Most of all fun
 
 
 ### Current status
-All presented operations are stable but mult21/div21 and parseDouble/toString not properly accurate with back and forth operation. Anyway it works. Give me feedback if you think that this library is useful.
+Functions mult21/div21 and parseDouble/toString not properly accurate with back and forth operations. Anyway it stable with long repetitive calculations. Give me feedback if you think that this library is useful.
 
 ### Benchmark
 ![double.js](https://i89.fastpic.ru/big/2019/0809/76/da3694419b1a2e280186b26c06715876.png)
