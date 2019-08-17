@@ -34,8 +34,8 @@
     "@babel/preset-env": "7.5.5",
     "codecov": "3.5.0",
     "istanbul": "0.4.5",
-    "lodash": "4.17.14",
-    "rollup": "1.16.7",
+    "lodash": "4.17.15",
+    "rollup": "1.19.4",
     "rollup-plugin-babel": "4.3.3",
     "tap-spec": "5.0.0",
     "tape": "4.11.0"
