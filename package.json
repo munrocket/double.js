@@ -30,8 +30,8 @@
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
-    "@babel/core": "7.5.4",
-    "@babel/preset-env": "7.5.4",
+    "@babel/core": "7.5.5",
+    "@babel/preset-env": "7.5.5",
     "codecov": "3.5.0",
     "istanbul": "0.4.5",
     "lodash": "4.17.14",
