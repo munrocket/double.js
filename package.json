@@ -1,10 +1,10 @@
 {
   "name": "double.js",
-  "version": "0.0.8",
+  "version": "0.1.0",
   "description": "Floating point expansions with 32 accurate decimal digits, also known as double-double arithmetic.",
   "main": "dist/double.cjs.js",
   "types": "dist/double.d.ts",
-  "browser": "dist/double.iife.js",
+  "browser": "dist/double.js",
   "scripts": {
     "build": "rollup -c",
     "ci": "npm run build && npm run coverage",

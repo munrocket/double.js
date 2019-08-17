@@ -13,8 +13,7 @@ Floating point expansions with 31 accurate decimal digits, also known as double-
 Number stored as unevaluated sum of two javascript float numbers and uses error-free arithmetic algorithms from references below. This brings accuracy and significant increase in performance in comparison to digit-wise approach, because this float arithmetic is implemented in hardware. Note that there are no theoretical limitations to javascript language since ECMAScript version 1 uses 64 bit IEEE 754 with round-to-nearest after each operations.
 
 ### Usage
-Include double.iife.js script to webpage or install npm package. Most of all functions have static and instance methods. Instance methods more handy. Static methods are faster but you need to control memory allocation by yourself. Result of static methods always returned in first variable, that's why they mutate it. If you want to avoid mutation you need to clone it before usage. Details you can find in [wiki](https://github.com/munrocket/double.js/wiki) page. Also you can play with library in [sandbox](https://runkit.com/munrocket/double.js-example/1.1.0).
-
+Include double.js script to webpage or install npm package. Most of all functions have static and instance methods. Instance methods more handy. Static methods are faster but you need to control memory allocation by yourself. Result of static methods always returned in first variable, that's why they mutate it. If you want to avoid mutation you need to clone it before usage. Details you can find in [wiki](https://github.com/munrocket/double.js/wiki) page. Also you can play with library in [sandbox](https://runkit.com/munrocket/double.js-example/1.1.0).
 
 ### Current status
 Functions mult21/div21 and parseDouble/toString not properly accurate with back and forth operations. Anyway it stable with long repetitive calculations. Give me feedback if you think that this library is useful.

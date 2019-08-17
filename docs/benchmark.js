@@ -132,7 +132,7 @@ function drawSplitTest(calc1, calc2, target) {
   ctx.moveTo(0,0);
   ctx.lineTo(bufer.width,bufer.height);
   ctx.stroke();
-  ctx.font = 'bold 14px Verdana';
+  ctx.font = 'bold 14px Open Sans';
   ctx.fillStyle = '#FFF';
   ctx.fillText(calc1.name.slice(4), canvas.width - 85, 25);
   ctx.fillText(calc2.name.slice(4), 10, canvas.height - 10);
