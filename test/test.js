@@ -1,10 +1,7 @@
 var tape = require('tape');
 var tapSpec = require('tap-spec');
 var D = require('../dist/double.cjs.js');
-
-tape.createStream()
-  .pipe(tapSpec())
-  .pipe(process.stdout);
+tape.createStream().pipe(tapSpec()).pipe(process.stdout);
 
 var eps1 = 1e-15;
 var eps2 = 1e-30;

@@ -15,7 +15,7 @@ Number stored as unevaluated sum of two javascript float numbers and uses error-
 ### Benchmark
 ![double.js](https://i89.fastpic.ru/big/2019/0809/76/da3694419b1a2e280186b26c06715876.png) 
 
-You can check calculation [time and quality](https://munrocket.github.io/double.js/) of different libraries in your browser.
+You can check calculation [time](https://jsperf.com/double-js) and [quality](https://munrocket.github.io/double.js/) of different libraries in your browser.
 
 ### Usage
 Include double.js script to webpage or install npm package. Most of all functions have static and instance methods. Instance methods more handy. Static methods are faster but you need to control memory allocation by yourself. Result of static methods always returned in first variable, that's why they mutate it. If you want to avoid mutation you need to clone it before usage.
