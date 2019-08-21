@@ -7,7 +7,9 @@
   "browser": "dist/double.js",
   "scripts": {
     "build": "rollup -c",
+    "watch": "rollup -c -w",
     "ci": "npm run build && npm run coverage",
+    "test": "node ./test/test.js",
     "coverage": "istanbul cover ./test/test.js --report lcovonly -- -R spec",
     "paranoia": "node ./test/paranoia.js"
   },

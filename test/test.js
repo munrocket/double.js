@@ -8,6 +8,23 @@ var eps2 = 1e-30;
 var abs = Math.abs;
 var diff, diff2, expected, expected2, actual, actual2, actual3;
 
+tape('constructor test', function (t) {
+  var d = new D(0.3);
+  t.ok(d instanceof D, 'constructed from number');
+  var d2 = new D('0.3');
+  t.ok(d2 instanceof D, 'constructed from string');
+  var d3 = new D({ hi: 0.3, lo: 0 });
+  t.ok(d3 instanceof D, 'constructed from object');
+  var d4 = new D([0.3, 0]);
+  t.ok(d4 instanceof D, 'constructed from array');
+  var d5 = new D(d);
+  t.deepEqual(d3, d, 'fromObject() equal to fromNumber()');
+  t.deepEqual(d4, d, 'fromArray() equal to fromNumber()');
+  t.deepEqual(d5, d, 'clone() equal to fromString()');
+  t.ok(d.toNumber() == 0.3, 'toNumber() equal to number');
+  t.end();
+});
+
 tape('classic test', function (t) {
   expected = 0.2;
   actual = new D('0.3').sub(new D('0.1')).toNumber();
@@ -46,7 +63,7 @@ tape('unary operators with double', function (t) {
 
 tape('double-single operations', function (t) {
   expected = D.Log2;
-  actual = D.Log2.add(D.E.arr[0]).sub(D.E.arr[0]);
+  actual = D.Log2.add(D.E.hi).sub(D.E.hi);
   diff = expected.sub(actual).abs().toNumber();
   t.ok(diff < eps2, 'additive inverse (diff=' + diff + ')');
   expected = D.Pi;
@@ -58,7 +75,7 @@ tape('double-single operations', function (t) {
   diff = expected.sub(actual).abs().toNumber();
   t.ok(diff < eps2, 'sub21 with inverted (diff=' + diff + ')');
   expected = D.E;
-  actual = D.E.mul(D.Pi.arr[0]).div(D.Pi.arr[0]);
+  actual = D.E.mul(D.Pi.hi).div(D.Pi.hi);
   diff = expected.sub(actual).abs().toNumber();
   t.ok(diff < eps2, 'multiplicative inverse (diff=' + diff + ')');
   expected = 1e20; expected2 = 1e-20;
@@ -86,11 +103,11 @@ tape('double-double operations', function (t) {
 
 tape('golden ratio equation test', function(t) {
   var phi = new D([5, 0]).sqrt().add(1).div(2);
-  expected = D.clone(phi).add(1);
-  actual = D.clone(phi).sqr();
+  expected = new D(phi).add(1);
+  actual = new D(phi).sqr();
   diff = expected.sub(actual).abs().toNumber();
   t.ok(diff < eps2, 'ϕ² = ϕ + 1 (diff=' + diff + ')');
-  expected = D.clone(phi).inv();
+  expected = new D(phi).inv();
   actual = phi.sub(1);
   diff = expected.sub(actual).abs().toNumber();
   t.ok(diff < eps2, '1/ϕ = ϕ - 1 (diff=' + diff + ')');
@@ -149,11 +166,11 @@ tape('fromNumber', function (t) {
   expected = 9e300;
   actual = new D('9e300');
   diff = abs(expected - actual.toNumber());
-  t.ok(diff < Infinity, 'Large exponent (diff=' + diff + ', actual=[' + actual.arr[0] + ',' + actual.arr[1] + '])');
+  t.ok(diff < Infinity, 'Large exponent (diff=' + diff + ', actual=[' + actual.hi + ',' + actual.lo + '])');
   expected = 0;
   actual = new D('9e-322');
   diff = abs(expected - actual.toNumber());
-  t.ok(diff < eps2, 'Tiny exponent (diff=' + diff + ', actual=[' + actual.arr[0] + ',' + actual.arr[1] + '])');
+  t.ok(diff < eps2, 'Tiny exponent (diff=' + diff + ', actual=[' + actual.hi + ',' + actual.lo + '])');
   actual = new D('1e500').toNumber();
   actual2 = new D('-1e500').toNumber();
   t.ok(actual === Infinity && actual2 === -Infinity, 'Giant exponent');
