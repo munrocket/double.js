@@ -12,16 +12,32 @@ Floating point expansions with 31 accurate decimal digits, also known as double-
 ### Algorithm
 Number stored as unevaluated sum of two javascript float numbers and uses error-free arithmetic algorithms from references below. This brings accuracy and significant increase in performance in comparison to digit-wise approach, because this float arithmetic is implemented in hardware. Note that there are no theoretical limitations to javascript language since ECMAScript version 1 uses 64 bit IEEE 754 with round-to-nearest after each operations.
 
+### Benchmark
+![double.js](https://i89.fastpic.ru/big/2019/0809/76/da3694419b1a2e280186b26c06715876.png) 
+
+You can check calculation [time and quality](https://munrocket.github.io/double.js/) of different libraries in your browser.
+
 ### Usage
-Include double.js script to webpage or install npm package. Most of all functions have static and instance methods. Instance methods more handy. Static methods are faster but you need to control memory allocation by yourself. Result of static methods always returned in first variable, that's why they mutate it. If you want to avoid mutation you need to clone it before usage. Details you can find in [wiki](https://github.com/munrocket/double.js/wiki) page. Also you can play with library in [sandbox](https://runkit.com/munrocket/double.js-example/1.1.0).
+Include double.js script to webpage or install npm package. Most of all functions have static and instance methods. Instance methods more handy. Static methods are faster but you need to control memory allocation by yourself. Result of static methods always returned in first variable, that's why they mutate it. If you want to avoid mutation you need to clone it before usage.
+```javascript
+import { Double } from 'double.js';
+
+// L = sqrt(a^2 + 10)
+let L = a.sqr().add(new Double(10)).sqrt();
+
+// S(r) = 4/3 * PI * r^3
+const S = (r) => new Double('4.18879020478639098461685784437267').mul(r.pow(3));
+
+// |f'(x)| = (f(x+h) - f(x)) / h;
+let dF = (x) => F(x.add(h)).sub(F(x)).div(h);
+
+// |f'(x)| < 1 ? print(x)
+if (dF(x).abs().lt(1)) { console.log(x.toNumber()); }
+```
+You can play with library in [sandbox](https://runkit.com/munrocket/double.js-example/1.1.0). API details you can find in [wiki](https://github.com/munrocket/double.js/wiki) page.
 
 ### Current status
 Functions mult21/div21 and parseDouble/toString not properly accurate with back and forth operations. Anyway it stable with long repetitive calculations. Give me feedback if you think that this library is useful.
-
-### Benchmark
-![double.js](https://i89.fastpic.ru/big/2019/0809/76/da3694419b1a2e280186b26c06715876.png)
-
-You can check calculation [time and quality](https://munrocket.github.io/double.js/) of different libraries in your browser.
 
 ### Special thanks
 To [Jeffrey Sarnoff](https://github.com/JeffreySarnoff) for help me with books and algorithm.
