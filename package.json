@@ -1,6 +1,6 @@
 {
   "name": "double.js",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "description": "Floating point expansions with 32 accurate decimal digits, also known as double-double arithmetic.",
   "main": "dist/double.cjs.js",
   "types": "dist/double.d.ts",
@@ -12,6 +12,7 @@
     "ci": "npm run build && npm run coverage",
     "test": "node ./test/test.js",
     "coverage": "istanbul cover ./test/test.js --report lcovonly -- -R spec",
+    "deploy": "npm version patch && git push --tags origin master",
     "paranoia": "node ./test/paranoia.js"
   },
   "eslintIgnore": [

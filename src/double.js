@@ -57,7 +57,7 @@ export default class Double {
     }
   }
     
-  static clone(X) { return new Double(X); }
+  static clone(X) { let d = new Double(); d.hi = X.hi; d.lo = X.lo; return d; }
   static fromSum11(a, b) { return new Double(twoSum(a, b)); }
   static fromMul11(a, b) { return new Double(twoMult(a, b)); }
   static fromSqr1(a) { return new Double(oneSqr(a)); }
@@ -223,7 +223,7 @@ export default class Double {
     if (Double.le21(X, 0)) return Double.NaN;
     if (Double.eq21(X, 1)) return Double.Zero;
     let Z = new Double(Math.log(X.hi));
-    Double.sub21(Double.add22(Double.mul22(X, Double.exp2(Double.neg2(new Double(Z)))), Z), 1);
+    Double.sub21(Double.add22(Double.mul22(X, Double.exp2(Double.neg2(Double.clone(Z.clone)))), Z), 1);
     return X;
   }
 
@@ -289,7 +289,7 @@ export default class Double {
     if (!isPositive) exp = -exp;
     let n = Math.floor(Math.log(exp) / Math.log(2));
     let m = Math.floor(exp - (1 << n));
-    let X0 = new Double(X);
+    let X0 = Double.clone(X);
     while (n--) Double.sqr2(X);
     while (m--) Double.mul22(X, X0);
     return isPositive ? X : Double.inv2(X);
@@ -312,66 +312,66 @@ export default class Double {
 
   /* Double constants */
 
-  static get One() { return new Double({ hi: 1, lo: 0 }) }
-  static get Zero() { return new Double({ hi: 0, lo: 0 }) }
-  static get Infinity() { return new Double({ hi: Infinity, lo: Infinity }) }
-  static get NaN() { return new Double({ hi: NaN, lo: NaN }) }
-  static get Pi() { return new Double({ hi: 3.141592653589793116, lo:  1.224646799147353207e-16 }); }
-  static get X2Pi() { return new Double({ hi: 6.283185307179586232, lo: 2.449293598294706414e-16 }); }
-  static get E() { return new Double({ hi: 2.718281828459045, lo: 1.4456468917292502e-16 }); }
-  static get Log2() { return new Double({ hi: 0.6931471805599453, lo: 2.3190468138462996e-17 }); }
-  static get Phi() { return new Double({ hi: 1.618033988749895, lo: -5.4321152036825055e-17 }); }
+  static get One() {  let d = new Double();     d.hi = 1; d.lo = 0; return d; }
+  static get Zero() { let d = new Double();     d.hi = 0; d.lo = 0; return d; }
+  static get Infinity() { let d = new Double(); d.hi = Infinity; d.lo = Infinity; return d; }
+  static get NaN() { let d = new Double();      d.hi = NaN; d.lo = NaN; return d; }
+  static get Pi() { let d = new Double();       d.hi = 3.141592653589793116; d.lo =  1.224646799147353207e-16; return d; }
+  static get X2Pi() { let d = new Double();     d.hi = 6.283185307179586232; d.lo = 2.449293598294706414e-16; return d; }
+  static get E() { let d = new Double();        d.hi = 2.718281828459045; d.lo = 1.4456468917292502e-16; return d; }
+  static get Log2() { let d = new Double();     d.hi = 0.6931471805599453; d.lo = 2.3190468138462996e-17; return d; }
+  static get Phi() { let d = new Double();      d.hi = 1.618033988749895; d.lo = -5.4321152036825055e-17; return d; }
   
   /* Repeating static methods to instance */
 
   add(other) {
-    if (other instanceof Double) return Double.add22(new Double(this), other);
-    else if (typeof other == 'number') return Double.add21(new Double(this), other);
+    if (other instanceof Double) return Double.add22(Double.clone(this), other);
+    else if (typeof other == 'number') return Double.add21(Double.clone(this), other);
   }
   sub(other) {
-    if (other instanceof Double) return Double.sub22(new Double(this), other);
-    else if (typeof other == 'number') return Double.sub21(new Double(this), other);
+    if (other instanceof Double) return Double.sub22(Double.clone(this), other);
+    else if (typeof other == 'number') return Double.sub21(Double.clone(this), other);
   }
   mul(other) {
-    if (other instanceof Double) return Double.mul22(new Double(this), other);
-    else if (typeof other == 'number') return Double.mul21(new Double(this), other);
+    if (other instanceof Double) return Double.mul22(Double.clone(this), other);
+    else if (typeof other == 'number') return Double.mul21(Double.clone(this), other);
   }
   div(other) {
-    if (other instanceof Double) return Double.div22(new Double(this), other);
-    else if (typeof other == 'number') return Double.div21(new Double(this), other);
+    if (other instanceof Double) return Double.div22(Double.clone(this), other);
+    else if (typeof other == 'number') return Double.div21(Double.clone(this), other);
   }
-  pow(exp) { return Double.pow22(new Double(this), exp)}
-  abs() { return Double.abs2(new Double(this)); }
-  neg() { return Double.neg2(new Double(this)); }
-  inv() { return Double.inv2(new Double(this)); }
-  sqr() { return Double.sqr2(new Double(this)); }
-  sqrt() { return Double.sqrt2(new Double(this)); }
-  exp() { return Double.exp2(new Double(this)); }
-  ln() { return Double.ln2(new Double(this)); }
-  sinh() { return Double.sinh2(new Double(this)); }
-  cosh() { return Double.cosh2(new Double(this)); }
+  pow(exp) { return Double.pow22(Double.clone(this), exp)}
+  abs() { return Double.abs2(Double.clone(this)); }
+  neg() { return Double.neg2(Double.clone(this)); }
+  inv() { return Double.inv2(Double.clone(this)); }
+  sqr() { return Double.sqr2(Double.clone(this)); }
+  sqrt() { return Double.sqrt2(Double.clone(this)); }
+  exp() { return Double.exp2(Double.clone(this)); }
+  ln() { return Double.ln2(Double.clone(this)); }
+  sinh() { return Double.sinh2(Double.clone(this)); }
+  cosh() { return Double.cosh2(Double.clone(this)); }
   eq(other) {
-    if (other instanceof Double) return Double.eq22(new Double(this), other);
-    else if (typeof other == 'number') return Double.eq21(new Double(this), other);
+    if (other instanceof Double) return Double.eq22(Double.clone(this), other);
+    else if (typeof other == 'number') return Double.eq21(Double.clone(this), other);
   }
   ne(other) {
-    if (other instanceof Double) return Double.ne22(new Double(this), other);
-    else if (typeof other == 'number') return Double.ne21(new Double(this), other);
+    if (other instanceof Double) return Double.ne22(Double.clone(this), other);
+    else if (typeof other == 'number') return Double.ne21(Double.clone(this), other);
   }
   gt(other) {
-    if (other instanceof Double) return Double.gt22(new Double(this), other);
-    else if (typeof other == 'number') return Double.gt21(new Double(this), other);
+    if (other instanceof Double) return Double.gt22(Double.clone(this), other);
+    else if (typeof other == 'number') return Double.gt21(Double.clone(this), other);
   }
   lt(other) {
-    if (other instanceof Double) return Double.lt22(new Double(this), other);
-    else if (typeof other == 'number') return Double.lt21(new Double(this), other);
+    if (other instanceof Double) return Double.lt22(Double.clone(this), other);
+    else if (typeof other == 'number') return Double.lt21(Double.clone(this), other);
   }
   ge(other) {
-    if (other instanceof Double) return Double.ge22(new Double(this), other);
-    else if (typeof other == 'number') return Double.ge21(new Double(this), other);
+    if (other instanceof Double) return Double.ge22(Double.clone(this), other);
+    else if (typeof other == 'number') return Double.ge21(Double.clone(this), other);
   }
   le(other) {
-    if (other instanceof Double) return Double.le22(new Double(this), other);
-    else if (typeof other == 'number') return Double.le21(new Double(this), other);
+    if (other instanceof Double) return Double.le22(Double.clone(this), other);
+    else if (typeof other == 'number') return Double.le21(Double.clone(this), other);
   }
 }

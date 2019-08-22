@@ -13,7 +13,7 @@ Floating point expansions with 31 accurate decimal digits, also known as double-
 Number stored as unevaluated sum of two javascript float numbers and uses error-free arithmetic algorithms from references below. This brings accuracy and significant increase in performance in comparison to digit-wise approach, because this float arithmetic is implemented in hardware. Note that there are no theoretical limitations to javascript language since ECMAScript version 1 uses 64 bit IEEE 754 with round-to-nearest after each operations.
 
 ### Benchmark
-![double.js](https://i89.fastpic.ru/big/2019/0809/76/da3694419b1a2e280186b26c06715876.png) 
+![double.js](https://habrastorage.org/webt/te/72/ry/te72ryvkkohfy-nnyeueikgtn8q.png) 
 
 You can check calculation [time](https://jsperf.com/double-js) and [quality](https://munrocket.github.io/double.js/) of different libraries in your browser.
 
