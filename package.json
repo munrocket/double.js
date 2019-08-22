@@ -8,6 +8,7 @@
   "scripts": {
     "build": "rollup -c",
     "watch": "rollup -c -w",
+    "serve": "http-server -p 1234 docs",
     "ci": "npm run build && npm run coverage",
     "test": "node ./test/test.js",
     "coverage": "istanbul cover ./test/test.js --report lcovonly -- -R spec",

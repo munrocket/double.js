@@ -17,8 +17,26 @@ function withFloat(buffer, target, i, j) {
   }
   colorizer(buffer, iteration - 1)
 }
+function withDoubleJs_PrevVer(buffer, target, i, j) {
+  let D = D0;
+  let iteration = 0;
+  let x = D.Zero, y = D.Zero;
+  let xx = D.Zero, xy = D.Zero, yy = D.Zero;
+  let tx = new D(target.x), ty = new D(target.y);
+  let tdx = new D(target.dx), tdy = new D(target.dy);
+  let cx = tx.sub(tdx).add(tdx.mul(2 * i).div(buffer.width));
+  let cy = ty.add(tdy).sub(tdy.mul(2 * j).div(buffer.height));
+  while (iteration++ < maxIteration && xx.add(yy).lt(4)) {
+    x = xx.sub(yy).add(cx);
+    y = xy.add(xy).add(cy);
+    xx = x.mul(x);
+    yy = y.mul(y);
+    xy = x.mul(y);
+  }
+  colorizer(buffer, iteration - 1);
+}
 function withDoubleJs_Static(buffer, target, i, j) {
-  let D = Double;
+  let D = D0;
   let iteration = 0;
   let x = D.Zero, y = D.Zero;
   let xx = D.Zero, xy = D.Zero, yy = D.Zero;
@@ -181,27 +199,52 @@ window.onload = function() {
   Decimal.set({ precision: 31 });
   BigNumber.set({ DECIMAL_PLACES: 31 });
 
-  //barChart
-  maxIteration = 8000;
-  let target = { x: -1.7490863748149414, y: -1e-25, dx: 3e-15, dy: 2e-15};
-  let start;
-  let calculators = [withFloat, withDoubleJs_Static, withDoubleJs, withBigNumberJs, withDecimalJs, withBigJs, withBigFloat32 ]; //withBigFloat53
-  for (let i = 0; i < 3; i++) {
-    calculators.forEach(function(calculator) {
-      start = (typeof performance != 'undefined') ? performance.now() : Date.now(); draw(calculator, target);
-      calculator.benchmark = (performance) ? performance.now() : Date.now() - start;
-    })
-  }
-  document.getElementsByTagName('p')[0].style.display = 'block';
-  new Chart(document.getElementById('barChart').getContext('2d'), {
-    type: 'horizontalBar',
-    data: { labels: calculators.map(x => x.name.slice(4)), datasets: [{ borderWidth: 1, data: calculators.map(x => x.benchmark) }]},
-    options: { responsive: false, legend: false, title: { display: true, text: 'Mandelbrot benchmark' } }
-  });
-
   //SplitTest
-  setTimeout(function() {
-    maxIteration = 1000; target.dx = 3e-15; target.dy = 2e-15;
-    drawSplitTest(withDoubleJs, withFloat, target);
-  }, 100);
+  let target = { x: -1.7490863748149414, y: -1e-25, dx: 3e-15, dy: 2e-15};
+  maxIteration = 1000;
+  drawSplitTest(withDoubleJs, withFloat, target);
+
+  let popups = document.getElementsByClassName('bench-popup');
+
+  //benchmark
+  let now = () => (typeof performance != 'undefined') ? performance.now() : Date.now();
+  target.dx = 3e-16;
+  target.dy = 2e-16;
+  let calculators = [withDoubleJs_PrevVer, withDoubleJs_Static, withDoubleJs, withBigNumberJs, withDecimalJs, withBigJs, withBigFloat32 ]; //withBigFloat53
+  calculators.forEach((calculator) => setTimeout(() => {
+    popups[0].style.display = 'block';
+    popups[1].style.display = 'block';
+
+    let start = now();
+    let end = start;
+    let counter = 0;
+    while (end < start + 1500) {
+      counter++;
+      draw(calculator, target);
+      end = now();
+    };
+    calculator.benchmark = counter / (end - start);
+
+
+    //barChart
+    new Chart(document.getElementById('barChart').getContext('2d'), {
+      type: 'horizontalBar',
+      data: { labels: calculators.map(x => x.name.slice(4)), datasets: [{ borderWidth: 1, data: calculators.map(x => x.benchmark) }]},
+      options: { responsive: false, legend: false, title: {
+        display: true, text: 'Mandelbrot benchmark (bigger is better)',
+        fontFamily: "Sans", fontColor: "#000", fontSize: 16, fontStyle: 'normal' }
+      }
+    });
+  }, 100));
+  setTimeout(() => {
+    popups[2].style.display = 'block';
+    new Chart(document.getElementById('barChart').getContext('2d'), {
+      type: 'horizontalBar',
+      data: { labels: calculators.map(x => x.name.slice(4)), datasets: [{ borderWidth: 1, data: calculators.map(x => x.benchmark) }]},
+      options: { responsive: false, legend: false, title: {
+        display: true, text: 'Mandelbrot benchmark (bigger is better)',
+        fontFamily: "Sans", fontColor: "#000", fontSize: 16, fontStyle: 'normal' }
+      }
+    });
+  }, 7000);
 }
