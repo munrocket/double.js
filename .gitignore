@@ -1,8 +1,3 @@
-#common
 node_modules
 npm-debug.log
 coverage
-
-#particular case
-wiki
-.eslintrc

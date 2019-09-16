@@ -1,5 +1,6 @@
 {
-  "extends": [
-    "config:base"
-  ]
+  "automerge": true,
+  "automergeType": "branch",
+  "bumpVersion": "patch",
+  "schedule": ["on sunday"]
 }

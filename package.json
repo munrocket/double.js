@@ -1,6 +1,6 @@
 {
   "name": "double.js",
-  "version": "0.1.5",
+  "version": "0.2.1",
   "description": "Floating point expansions with 32 accurate decimal digits, also known as double-double arithmetic.",
   "main": "dist/double.cjs.js",
   "types": "dist/double.d.ts",
@@ -13,7 +13,7 @@
     "test": "node ./test/test.js",
     "coverage": "istanbul cover ./test/test.js --report lcovonly -- -R spec",
     "deploy": "npm version patch && git push --tags origin master",
-    "paranoia": "node ./test/paranoia.js"
+    "float-paranoia": "node ./test/paranoia.js"
   },
   "eslintIgnore": [
     "dist",
@@ -34,12 +34,12 @@
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
-    "@babel/core": "7.5.5",
-    "@babel/preset-env": "7.5.5",
+    "@babel/core": "7.6.0",
+    "@babel/preset-env": "7.6.0",
     "codecov": "3.5.0",
     "istanbul": "0.4.5",
     "lodash": "4.17.15",
-    "rollup": "1.20.1",
+    "rollup": "1.21.4",
     "rollup-plugin-babel": "4.3.3",
     "tap-spec": "5.0.0",
     "tape": "4.11.0"
