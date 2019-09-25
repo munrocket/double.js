@@ -1,11 +1,7 @@
 # double.js
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](https://egghead.io/courses/how-to-contribute-to-an-open-source-project-on-github) 
-![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg)
+[![bundlephobia](https://badgen.net/bundlephobia/min/double.js)](https://bundlephobia.com/result?p=double.js)
 [![Build Status](https://travis-ci.org/munrocket/double.js.svg?branch=master)](https://travis-ci.org/munrocket/double.js)
 [![Codecov](https://img.shields.io/codecov/c/github/munrocket/double.js.svg)](https://codecov.io/gh/munrocket/double.js)
-[![install size](https://packagephobia.now.sh/badge?p=double.js)](https://packagephobia.now.sh/result?p=double.js)
-[![dependencies Status](https://david-dm.org/munrocket/double.js/status.svg)](https://david-dm.org/munrocket/double.js)
-
 
 Floating point expansions with 31 accurate decimal digits, also known as double-double arithmetic. This library can be useful for fast calculation with extended precision. For example in computational geometry and numerically unstable algorithms such as performing triangulation, polygon clipping, inverting matrix and finding differentials.
 

@@ -1,6 +1,6 @@
 {
   "name": "double.js",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Floating point expansions with 32 accurate decimal digits, also known as double-double arithmetic.",
   "main": "dist/double.cjs.js",
   "types": "dist/double.d.ts",
@@ -38,7 +38,6 @@
     "@babel/preset-env": "7.6.0",
     "codecov": "3.5.0",
     "istanbul": "0.4.5",
-    "lodash": "4.17.15",
     "rollup": "1.21.4",
     "rollup-plugin-babel": "4.3.3",
     "tap-spec": "5.0.0",

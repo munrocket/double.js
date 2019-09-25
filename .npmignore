@@ -1,0 +1,10 @@
+coverage
+docs
+node_modules
+test
+.babelrc
+.gitignore
+.renovaterc
+.travis.yml
+LICENSE
+package-lock.json
