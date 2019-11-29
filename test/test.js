@@ -1,6 +1,6 @@
 var tape = require('tape');
 var tapSpec = require('tap-spec');
-var D = require('../dist/double.cjs.js');
+var D = require('../dist/double.js');
 tape.createStream().pipe(tapSpec()).pipe(process.stdout);
 
 var eps1 = 1e-15;
@@ -26,10 +26,10 @@ tape('constructor test', function (t) {
 });
 
 tape('classic test', function (t) {
-  expected = 0.2;
-  actual = new D('0.3').sub(new D('0.1')).toNumber();
-  diff = Math.abs(expected - actual);
-  t.ok(diff < eps2, '0.3-0.1 = 0.2 (diff=' + diff + ')');
+  expected = new D('0.2');
+  actual = new D('0.3').sub(new D('0.1'));
+  diff = expected.sub(actual).abs().toNumber();
+  t.ok(diff < eps2, '0.3-0.1 = 0.2 (result = ' + actual.toNumber() +', diff=' + diff + ')');
   t.end();
 });
 
@@ -62,26 +62,30 @@ tape('unary operators with double', function (t) {
 });
 
 tape('double-single operations', function (t) {
-  expected = D.Log2;
-  actual = D.Log2.add(D.E.hi).sub(D.E.hi);
-  diff = expected.sub(actual).abs().toNumber();
-  t.ok(diff < eps2, 'additive inverse (diff=' + diff + ')');
   expected = D.Pi;
-  actual = D.Pi.add(1000).add(-1000);
+  actual = D.Pi.add(D.E.hi).add(-D.E.hi);
   diff = expected.sub(actual).abs().toNumber();
   t.ok(diff < eps2, 'add21 with inverted (diff=' + diff + ')');
   expected = D.Pi;
   actual = D.Pi.sub(1000).sub(-1000);
   diff = expected.sub(actual).abs().toNumber();
   t.ok(diff < eps2, 'sub21 with inverted (diff=' + diff + ')');
-  expected = D.E;
-  actual = D.E.mul(D.Pi.hi).div(D.Pi.hi);
+  expected = D.Pi;
+  actual = D.mul22(D.mul21(D.Pi, 10), new D('0.1'));
   diff = expected.sub(actual).abs().toNumber();
-  t.ok(diff < eps2, 'multiplicative inverse (diff=' + diff + ')');
+  t.ok(diff < eps2, 'mul21 with inverted (diff=' + diff + ')');
+  expected = D.Pi;
+  actual = D.div22(D.div21(D.Pi, 10), new D('0.1'));
+  diff = expected.sub(actual).abs().toNumber();
+  t.ok(diff < eps2, 'div21 with inverted (diff=' + diff + ')');
+  expected = D.E;
+  actual = D.E.mul(1000).div(1000);
+  diff = expected.sub(actual).abs().toNumber();
+  t.ok(diff < eps2, 'mul21/div21 inverse (diff=' + diff + ')');
   expected = 1e20; expected2 = 1e-20;
-  actual = D.pow21n(new D([10, 0]), 20).toNumber(); actual2 = D.pow21n(new D([10, 0]), -20).toNumber();
+  actual = new D([10, 0]).pown(20).toNumber(); actual2 = new D([10, 0]).pown(-20).toNumber();
   diff = abs(actual - expected); diff2 = abs(actual2 - expected2);
-  t.ok(diff < eps1 && diff2 < eps1,'pow21n (diff=' + diff + ', diff2=' + diff2 + ')');
+  t.ok(diff < eps2 && diff2 < eps2,'pow2n (diff=' + diff + ', diff2=' + diff2 + ')');
   t.end();
 });
 
@@ -95,34 +99,13 @@ tape('double-double operations', function (t) {
   diff = expected.sub(actual).abs().toNumber();
   t.ok(diff < eps2, 'multiplicative inverse (diff=' + diff + ')');
   expected = D.Pi;
-  actual = D.Pi.pow(D.E).pow(D.inv2(D.E));
+  actual = D.Pi.pow(D.E).pow(D.E.inv());
   diff = expected.sub(actual).abs().toNumber();
   t.ok(diff < eps2, 'pow22 (diff=' + diff + ')');
   t.end();
 });
 
-tape('golden ratio equation test', function(t) {
-  var phi = new D([5, 0]).sqrt().add(1).div(2);
-  expected = new D(phi).add(1);
-  actual = new D(phi).sqr();
-  diff = expected.sub(actual).abs().toNumber();
-  t.ok(diff < eps2, 'ϕ² = ϕ + 1 (diff=' + diff + ')');
-  expected = new D(phi).inv();
-  actual = phi.sub(1);
-  diff = expected.sub(actual).abs().toNumber();
-  t.ok(diff < eps2, '1/ϕ = ϕ - 1 (diff=' + diff + ')');
-  t.end();
-});
-
-tape('toExponential', function(t) {
-  expected = D.Pi;
-  actual = new D(D.Pi.toExponential());
-  diff = expected.sub(actual).abs().toNumber();
-  t.ok(diff < eps1, 'double -> string -> double (diff=' + diff + ')');
-  t.end();
-});
-
-tape('fromNumber', function (t) {
+tape('fromString', function (t) {
   expected = 123456789;
   actual = new D('123456789Q').toNumber();
   diff = abs(expected - actual);
@@ -134,15 +117,15 @@ tape('fromNumber', function (t) {
   expected = 654321.789;
   actual = new D(' 654321.789').toNumber();
   diff = abs(expected - actual);
-  t.ok(diff < eps2, 'decimal numbers (diff=' + diff + ')');
+  t.ok(diff < eps2, 'fractional (diff=' + diff + ')');
   expected = 120;
   actual = new D('12e1').toNumber();
   diff = abs(expected - actual);
-  t.ok(diff < eps2, 'Exponent format (diff=' + diff + ')');
+  t.ok(diff < eps2, 'exponent format (diff=' + diff + ')');
   expected = 1.2;
   actual = new D('12e-1').toNumber();
   diff = abs(expected - actual);
-  t.ok(diff < eps1, 'Negative exponent (diff=' + diff + ')');
+  t.ok(diff < eps1, 'negative exponent (diff=' + diff + ')');
   expected = -0.123;
   actual = new D('-.123R').toNumber();
   diff = abs(expected - actual);
@@ -166,11 +149,11 @@ tape('fromNumber', function (t) {
   expected = 9e300;
   actual = new D('9e300');
   diff = abs(expected - actual.toNumber());
-  t.ok(diff < Infinity, 'Large exponent (diff=' + diff + ', actual=[' + actual.hi + ',' + actual.lo + '])');
+  t.ok(diff < Infinity, 'large exponent (diff=' + diff + ')');
   expected = 0;
   actual = new D('9e-322');
   diff = abs(expected - actual.toNumber());
-  t.ok(diff < eps2, 'Tiny exponent (diff=' + diff + ', actual=[' + actual.hi + ',' + actual.lo + '])');
+  t.ok(diff < eps2, 'Tiny exponent (diff=' + diff + ')');
   actual = new D('1e500').toNumber();
   actual2 = new D('-1e500').toNumber();
   t.ok(actual === Infinity && actual2 === -Infinity, 'Giant exponent');
@@ -186,16 +169,43 @@ tape('fromNumber', function (t) {
   actual2 = new D('SDLFK').toNumber();
   actual3 = new D('  ').toNumber();
   t.ok(isNaN(actual) && isNaN(actual2) && isNaN(actual3), 'NaN number');
-  actual = new D('3.141592653589793238462643383279502884197169399375105820974');
-  expected = D.Pi;
-  diff = expected.sub(actual).abs().toNumber();
-  t.ok(diff < eps1, 'parse Pi (diff=' + diff + ')');
-  actual = new D('2.718281828459045235360287471352662497757247093699959574966');
-  expected = D.E;
-  diff = expected.sub(actual).abs().toNumber();
-  t.ok(diff < eps1, 'parse E (diff=' + diff + ')');
   t.end();
 });
+
+tape('toExponential', function(t) {
+  expected = new D('3.1415926535897932384626433832795');
+  actual = new D(new D('3.1415926535897932384626433832795').toExponential());
+  diff = expected.sub(actual).abs().toNumber();
+  t.ok(diff < eps2, 'double -> string -> double (diff=' + diff + ')');
+  t.end();
+});
+
+tape('constants', function(t) {
+  expected = D.Pi;
+  actual = new D('3.1415926535897932384626433832795');
+  diff = expected.sub(actual).abs().toNumber();
+  t.ok(diff < eps2, 'pi (diff=' + diff + ')');
+  expected = D.X2Pi;
+  actual = new D('6.2831853071795864769252867665590');
+  diff = expected.sub(actual).abs().toNumber();
+  t.ok(diff < eps2, 'x2pi (diff=' + diff + ')');
+  expected = D.E;
+  actual = new D('2.7182818284590452353602874713526');
+  diff = expected.sub(actual).abs().toNumber();
+  t.ok(diff < eps2, 'e (diff=' + diff + ')');
+  expected = D.Log2;
+  actual = new D('0.69314718055994530941723212145817');
+  diff = expected.sub(actual).abs().toNumber();
+  t.ok(diff < eps2, 'ln(2) (diff=' + diff + ')');
+  expected = D.Phi;
+  actual = new D('1.6180339887498948482045868343656');
+  diff = expected.sub(actual).abs().toNumber();
+  t.ok(diff < eps2, 'phi (diff=' + diff + ')');
+  expected = new D('3.1415926535897932384626433832795');
+  actual = new D('4.7123889803846898576939650749192').mul(new D('0.66666666666666666666666666666666'));
+  diff = expected.sub(actual).abs().toNumber();
+  t.end();
+})
 
 tape('comparisons', function(t) {
   t.ok(D.Pi.eq(D.Pi.mul(D.One)) && D.Pi.ne(D.Log2) && D.Zero.eq(0) && D.One.ne(2), 'eq, ne (true)');
@@ -207,13 +217,24 @@ tape('comparisons', function(t) {
   t.end();
 });
 
-// tape('extendend tests', function (t) {
-//   expected = D.Pi;
-//   actual = D.mul21(D.mul21(D.Pi, 0.1), 10);
-//   diff = expected.sub(actual).abs().toNumber();
-//   t.ok(diff < eps2, 'mul21 with inverted (diff=' + diff + ')');
-//   actual = D.div22(D.div22(D.Pi, new D('10')), new D('0.1'));
-//   diff = expected.sub(actual).abs().toNumber();
-//   t.ok(diff < eps2, 'div21 with inverted (diff=' + diff + ')');
-//   t.end();
-// });
+tape('extended tests', function(t) {
+  var phi = new D([5, 0]).sqrt().add(1).div(2);
+  expected = new D(phi).add(1);
+  actual = new D(phi).sqr();
+  diff = expected.sub(actual).abs().toNumber();
+  t.ok(diff < eps2, 'ϕ² = ϕ + 1 (diff=' + diff + ')');
+  expected = new D(phi).inv();
+  actual = phi.sub(1);
+  diff = expected.sub(actual).abs().toNumber();
+  t.ok(diff < eps2, '1/ϕ = ϕ - 1 (diff=' + diff + ')');
+  t.ok(diff < eps2, 'parsed mult (3*pi/2) * (2/3) (diff=' + diff + ')');
+  expected = new D('5.8598744820488384738229308546321');
+  actual = new D('3.1415926535897932384626433832795').add(new D('2.7182818284590452353602874713526'));
+  diff = expected.sub(actual).abs().toNumber();
+  t.ok(diff < eps2, 'parsed add (e + pi) (diff=' + diff + ')');
+  expected = new D('1.7724538509055160272981674833411');
+  actual = new D('3.1415926535897932384626433832795').sqrt();
+  diff = expected.sub(actual).abs().toNumber();
+  t.ok(diff < eps2, 'parsed sqt (sqrt(pi)) (diff=' + diff + ')');
+  t.end();
+})

@@ -27,7 +27,7 @@ export default class Double {
     static mul21(X: Double, a: number): Double;
     static div21(X: Double, a: number): Double;
     static mul21pow2(X: Double, a: number): Double;
-    static pow21n(X: Double, exp: number): Double;
+    static pow2n(X: Double, exp: number): Double;
     static eq22(X: Double, Y: Double): boolean;
     static ne22(X: Double, Y: Double): boolean;
     static gt22(X: Double, Y: Double): boolean;
@@ -54,6 +54,7 @@ export default class Double {
     mul(other: any): Double;
     div(other: any): Double;
     pow(exp: any): Double;
+    pown(exp: number): Double;
     abs(): Double;
     neg(): Double;
     inv(): Double;

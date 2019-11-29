@@ -1,14 +1,13 @@
 {
   "name": "double.js",
-  "version": "0.2.2",
-  "description": "Floating point expansions with 32 accurate decimal digits, also known as double-double arithmetic.",
-  "main": "dist/double.cjs.js",
+  "version": "0.3.0",
+  "description": "Floating point expansions with 31 accurate decimal digits (100+ bits), also known as double-double arithmetic",
+  "main": "dist/double.js",
   "types": "dist/double.d.ts",
-  "browser": "dist/double.js",
   "scripts": {
     "build": "rollup -c",
     "watch": "rollup -c -w",
-    "serve": "http-server -p 1234 docs",
+    "serve": "http-server -p 1234 -c-1",
     "ci": "npm run build && npm run coverage",
     "test": "node ./test/test.js",
     "coverage": "istanbul cover ./test/test.js --report lcovonly -- -R spec",
@@ -20,25 +19,26 @@
     "test"
   ],
   "keywords": [
-    "double",
+    "float128",
     "quadruple",
     "double-double",
     "arbitrary-precision",
-    "bigfloat",
     "gmp",
     "mpfr",
-    "floating-point",
-    "float128"
+    "bigfloat",
+    "decimal.js",
+    "big.js",
+    "bignumber.js"
   ],
   "author": "munrocket",
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
-    "@babel/core": "7.6.0",
-    "@babel/preset-env": "7.6.0",
-    "codecov": "3.5.0",
+    "@babel/core": "7.7.4",
+    "@babel/preset-env": "7.7.4",
+    "codecov": "3.6.1",
     "istanbul": "0.4.5",
-    "rollup": "1.21.4",
+    "rollup": "1.27.4",
     "rollup-plugin-babel": "4.3.3",
     "tap-spec": "5.0.0",
     "tape": "4.11.0"

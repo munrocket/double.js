@@ -1,41 +1,40 @@
-var Double = (function () {
-  'use strict';
+(function (global, factory) {
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+  typeof define === 'function' && define.amd ? define(factory) :
+  (global = global || self, global.Double = factory());
+}(this, function () { 'use strict';
 
   /* Basic error-free algorithms */
 
-  const splitter = 134217729; //2^27+1 for 64-bit float
+  const splitter = 134217729; // Veltkamp’s splitter for 64-bit float (equal to 2^27+1)
 
+  // Knuth's and Møller's summation (algorithm 4.4 from [1])
   let twoSum = function(a, b) {
     let s = a + b;
-    let a1 = s - b;
-    let db = a1 - s + b;
-    return { hi: s, lo: a - a1 + db };
+    let a1  = s - b;
+    return { hi: s, lo: (a - a1) + (b - (s - a1)) };
   };
 
+  // Dekker’s multiplication (algorithm 4.7 from [1])
   let twoMult = function(a, b) {
-    let p = a * splitter;
-    let ah = a - p + p, al = a - ah;
-    p = b * splitter;
-    let bh = b - p + p, bl = b - bh;
-    p = ah * bh;
-    let q = ah * bl + al * bh, s = p + q;
-    return { hi: s, lo: p - s + q + al * bl };
+    let t = splitter * a;
+    let ah = t + (a - t), al = a - ah;
+    t = splitter * b;
+    let bh = t + (b - t), bl = b - bh;
+    t = a * b;
+    return { hi: t, lo: -t + ah * bh + ah * bl + al * bh + al * bl }
   };
-
   let oneSqr = function(a) {
-    let p = a * splitter;
-    let ah = a - p + p, al = a - ah;
-    p = ah * ah;
-    let q = ah * al; q += q;
-    let s = p + q;
-    return { hi: s, lo: p - s + q + al * al };
+    let t = splitter * a;
+    let ah = t + (a - t), al = a - ah;
+    t = a * a;
+    let hl = al * ah;
+    return { hi: t, lo: -t + ah * ah + hl + hl + al * al }
   };
 
   /* Main class for double-length float number */
 
   class Double {
-
-    /* Constructors */
 
     constructor(val) {
       if (val instanceof Double) {
@@ -58,12 +57,13 @@ var Double = (function () {
         this.lo = val.lo;
       }
     }
+
+    /* Constructors blocks */
       
     static clone(X) { let d = new Double(); d.hi = X.hi; d.lo = X.lo; return d; }
     static fromSum11(a, b) { return new Double(twoSum(a, b)); }
     static fromMul11(a, b) { return new Double(twoMult(a, b)); }
     static fromSqr1(a) { return new Double(oneSqr(a)); }
-
     static fromString(string) {
       let isPositive = (/^\s*-/.exec(string) === null);
       let str = string.replace(/^\s*[+-]?/, '');
@@ -79,10 +79,10 @@ var Double = (function () {
       if (exp + dotId - 1 > 300) return isPositive ? Double.Infinity : Double.neg2(Double.Infinity);
 
       let nextDigs, shift, result = Double.Zero;
-      for (let i = 0; i < digits.length; i += 16) {
-        nextDigs = digits.slice(i, i + 16);
-        shift = Math.pow(10, exp + dotId - i - nextDigs.length);
-        Double.add22(result, Double.fromMul11(shift, parseInt(nextDigs)));
+      for (let i = 0; i < digits.length; i += 15) {
+        nextDigs = digits.slice(i, i + 15);
+        shift = Double.pow2n(new Double(10), exp + dotId - i - nextDigs.length);
+        Double.add22(result, Double.mul21(shift, parseInt(nextDigs)));
       }
       return (isPositive) ? result : Double.neg2(result);
     }
@@ -107,8 +107,8 @@ var Double = (function () {
         isPositive = (str[0][0] != '-');
         nextDigs = str[0].replace(/^0\.|\./, '').slice(0, 15);
         if (!isPositive) nextDigs = nextDigs.slice(1);
-        shift = Math.floor(parseInt(str[1]) - 14);
-        Double.sub22(this, Double.fromMul11(parseInt(nextDigs) * ((isPositive) ? 1 : -1), Math.pow(10, shift)));
+        shift = Double.pow2n(new Double(10), parseInt(str[1]) - 14);
+        Double.sub22(this, Double.mul21(shift, parseInt(nextDigs) * ((isPositive) ? 1 : -1)));
         nextDigs = nextDigs.slice(0, precision - i);
         result += (i != 0) ? nextDigs : nextDigs.slice(0, 1) + '.' + nextDigs.slice(1);
       }
@@ -225,7 +225,7 @@ var Double = (function () {
       if (Double.le21(X, 0)) return Double.NaN;
       if (Double.eq21(X, 1)) return Double.Zero;
       let Z = new Double(Math.log(X.hi));
-      Double.sub21(Double.add22(Double.mul22(X, Double.exp2(Double.neg2(Double.clone(Z.clone)))), Z), 1);
+      Double.sub21(Double.add22(Double.mul22(X, Double.exp2(Double.neg2(Double.clone(Z)))), Z), 1);
       return X;
     }
 
@@ -284,7 +284,7 @@ var Double = (function () {
       return X;
     }
 
-    static pow21n(X, exp) {
+    static pow2n(X, exp) {
       if (exp === 0) return Double.One;
       if (exp == 1) return X;
       let isPositive = exp > 0;
@@ -314,15 +314,15 @@ var Double = (function () {
 
     /* Double constants */
 
-    static get One() { let d = new Double(); d.hi = 1; d.lo = 0; return d; }
-    static get Zero() { let d = new Double(); d.hi = 0; d.lo = 0; return d; }
+    static get One() {  let d = new Double();     d.hi = 1; d.lo = 0; return d; }
+    static get Zero() { let d = new Double();     d.hi = 0; d.lo = 0; return d; }
     static get Infinity() { let d = new Double(); d.hi = Infinity; d.lo = Infinity; return d; }
-    static get NaN() { let d = new Double(); d.hi = NaN; d.lo = NaN; return d; }
-    static get Pi() { let d = new Double(); d.hi = 3.141592653589793116; d.lo =  1.224646799147353207e-16; return d; }
-    static get X2Pi() { let d = new Double(); d.hi = 6.283185307179586232; d.lo = 2.449293598294706414e-16; return d; }
-    static get E() { let d = new Double(); d.hi = 2.718281828459045; d.lo = 1.4456468917292502e-16; return d; }
-    static get Log2() { let d = new Double(); d.hi = 0.6931471805599453; d.lo = 2.3190468138462996e-17; return d; }
-    static get Phi() { let d = new Double(); d.hi = 1.618033988749895; d.lo = -5.4321152036825055e-17; return d; }
+    static get NaN() { let d = new Double();      d.hi = NaN; d.lo = NaN; return d; }
+    static get Pi() { let d = new Double();       d.hi = 3.141592653589793116; d.lo =  1.224646799147353207e-16; return d; }
+    static get X2Pi() { let d = new Double();     d.hi = 6.283185307179586232; d.lo = 2.449293598294706414e-16; return d; }
+    static get E() { let d = new Double();        d.hi = 2.718281828459045; d.lo = 1.4456468917292502e-16; return d; }
+    static get Log2() { let d = new Double();     d.hi = 0.6931471805599453; d.lo = 2.3190468138462996e-17; return d; }
+    static get Phi() { let d = new Double();      d.hi = 1.618033988749895; d.lo = -5.4321152036825055e-17; return d; }
     
     /* Repeating static methods to instance */
 
@@ -342,7 +342,8 @@ var Double = (function () {
       if (other instanceof Double) return Double.div22(Double.clone(this), other);
       else if (typeof other == 'number') return Double.div21(Double.clone(this), other);
     }
-    pow(exp) { return Double.pow22(Double.clone(this), exp)}
+    pow(exp) { return Double.pow22(Double.clone(this), exp); }
+    pown(exp) { return Double.pow2n(Double.clone(this), exp); }
     abs() { return Double.abs2(Double.clone(this)); }
     neg() { return Double.neg2(Double.clone(this)); }
     inv() { return Double.inv2(Double.clone(this)); }
@@ -380,4 +381,4 @@ var Double = (function () {
 
   return Double;
 
-}());
+}));

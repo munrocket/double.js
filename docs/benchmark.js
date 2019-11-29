@@ -2,7 +2,7 @@ let maxIteration, pixelId;
 
 /* different calculators */
 
-function withFloat(buffer, target, i, j) {
+function withNumber(buffer, target, i, j) {
   let iteration = 0;
   let x = 0, y = 0;
   let xx = 0, xy = 0, yy = 0;
@@ -17,8 +17,8 @@ function withFloat(buffer, target, i, j) {
   }
   colorizer(buffer, iteration - 1)
 }
-function withDoubleJs_PrevVer(buffer, target, i, j) {
-  let D = D0;
+function withDoubleJs_FirstVer(buffer, target, i, j) {
+  let D = D01;
   let iteration = 0;
   let x = D.Zero, y = D.Zero;
   let xx = D.Zero, xy = D.Zero, yy = D.Zero;
@@ -36,7 +36,7 @@ function withDoubleJs_PrevVer(buffer, target, i, j) {
   colorizer(buffer, iteration - 1);
 }
 function withDoubleJs_Static(buffer, target, i, j) {
-  let D = D0;
+  let D = Double;
   let iteration = 0;
   let x = D.Zero, y = D.Zero;
   let xx = D.Zero, xy = D.Zero, yy = D.Zero;
@@ -202,7 +202,7 @@ window.onload = function() {
   //SplitTest
   let target = { x: -1.7490863748149414, y: -1e-25, dx: 3e-15, dy: 2e-15};
   maxIteration = 1000;
-  drawSplitTest(withDoubleJs, withFloat, target);
+  drawSplitTest(withDoubleJs, withNumber, target);
 
   let popups = document.getElementsByClassName('bench-popup');
 
@@ -210,7 +210,7 @@ window.onload = function() {
   let now = () => (typeof performance != 'undefined') ? performance.now() : Date.now();
   target.dx = 3e-16;
   target.dy = 2e-16;
-  let calculators = [withDoubleJs_PrevVer, withDoubleJs_Static, withDoubleJs, withBigNumberJs, withDecimalJs, withBigJs, withBigFloat32 ]; //withBigFloat53
+  let calculators = [withDoubleJs_FirstVer, withDoubleJs_Static, withDoubleJs, withBigNumberJs, withDecimalJs, withBigJs, withBigFloat32 ]; //withBigFloat53
   calculators.forEach((calculator) => setTimeout(() => {
     popups[0].style.display = 'block';
     popups[1].style.display = 'block';

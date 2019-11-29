@@ -15,8 +15,8 @@
     <canvas id="barChart" width="400" height="200" style="position: absolute; padding-left: 420px"></canvas>
     <div class="bench-popup" style="display: none; position: absolute; padding-left: 830px; padding-top: 12px;">debug</div>
     <div class="bench-popup" style="display: none; position: absolute; padding-left: 840px; padding-top: 10px;">
-      <div style="padding-top: 4px;"><canvas id="withFloat" width="15" height="10"></canvas></div>
-      <div style="padding-top: 4px;"><canvas id="withDoubleJs_PrevVer" width="15" height="10"></canvas></div>
+      <div style="padding-top: 4px;"><canvas id="withNumber" width="15" height="10"></canvas></div>
+      <div style="padding-top: 4px;"><canvas id="withDoubleJs_FirstVer" width="15" height="10"></canvas></div>
       <div style="padding-top: 4px;"><canvas id="withDoubleJs_Static" width="15" height="10"></canvas></div>
       <div style="padding-top: 4px;"><canvas id="withDoubleJs" width="15" height="10"></canvas></div>
       <div style="padding-top: 4px;"><canvas id="withDecimalJs" width="15" height="10"></canvas></div>
@@ -34,8 +34,10 @@
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
 
-<script src="https://unpkg.com/double.js@0.1.0/dist/double.js"></script>
-<script>D0 = Double;</script>
+<!-- test v0.1 version -->
+<script src="https://unpkg.com/double.js@0.1.0"></script>
+<script>D01 = Double;</script>
+
 <script src="https://unpkg.com/double.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/decimal.js/10.0.1/decimal.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bignumber.js/7.2.1/bignumber.min.js"></script>
