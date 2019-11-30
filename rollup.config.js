@@ -20,17 +20,17 @@ const tsconfig = {
 }
 
 export default [
-	{
-		input: 'src/double.ts',
-		output: [
-			{ file: pkg.main, name: 'Double', format: 'umd' },
-			{ file: pkg.module, name: 'Double', format: 'esm' },
-		],
-		plugins: [ typescript({ tsconfigOverride: tsconfig }) ]
-	},
-	{
-		input: pkg.module,
-		output: { file: './dist/double.es5.js', name: 'Double', format: 'iife' },
+  {
+    input: 'src/double.ts',
+    output: [
+      { file: pkg.main, name: 'Double', format: 'umd' },
+      { file: pkg.module, name: 'Double', format: 'esm' },
+    ],
+    plugins: [ typescript({ tsconfigOverride: tsconfig }) ]
+  },
+  {
+    input: pkg.module,
+    output: { file: './dist/double.es5.js', name: 'Double', format: 'iife' },
     plugins: [ babel({ exclude: 'node_modules/**' }) ]
-	}
+  }
 ];

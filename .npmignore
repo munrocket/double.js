@@ -2,8 +2,9 @@ coverage
 docs
 node_modules
 test
-.babelrc
 .gitignore
+.npmignore
+.babelrc
 .renovaterc
 .travis.yml
 LICENSE

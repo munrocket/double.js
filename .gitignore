@@ -1,7 +1,5 @@
+.nyc_output
+coverage
 node_modules
 npm-debug.log
-coverage
-docs
-.gitignore
-.renovaterc
-.travis.yml
+index.html

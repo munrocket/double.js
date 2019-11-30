@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> 
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/qunit-theme-ninja@2.0.0/qunit.css"></link>
+  <title>Unit testing</title>
+</head>
+<body>
+
+  <h2>UNIT TESTING</h2>
+
+  <div class="star" style="position: fixed; bottom: 0; right: 0; transform: scale(0.8)">
+    <iframe src="https://ghbtns.com/github-btn.html?user=munrocket&repo=double.js&type=star&count=true&size=large" frameborder="0" scrolling="0" width="130px" height="30px"></iframe>
+  </div>
+
+  <div id="screen"></div>
+
+  <!-- <script src="https://cdn.jsdelivr.net/npm/dat.gui@0.7.6/build/dat.gui.min.js"></script> -->
+  <script>
+    const addSniffer = (spyTarget) => function() {
+      spyTarget.apply(window.console, arguments);
+      sniffer([...arguments]);
+    }
+    window.console.log = addSniffer(window.console.log);
+    window.console.error = addSniffer(window.console.error);
+    let screen = document.getElementById('screen');
+    function sniffer(string) {
+      let screen = document.getElementById("screen");
+      string.forEach(line => {
+        let div = document.createElement("div");
+        let text = document.createTextNode(line);
+        div.appendChild(text)
+        screen.appendChild(div);
+      });
+    }
+  </script>
+  <script type="module" src="./test.js"></script>
+</body>
+</html>

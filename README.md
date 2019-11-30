@@ -6,7 +6,7 @@
 Floating point expansions with 31 accurate decimal digits (100+ bits), also known as double-word arithmetic. This library can be useful for fast calculation with extended precision. For example in computational geometry and numerically unstable algorithms such as performing triangulation, polygon clipping, inverting matrix and finding differentials.
 
 ### Algorithm
-Number stored as unevaluated sum of two javascript float numbers and uses error-free arithmetic algorithms from references below. This brings accuracy and significant increase in performance in comparison to digit-wise approach, because this float arithmetic is implemented in hardware. Note that there are no theoretical limitations to javascript language since ECMAScript uses 64 bit IEEE 754 with round-to-nearest-even after each operation and without FMA.
+Number stored as unevaluated sum of two javascript float numbers and uses error-free arithmetic algorithms from references below. This brings accuracy and significant increase in performance in comparison to digit-wise approach, because this float arithmetic is implemented in hardware. Note that there are no theoretical limitations to javascript language since ECMAScript uses 64 bit IEEE 754 with round-to-nearest-even after each operation and without FMA instruction.
 
 ### Benchmark
 ![](https://habrastorage.org/webt/i0/jk/-h/i0jk-hl2r9tixahe906pl2wj0j0.png)

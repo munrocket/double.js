@@ -5,26 +5,29 @@
   "main": "dist/double.js",
   "types": "dist/double.d.ts",
   "module": "dist/double.esm.js",
+  "type": "module",
   "scripts": {
     "build": "rollup -c",
-    "watch": "rollup -c -w",
-    "serve": "http-server -p 1234 -c-1",
-    "ci": "npm run build && npm run coverage",
-    "test": "node ./test/test.js",
-    "coverage": "istanbul cover ./test/test.js --report lcovonly -- -R spec",
+    "dev": "concurrently \"rollup -c -w\" \"npm:serve\"",
+    "test": "node --experimental-modules --no-warnings ./test/puppeteer.js",
+    "ieee": "node ./test/float-paranoia.js",
+    "serve": "http-server -c-1 -p 1234",
+    "ci": "concurrently -k -s first \"npm:test\" \"npm:serve\"",
+    "cov": "nyc report --reporter=lcov",
     "deploy": "npm version minor && git push --tags origin master"
   },
   "devDependencies": {
     "@babel/core": "7.7.4",
     "@babel/preset-env": "7.7.4",
     "codecov": "3.6.1",
-    "istanbul": "0.4.5",
+    "nyc": "^14.1.1",
+    "puppeteer": "^2.0.0",
+    "puppeteer-to-istanbul": "^1.2.2",
     "rollup": "1.27.4",
     "rollup-plugin-babel": "4.3.3",
     "rollup-plugin-typescript2": "^0.25.2",
-    "tap-spec": "5.0.0",
-    "tape": "4.11.0",
-    "typescript": "^3.7.2"
+    "typescript": "^3.7.2",
+    "zora": "^3.1.5"
   },
   "eslintIgnore": [
     "dist",
@@ -48,5 +51,8 @@
     "big.js"
   ],
   "author": "munrocket",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "concurrently": "^5.0.0"
+  }
 }

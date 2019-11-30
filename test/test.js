@@ -1,39 +1,36 @@
-var tape = require('tape');
-var tapSpec = require('tap-spec');
-var D = require('../dist/double.js');
-tape.createStream().pipe(tapSpec()).pipe(process.stdout);
+import { test } from 'https://cdn.jsdelivr.net/npm/zora@3.0.3/dist/bundle/module.js';
+import Double from '../dist/double.esm.js';
 
-var eps1 = 1e-15;
-var eps2 = 1e-30;
-var abs = Math.abs;
-var diff, diff2, expected, expected2, actual, actual2, actual3;
+let D = Double;
+let eps1 = 1e-15;
+let eps2 = 1e-30;
+let abs = Math.abs;
+let diff, diff2, expected, expected2, actual, actual2, actual3;
 
-tape('constructor test', function (t) {
-  var d = new D(0.3);
+test('constructor test', t => {
+  let d = new D(0.3);
   t.ok(d instanceof D, 'constructed from number');
-  var d2 = new D('0.3');
+  let d2 = new D('0.3');
   t.ok(d2 instanceof D, 'constructed from string');
-  var d3 = new D({ hi: 0.3, lo: 0 });
+  let d3 = new D({ hi: 0.3, lo: 0 });
   t.ok(d3 instanceof D, 'constructed from object');
-  var d4 = new D([0.3, 0]);
+  let d4 = new D([0.3, 0]);
   t.ok(d4 instanceof D, 'constructed from array');
-  var d5 = new D(d);
+  let d5 = new D(d);
   t.deepEqual(d3, d, 'fromObject() equal to fromNumber()');
   t.deepEqual(d4, d, 'fromArray() equal to fromNumber()');
   t.deepEqual(d5, d, 'clone() equal to fromString()');
   t.ok(d.toNumber() == 0.3, 'toNumber() equal to number');
-  t.end();
 });
 
-tape('classic test', function (t) {
+test('classic test', t => {
   expected = new D('0.2');
   actual = new D('0.3').sub(new D('0.1'));
   diff = expected.sub(actual).abs().toNumber();
   t.ok(diff < eps2, '0.3-0.1 = 0.2 (result = ' + actual.toNumber() +', diff=' + diff + ')');
-  t.end();
 });
 
-tape('unary operators with double', function (t) {
+test('unary operators with double', t => {
   expected = D.One;
   actual = D.Log2.mul(D.Log2.inv());
   diff = expected.sub(actual).abs().toNumber();
@@ -58,10 +55,9 @@ tape('unary operators with double', function (t) {
   actual = D.Log2.cosh().sqr().sub(D.Log2.sinh().sqr());
   diff = expected.sub(actual).abs().toNumber();
   t.ok(diff < eps2,'cosh(x)² - sinh(x)² = 1 (diff=' + diff + ')');
-  t.end();
 });
 
-tape('double-single operations', function (t) {
+test('double-single operations', t => {
   expected = D.Pi;
   actual = D.Pi.add(D.E.hi).add(-D.E.hi);
   diff = expected.sub(actual).abs().toNumber();
@@ -86,10 +82,9 @@ tape('double-single operations', function (t) {
   actual = new D([10, 0]).pown(20).toNumber(); actual2 = new D([10, 0]).pown(-20).toNumber();
   diff = abs(actual - expected); diff2 = abs(actual2 - expected2);
   t.ok(diff < eps2 && diff2 < eps2,'pow2n (diff=' + diff + ', diff2=' + diff2 + ')');
-  t.end();
 });
 
-tape('double-double operations', function (t) {
+test('double-double operations', t => {
   expected = D.Log2;
   actual = D.Log2.add(D.E).sub(D.E);
   diff = expected.sub(actual).abs().toNumber();
@@ -102,10 +97,9 @@ tape('double-double operations', function (t) {
   actual = D.Pi.pow(D.E).pow(D.E.inv());
   diff = expected.sub(actual).abs().toNumber();
   t.ok(diff < eps2, 'pow22 (diff=' + diff + ')');
-  t.end();
 });
 
-tape('fromSum11 / fromMul11 / fromSqr1', function(t) {
+test('fromSum11 / fromMul11 / fromSqr1',t => {
   expected = new D(1024);
   actual = D.fromSum11(512, 512);
   diff = expected.sub(actual).abs().toNumber();
@@ -118,10 +112,9 @@ tape('fromSum11 / fromMul11 / fromSqr1', function(t) {
   actual = D.fromSqr1(32);
   diff = expected.sub(actual).abs().toNumber();
   t.ok(diff < eps2, 'fromSqr1 (diff=' + diff + ')');
-  t.end();
 });
 
-tape('fromString', function (t) {
+test('fromString', t => {
   expected = 123456789;
   actual = new D('123456789Q').toNumber();
   diff = abs(expected - actual);
@@ -185,18 +178,16 @@ tape('fromString', function (t) {
   actual2 = new D('SDLFK').toNumber();
   actual3 = new D('  ').toNumber();
   t.ok(isNaN(actual) && isNaN(actual2) && isNaN(actual3), 'NaN number');
-  t.end();
 });
 
-tape('toExponential', function(t) {
+test('toExponential',t => {
   expected = new D('3.1415926535897932384626433832795');
   actual = new D(new D('3.1415926535897932384626433832795').toExponential());
   diff = expected.sub(actual).abs().toNumber();
   t.ok(diff < eps2, 'double -> string -> double (diff=' + diff + ')');
-  t.end();
 });
 
-tape('constants', function(t) {
+test('constants',t => {
   expected = D.Pi;
   actual = new D('3.1415926535897932384626433832795');
   diff = expected.sub(actual).abs().toNumber();
@@ -220,21 +211,19 @@ tape('constants', function(t) {
   expected = new D('3.1415926535897932384626433832795');
   actual = new D('4.7123889803846898576939650749192').mul(new D('0.66666666666666666666666666666666'));
   diff = expected.sub(actual).abs().toNumber();
-  t.end();
 })
 
-tape('comparisons', function(t) {
+test('comparisons',t => {
   t.ok(D.Pi.eq(D.Pi.mul(D.One)) && D.Pi.ne(D.Log2) && D.Zero.eq(0) && D.One.ne(2), 'eq, ne (true)');
   t.ok(!D.Pi.eq(D.Log2) && !D.Pi.ne(D.Pi) && !D.Zero.eq(D.Log2) && !D.One.ne(1), 'eq, ne (false)');
   t.ok(D.Pi.lt(D.X2Pi) && D.Pi.le(D.X2Pi) && D.Pi.lt(4) && D.Pi.le(4), 'lt, le (true)');
   t.ok(!D.Pi.lt(D.Pi) && !D.Pi.le(D.One) && !D.One.lt(1) && !D.Pi.le(1), 'lt, le (false)');
   t.ok(D.X2Pi.gt(D.Pi) && D.X2Pi.ge(D.Pi) && D.Pi.gt(2) && D.Pi.ge(2), 'gt, ge (true)');
   t.ok(!D.One.gt(D.One) && !D.Pi.ge(4) && !D.Zero.gt(0) && !D.Pi.ge(4), 'gt, ge (false)');
-  t.end();
 });
 
-tape('extended tests', function(t) {
-  var phi = new D([5, 0]).sqrt().add(1).div(2);
+test('extended tests',t => {
+  let phi = new D([5, 0]).sqrt().add(1).div(2);
   expected = new D(phi).add(1);
   actual = new D(phi).sqr();
   diff = expected.sub(actual).abs().toNumber();
@@ -252,5 +241,4 @@ tape('extended tests', function(t) {
   actual = new D('3.1415926535897932384626433832795').sqrt();
   diff = expected.sub(actual).abs().toNumber();
   t.ok(diff < eps2, 'parsed sqt (sqrt(pi)) (diff=' + diff + ')');
-  t.end();
 })
