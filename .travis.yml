@@ -2,10 +2,10 @@ language: node_js
 node_js: node
 
 script:
-- npm run ci && npm run cov
+- npm run ci
 
 after_success:
-- bash <(curl -s https://codecov.io/bash)
+- npm run cov
 
 deploy:
   provider: npm
