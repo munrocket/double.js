@@ -1,9 +1,10 @@
 {
   "name": "double.js",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Floating point expansions with 31 accurate decimal digits (100+ bits), also known as double-word arithmetic",
   "main": "dist/double.js",
   "types": "dist/double.d.ts",
+  "module": "dist/double.esm.js",
   "scripts": {
     "build": "rollup -c",
     "watch": "rollup -c -w",
@@ -11,13 +12,29 @@
     "ci": "npm run build && npm run coverage",
     "test": "node ./test/test.js",
     "coverage": "istanbul cover ./test/test.js --report lcovonly -- -R spec",
-    "deploy": "npm version patch && git push --tags origin master",
-    "float-paranoia": "node ./test/paranoia.js"
+    "deploy": "npm version minor && git push --tags origin master"
+  },
+  "devDependencies": {
+    "@babel/core": "7.7.4",
+    "@babel/preset-env": "7.7.4",
+    "codecov": "3.6.1",
+    "istanbul": "0.4.5",
+    "rollup": "1.27.4",
+    "rollup-plugin-babel": "4.3.3",
+    "rollup-plugin-typescript2": "^0.25.2",
+    "tap-spec": "5.0.0",
+    "tape": "4.11.0",
+    "typescript": "^3.7.2"
   },
   "eslintIgnore": [
     "dist",
     "test"
   ],
+  "babel": {
+    "presets": [
+      "@babel/preset-env"
+    ]
+  },
   "keywords": [
     "float128",
     "quadruple",
@@ -31,16 +48,5 @@
     "big.js"
   ],
   "author": "munrocket",
-  "license": "MIT",
-  "dependencies": {},
-  "devDependencies": {
-    "@babel/core": "7.7.4",
-    "@babel/preset-env": "7.7.4",
-    "codecov": "3.6.1",
-    "istanbul": "0.4.5",
-    "rollup": "1.27.4",
-    "rollup-plugin-babel": "4.3.3",
-    "tap-spec": "5.0.0",
-    "tape": "4.11.0"
-  }
+  "license": "MIT"
 }

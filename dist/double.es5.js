@@ -37,11 +37,10 @@ var Double = (function () {
     return Constructor;
   }
 
-  /* Basic error-free transformation algorithms */
-  var splitter = 134217729; // Veltkamp’s splitter (equal to 2^27+1 for 64-bit float)
+  var f64Type = 'number';
+  var f64Splitter = 134217729;
 
   function twoSum(a, b) {
-    // Møller's and Knuth's summation (algorithm 2 from [1])
     var s = a + b;
     var a1 = s - b;
     return {
@@ -51,11 +50,10 @@ var Double = (function () {
   }
 
   function twoProd(a, b) {
-    // Dekker’s multiplication (algorithm 4.7 with inlined 4.6 from [2])
-    var t = splitter * a;
+    var t = f64Splitter * a;
     var ah = t + (a - t),
         al = a - ah;
-    t = splitter * b;
+    t = f64Splitter * b;
     var bh = t + (b - t),
         bl = b - bh;
     t = a * b;
@@ -66,7 +64,7 @@ var Double = (function () {
   }
 
   function oneSqr(a) {
-    var t = splitter * a;
+    var t = f64Splitter * a;
     var ah = t + (a - t),
         al = a - ah;
     t = a * a;
@@ -76,40 +74,34 @@ var Double = (function () {
       lo: ah * ah - t + hl + hl + al * al
     };
   }
-  /* Main class for double-length float number */
-
 
   var Double =
   /*#__PURE__*/
   function () {
-    function Double(val) {
+    function Double(obj) {
       _classCallCheck(this, Double);
 
-      if (val instanceof Double) {
-        this.hi = val.hi;
-        this.lo = val.lo;
-      } else if (typeof val === 'number') {
-        this.hi = val;
+      if (obj instanceof Double) {
+        this.hi = obj.hi;
+        this.lo = obj.lo;
+      } else if (_typeof(obj) === f64Type) {
+        this.hi = obj;
         this.lo = 0;
-      } else if (typeof val === 'string') {
-        var d = Double.fromString(val);
+      } else if (typeof obj === 'string') {
+        var d = Double.fromString(obj);
         this.hi = d.hi;
         this.lo = d.lo;
-      } else if (Array.isArray(val)) {
-        this.hi = val[0];
-        this.lo = val[1];
-      } else if (_typeof(val) === "object") {
-        this.hi = val.hi;
-        this.lo = val.lo;
+      } else if (Array.isArray(obj)) {
+        this.hi = obj[0];
+        this.lo = obj[1];
+      } else if (_typeof(obj) === 'object') {
+        this.hi = obj.hi;
+        this.lo = obj.lo;
       }
     }
-    /* Static constructors */
-
 
     _createClass(Double, [{
       key: "toNumber",
-
-      /* Convertations */
       value: function toNumber() {
         return this.hi + this.lo;
       }
@@ -137,29 +129,25 @@ var Double = (function () {
 
         return result + 'e' + exp;
       }
-      /* Arithmetic operations with two double */
-
     }, {
       key: "add",
-
-      /* Repeating static methods to instance */
       value: function add(other) {
-        if (other instanceof Double) return Double.add22(Double.clone(this), other);else if (typeof other == 'number') return Double.add21(Double.clone(this), other);
+        if (other instanceof Double) return Double.add22(Double.clone(this), other);else if (_typeof(other) == f64Type) return Double.add21(Double.clone(this), other);
       }
     }, {
       key: "sub",
       value: function sub(other) {
-        if (other instanceof Double) return Double.sub22(Double.clone(this), other);else if (typeof other == 'number') return Double.sub21(Double.clone(this), other);
+        if (other instanceof Double) return Double.sub22(Double.clone(this), other);else if (_typeof(other) == f64Type) return Double.sub21(Double.clone(this), other);
       }
     }, {
       key: "mul",
       value: function mul(other) {
-        if (other instanceof Double) return Double.mul22(Double.clone(this), other);else if (typeof other == 'number') return Double.mul21(Double.clone(this), other);
+        if (other instanceof Double) return Double.mul22(Double.clone(this), other);else if (_typeof(other) == f64Type) return Double.mul21(Double.clone(this), other);
       }
     }, {
       key: "div",
       value: function div(other) {
-        if (other instanceof Double) return Double.div22(Double.clone(this), other);else if (typeof other == 'number') return Double.div21(Double.clone(this), other);
+        if (other instanceof Double) return Double.div22(Double.clone(this), other);else if (_typeof(other) == f64Type) return Double.div21(Double.clone(this), other);
       }
     }, {
       key: "pow",
@@ -219,32 +207,32 @@ var Double = (function () {
     }, {
       key: "eq",
       value: function eq(other) {
-        if (other instanceof Double) return Double.eq22(Double.clone(this), other);else if (typeof other == 'number') return Double.eq21(Double.clone(this), other);
+        if (other instanceof Double) return Double.eq22(Double.clone(this), other);else if (_typeof(other) == f64Type) return Double.eq21(Double.clone(this), other);
       }
     }, {
       key: "ne",
       value: function ne(other) {
-        if (other instanceof Double) return Double.ne22(Double.clone(this), other);else if (typeof other == 'number') return Double.ne21(Double.clone(this), other);
+        if (other instanceof Double) return Double.ne22(Double.clone(this), other);else if (_typeof(other) == f64Type) return Double.ne21(Double.clone(this), other);
       }
     }, {
       key: "gt",
       value: function gt(other) {
-        if (other instanceof Double) return Double.gt22(Double.clone(this), other);else if (typeof other == 'number') return Double.gt21(Double.clone(this), other);
+        if (other instanceof Double) return Double.gt22(Double.clone(this), other);else if (_typeof(other) == f64Type) return Double.gt21(Double.clone(this), other);
       }
     }, {
       key: "lt",
       value: function lt(other) {
-        if (other instanceof Double) return Double.lt22(Double.clone(this), other);else if (typeof other == 'number') return Double.lt21(Double.clone(this), other);
+        if (other instanceof Double) return Double.lt22(Double.clone(this), other);else if (_typeof(other) == f64Type) return Double.lt21(Double.clone(this), other);
       }
     }, {
       key: "ge",
       value: function ge(other) {
-        if (other instanceof Double) return Double.ge22(Double.clone(this), other);else if (typeof other == 'number') return Double.ge21(Double.clone(this), other);
+        if (other instanceof Double) return Double.ge22(Double.clone(this), other);else if (_typeof(other) == f64Type) return Double.ge21(Double.clone(this), other);
       }
     }, {
       key: "le",
       value: function le(other) {
-        if (other instanceof Double) return Double.le22(Double.clone(this), other);else if (typeof other == 'number') return Double.le21(Double.clone(this), other);
+        if (other instanceof Double) return Double.le22(Double.clone(this), other);else if (_typeof(other) == f64Type) return Double.le21(Double.clone(this), other);
       }
     }], [{
       key: "clone",
@@ -271,15 +259,15 @@ var Double = (function () {
       }
     }, {
       key: "fromString",
-      value: function fromString(string) {
-        var isPositive = /^\s*-/.exec(string) === null;
-        var str = string.replace(/^\s*[+-]?/, '');
-        if (/Infinity.*/.exec(str) !== null) return isPositive ? Double.Infinity : Double.neg2(Double.Infinity);
-        str = /^([0-9]*\.?[0-9]+)(?:[eE]([-+]?[0-9]+))?/.exec(str);
-        if (!str) return Double.NaN;
-        var digits = str[1].replace('.', '');
-        var exp = str[2] !== undefined ? parseInt(str[2]) : 0;
-        var dotId = str[0].indexOf('.');
+      value: function fromString(s) {
+        var isPositive = /^\s*-/.exec(s) === null;
+        s = s.replace(/^\s*[+-]?/, '');
+        if (/Infinity.*/.exec(s) !== null) return isPositive ? Double.Infinity : Double.neg2(Double.Infinity);
+        var rex = /^([0-9]*\.?[0-9]+)(?:[eE]([-+]?[0-9]+))?/.exec(s);
+        if (!rex) return Double.NaN;
+        var digits = rex[1].replace('.', '');
+        var exp = rex[2] !== undefined ? parseInt(rex[2]) : 0;
+        var dotId = rex[0].indexOf('.');
         if (dotId == -1) dotId = digits.length;
         if (exp + dotId - 1 < -300) return isPositive ? Double.Zero : Double.neg2(Double.Zero);
         if (exp + dotId - 1 > 300) return isPositive ? Double.Infinity : Double.neg2(Double.Infinity);
@@ -298,7 +286,6 @@ var Double = (function () {
     }, {
       key: "add22",
       value: function add22(X, Y) {
-        // AccurateDWPlusDW (6 with inlined 1 from [1])
         var S = twoSum(X.hi, Y.hi);
         var E = twoSum(X.lo, Y.lo);
         var c = S.lo + E.hi;
@@ -325,7 +312,6 @@ var Double = (function () {
     }, {
       key: "mul22",
       value: function mul22(X, Y) {
-        // DWTimesDW1 (10 with inlined 1 from [1])
         var S = twoProd(X.hi, Y.hi);
         S.lo += X.hi * Y.lo + X.lo * Y.hi;
         X.hi = S.hi + S.lo;
@@ -335,7 +321,6 @@ var Double = (function () {
     }, {
       key: "div22",
       value: function div22(X, Y) {
-        // DWDivDW1 (16 with inlined 1 from [1])
         var s = X.hi / Y.hi;
         var T = twoProd(s, Y.hi);
         var e = (X.hi - T.hi - T.lo + X.lo - s * Y.lo) / Y.hi;
@@ -345,11 +330,9 @@ var Double = (function () {
       }
     }, {
       key: "pow22",
-      value: function pow22(base, ex) {
-        return Double.exp2(Double.mul22(Double.ln2(base), ex));
+      value: function pow22(base, exp) {
+        return Double.exp2(Double.mul22(Double.ln2(base), exp));
       }
-      /* Unar operators with double */
-
     }, {
       key: "abs2",
       value: function abs2(X) {
@@ -445,13 +428,10 @@ var Double = (function () {
         X = Double.mul21pow2(Double.add22(new Double(exp), Double.inv2(exp)), -1);
         return X;
       }
-      /* Arithmetic operations with double and single */
-
     }, {
       key: "add21",
-      value: function add21(X, y) {
-        // DWPlusFP (4 with inlined 1 from [1])
-        var S = twoSum(X.hi, y);
+      value: function add21(X, f) {
+        var S = twoSum(X.hi, f);
         S.lo += X.lo;
         X.hi = S.hi + S.lo;
         X.lo = S.lo - (X.hi - S.hi);
@@ -459,8 +439,8 @@ var Double = (function () {
       }
     }, {
       key: "sub21",
-      value: function sub21(X, y) {
-        var S = twoSum(X.hi, -y);
+      value: function sub21(X, f) {
+        var S = twoSum(X.hi, -f);
         S.lo += X.lo;
         X.hi = S.hi + S.lo;
         X.lo = S.lo - (X.hi - S.hi);
@@ -468,10 +448,9 @@ var Double = (function () {
       }
     }, {
       key: "mul21",
-      value: function mul21(X, y) {
-        // DWTimesFP1 (7 with inlined 1 from [1])
-        var C = twoProd(X.hi, y);
-        var cl = X.lo * y;
+      value: function mul21(X, f) {
+        var C = twoProd(X.hi, f);
+        var cl = X.lo * f;
         var th = C.hi + cl;
         X.lo = cl - (th - C.hi);
         cl = X.lo + C.lo;
@@ -481,12 +460,11 @@ var Double = (function () {
       }
     }, {
       key: "div21",
-      value: function div21(X, y) {
-        // DWDivFP1 (13 with inlined 1 from [1])
-        var th = X.hi / y;
-        var P = twoProd(th, y);
+      value: function div21(X, f) {
+        var th = X.hi / f;
+        var P = twoProd(th, f);
         var D = twoSum(X.hi, -P.hi);
-        var tl = (D.hi + (D.lo + (X.lo - P.lo))) / y;
+        var tl = (D.hi + (D.lo + (X.lo - P.lo))) / f;
         X.hi = th + tl;
         X.lo = tl - (X.hi - th);
         return X;
@@ -521,8 +499,6 @@ var Double = (function () {
 
         return isPositive ? X : Double.inv2(X);
       }
-      /* Different comparisons */
-
     }, {
       key: "eq22",
       value: function eq22(X, Y) {
@@ -555,36 +531,34 @@ var Double = (function () {
       }
     }, {
       key: "eq21",
-      value: function eq21(X, a) {
-        return X.hi === a && X.lo === 0;
+      value: function eq21(X, f) {
+        return X.hi === f && X.lo === 0;
       }
     }, {
       key: "ne21",
-      value: function ne21(X, a) {
-        return X.hi !== a || X.lo !== 0;
+      value: function ne21(X, f) {
+        return X.hi !== f || X.lo !== 0;
       }
     }, {
       key: "gt21",
-      value: function gt21(X, a) {
-        return X.hi > a || X.hi === a && X.lo > 0;
+      value: function gt21(X, f) {
+        return X.hi > f || X.hi === f && X.lo > 0;
       }
     }, {
       key: "lt21",
-      value: function lt21(X, a) {
-        return X.hi < a || X.hi === a && X.lo < 0;
+      value: function lt21(X, f) {
+        return X.hi < f || X.hi === f && X.lo < 0;
       }
     }, {
       key: "ge21",
-      value: function ge21(X, a) {
-        return X.hi > a || X.hi === a && X.lo >= 0;
+      value: function ge21(X, f) {
+        return X.hi > f || X.hi === f && X.lo >= 0;
       }
     }, {
       key: "le21",
-      value: function le21(X, a) {
-        return X.hi < a || X.hi === a && X.lo <= 0;
+      value: function le21(X, f) {
+        return X.hi < f || X.hi === f && X.lo <= 0;
       }
-      /* Double constants */
-
     }, {
       key: "One",
       get: function get() {

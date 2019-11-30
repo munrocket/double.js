@@ -16,10 +16,10 @@ You can check [quality](https://munrocket.github.io/double.js/) and [time](https
 ### Usage
 Include double.js script to webpage or install npm package. Almost all arithmetic function named similar to WASM.
 ```javascript
-// example with ES6 modules
+// example with ES6 modules, also you can use ES5
 import { Double } from 'double.js';
 
-// classic test: '0.3' - '0.1' == 0.2
+// '0.3' - '0.1' == 0.2
 console.log(new Double('0.3').sub(new Double('0.1')).toNumber());
 
 // L = sqrt(a^2 + 10)
@@ -38,6 +38,9 @@ You can play with library in [sandbox](https://runkit.com/munrocket/double-js-ex
 
 ### Special thanks
 To [Jeffrey Sarnoff](https://github.com/JeffreySarnoff) for help me with books and algorithms.
+
+### AssemblyScript version
+This library will be ported to [wasm](https://github.com/MaxGraey/bignum.wasm).
 
 ### References
 1. J.-M. Muller, etc. *Tight and rigourous error bounds for basic building blocks of double-word arithmetic.*, 2017. [[PDF](https://hal.archives-ouvertes.fr/hal-01351529v3/document)]
