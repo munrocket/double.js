@@ -192,7 +192,7 @@ window.onload = function() {
   let now = () => (typeof performance != 'undefined') ? performance.now() : Date.now();
   target.dx = 3e-16;
   target.dy = 2e-16;
-  let calculators = [withDoubleJs_FirstVer, withDoubleJs_Static, withDoubleJs, withBigNumberJs, withDecimalJs, withBigJs, withBigFloat32 ]; //withBigFloat53
+  let calculators = [withDoubleJs, withDoubleJs_FirstVer, withBigNumberJs, withDecimalJs, withBigJs, withBigFloat32 ]; //withBigFloat53
   calculators.forEach((calculator) => setTimeout(() => {
     popups[0].style.display = 'block';
     popups[1].style.display = 'block';

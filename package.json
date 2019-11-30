@@ -1,6 +1,6 @@
 {
   "name": "double.js",
-  "version": "0.3.4",
+  "version": "0.4.0",
   "description": "Floating point expansions with 31 accurate decimal digits (100+ bits), also known as double-word arithmetic",
   "main": "dist/double.js",
   "types": "dist/double.d.ts",

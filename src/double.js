@@ -1,30 +1,28 @@
-
-/* Basic error-free algorithms */
+/* Basic error-free transformation algorithms */
 
 const splitter = 134217729; // Veltkamp’s splitter (equal to 2^27+1 for 64-bit float)
 
-// Møller's and Knuth's summation (algorithm 2 from [1])
-let twoSum = function(a, b) {
+function twoSum(a, b) { // Møller's and Knuth's summation (algorithm 2 from [1])
   let s = a + b;
   let a1  = s - b;
   return { hi: s, lo: (a - a1) + (b - (s - a1)) };
 }
 
-// Dekker’s multiplication (algorithm 4.7 with inlined 4.6 from [2])
-let twoMult = function(a, b) {
+function twoProd(a, b) { // Dekker’s multiplication (algorithm 4.7 with inlined 4.6 from [2])
   let t = splitter * a;
   let ah = t + (a - t), al = a - ah;
   t = splitter * b;
   let bh = t + (b - t), bl = b - bh;
   t = a * b;
-  return { hi: t, lo: -t + ah * bh + ah * bl + al * bh + al * bl };
+  return { hi: t, lo: ((ah * bh - t) + ah * bl + al * bh) + al * bl };
 }
-let oneSqr = function(a) {
+
+function oneSqr(a) {
   let t = splitter * a;
   let ah = t + (a - t), al = a - ah;
   t = a * a;
   let hl = al * ah;
-  return { hi: t, lo: -t + ah * ah + hl + hl + al * al };
+  return { hi: t, lo: ((ah * ah - t) + hl + hl) + al * al };
 }
 
 /* Main class for double-length float number */
@@ -51,11 +49,11 @@ export default class Double {
     }
   }
 
-  /* Constructors blocks */
+  /* Static constructors */
     
   static clone(X) { let d = new Double(); d.hi = X.hi; d.lo = X.lo; return d; }
   static fromSum11(a, b) { return new Double(twoSum(a, b)); }
-  static fromMul11(a, b) { return new Double(twoMult(a, b)); }
+  static fromMul11(a, b) { return new Double(twoProd(a, b)); }
   static fromSqr1(a) { return new Double(oneSqr(a)); }
   static fromString(string) {
     let isPositive = (/^\s*-/.exec(string) === null);
@@ -87,7 +85,7 @@ export default class Double {
   }
 
   toExponential(precision) {
-    if (precision === undefined) precision = 31;
+    if (precision === undefined) precision = 33;
     let result = (this.hi < 0) ? '-' :  '';
     if (isNaN(this.hi)) return 'NaN';
     if (!isFinite(this.hi)) return result + 'Infinity';
@@ -133,7 +131,7 @@ export default class Double {
   }
 
   static mul22(X, Y) { // DWTimesDW1 (10 with inlined 1 from [1])
-    let S = twoMult(X.hi, Y.hi);
+    let S = twoProd(X.hi, Y.hi);
     S.lo += X.hi * Y.lo + X.lo * Y.hi;
     X.hi = S.hi + S.lo;
     X.lo = S.lo - (X.hi - S.hi);
@@ -142,7 +140,7 @@ export default class Double {
 
   static div22(X, Y) { // DWDivDW1 (16 with inlined 1 from [1])
     let s = X.hi / Y.hi;
-    let T = twoMult(s, Y.hi);
+    let T = twoProd(s, Y.hi);
     let e = (X.hi - T.hi - T.lo + X.lo - s * Y.lo) / Y.hi;
     X.hi = s + e;
     X.lo = e - (X.hi - s);
@@ -253,7 +251,7 @@ export default class Double {
   }
 
   static mul21(X, y) { // DWTimesFP1 (7 with inlined 1 from [1])
-    let C = twoMult(X.hi, y);
+    let C = twoProd(X.hi, y);
     let cl = X.lo * y;
     let th = C.hi + cl;
     X.lo = cl - (th - C.hi);
@@ -265,7 +263,7 @@ export default class Double {
 
   static div21(X, y) { // DWDivFP1 (13 with inlined 1 from [1])
     let th = X.hi / y; 
-    let P = twoMult(th, y);
+    let P = twoProd(th, y);
     let D = twoSum(X.hi, -P.hi);
     let tl = (D.hi + (D.lo + (X.lo - P.lo))) / y;
     X.hi = th + tl;

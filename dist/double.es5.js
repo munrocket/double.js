@@ -37,21 +37,21 @@ var Double = (function () {
     return Constructor;
   }
 
-  /* Basic error-free algorithms */
+  /* Basic error-free transformation algorithms */
   var splitter = 134217729; // Veltkamp’s splitter (equal to 2^27+1 for 64-bit float)
-  // Møller's and Knuth's summation (algorithm 2 from [1])
 
-  var twoSum = function twoSum(a, b) {
+  function twoSum(a, b) {
+    // Møller's and Knuth's summation (algorithm 2 from [1])
     var s = a + b;
     var a1 = s - b;
     return {
       hi: s,
       lo: a - a1 + (b - (s - a1))
     };
-  }; // Dekker’s multiplication (algorithm 4.7 with inlined 4.6 from [2])
+  }
 
-
-  var twoMult = function twoMult(a, b) {
+  function twoProd(a, b) {
+    // Dekker’s multiplication (algorithm 4.7 with inlined 4.6 from [2])
     var t = splitter * a;
     var ah = t + (a - t),
         al = a - ah;
@@ -61,11 +61,11 @@ var Double = (function () {
     t = a * b;
     return {
       hi: t,
-      lo: -t + ah * bh + ah * bl + al * bh + al * bl
+      lo: ah * bh - t + ah * bl + al * bh + al * bl
     };
-  };
+  }
 
-  var oneSqr = function oneSqr(a) {
+  function oneSqr(a) {
     var t = splitter * a;
     var ah = t + (a - t),
         al = a - ah;
@@ -73,9 +73,9 @@ var Double = (function () {
     var hl = al * ah;
     return {
       hi: t,
-      lo: -t + ah * ah + hl + hl + al * al
+      lo: ah * ah - t + hl + hl + al * al
     };
-  };
+  }
   /* Main class for double-length float number */
 
 
@@ -103,7 +103,7 @@ var Double = (function () {
         this.lo = val.lo;
       }
     }
-    /* Constructors blocks */
+    /* Static constructors */
 
 
     _createClass(Double, [{
@@ -116,7 +116,7 @@ var Double = (function () {
     }, {
       key: "toExponential",
       value: function toExponential(precision) {
-        if (precision === undefined) precision = 31;
+        if (precision === undefined) precision = 33;
         var result = this.hi < 0 ? '-' : '';
         if (isNaN(this.hi)) return 'NaN';
         if (!isFinite(this.hi)) return result + 'Infinity';
@@ -262,7 +262,7 @@ var Double = (function () {
     }, {
       key: "fromMul11",
       value: function fromMul11(a, b) {
-        return new Double(twoMult(a, b));
+        return new Double(twoProd(a, b));
       }
     }, {
       key: "fromSqr1",
@@ -326,7 +326,7 @@ var Double = (function () {
       key: "mul22",
       value: function mul22(X, Y) {
         // DWTimesDW1 (10 with inlined 1 from [1])
-        var S = twoMult(X.hi, Y.hi);
+        var S = twoProd(X.hi, Y.hi);
         S.lo += X.hi * Y.lo + X.lo * Y.hi;
         X.hi = S.hi + S.lo;
         X.lo = S.lo - (X.hi - S.hi);
@@ -337,7 +337,7 @@ var Double = (function () {
       value: function div22(X, Y) {
         // DWDivDW1 (16 with inlined 1 from [1])
         var s = X.hi / Y.hi;
-        var T = twoMult(s, Y.hi);
+        var T = twoProd(s, Y.hi);
         var e = (X.hi - T.hi - T.lo + X.lo - s * Y.lo) / Y.hi;
         X.hi = s + e;
         X.lo = e - (X.hi - s);
@@ -470,7 +470,7 @@ var Double = (function () {
       key: "mul21",
       value: function mul21(X, y) {
         // DWTimesFP1 (7 with inlined 1 from [1])
-        var C = twoMult(X.hi, y);
+        var C = twoProd(X.hi, y);
         var cl = X.lo * y;
         var th = C.hi + cl;
         X.lo = cl - (th - C.hi);
@@ -484,7 +484,7 @@ var Double = (function () {
       value: function div21(X, y) {
         // DWDivFP1 (13 with inlined 1 from [1])
         var th = X.hi / y;
-        var P = twoMult(th, y);
+        var P = twoProd(th, y);
         var D = twoSum(X.hi, -P.hi);
         var tl = (D.hi + (D.lo + (X.lo - P.lo))) / y;
         X.hi = th + tl;
