@@ -1,30 +1,30 @@
 
 /* Basic error-free algorithms */
 
-const splitter = 134217729; // Veltkamp’s splitter for 64-bit float (equal to 2^27+1)
+const splitter = 134217729; // Veltkamp’s splitter (equal to 2^27+1 for 64-bit float)
 
-// Knuth's and Møller's summation (algorithm 4.4 from [1])
+// Møller's and Knuth's summation (algorithm 2 from [1])
 let twoSum = function(a, b) {
   let s = a + b;
   let a1  = s - b;
   return { hi: s, lo: (a - a1) + (b - (s - a1)) };
 }
 
-// Dekker’s multiplication (algorithm 4.7 from [1])
+// Dekker’s multiplication (algorithm 4.7 with inlined 4.6 from [2])
 let twoMult = function(a, b) {
   let t = splitter * a;
   let ah = t + (a - t), al = a - ah;
   t = splitter * b;
   let bh = t + (b - t), bl = b - bh;
   t = a * b;
-  return { hi: t, lo: -t + ah * bh + ah * bl + al * bh + al * bl }
+  return { hi: t, lo: -t + ah * bh + ah * bl + al * bh + al * bl };
 }
 let oneSqr = function(a) {
   let t = splitter * a;
   let ah = t + (a - t), al = a - ah;
   t = a * a;
   let hl = al * ah;
-  return { hi: t, lo: -t + ah * ah + hl + hl + al * al }
+  return { hi: t, lo: -t + ah * ah + hl + hl + al * al };
 }
 
 /* Main class for double-length float number */
@@ -35,16 +35,14 @@ export default class Double {
     if (val instanceof Double) {
       this.hi = val.hi;
       this.lo = val.lo;
-    }
-    else if (typeof val === 'number') {
+    } else if (typeof val === 'number') {
       this.hi = val;
       this.lo = 0;
     } else if (typeof val === 'string') {
       let d = Double.fromString(val);
       this.hi = d.hi;
       this.lo = d.lo;
-    }
-    else if (Array.isArray(val)) {
+    } else if (Array.isArray(val)) {
       this.hi = val[0];
       this.lo = val[1];
     } else if (typeof val === "object") {
@@ -112,14 +110,14 @@ export default class Double {
 
   /* Arithmetic operations with two double */
 
-  static add22(X, Y) {
+  static add22(X, Y) { // AccurateDWPlusDW (6 with inlined 1 from [1])
     let S = twoSum(X.hi, Y.hi);
     let E = twoSum(X.lo, Y.lo);
     let c = S.lo + E.hi;
-    let vh  = S.hi + c, vl = S.hi - vh + c;
-    let w = vl + E.lo;
-    X.hi = vh + w;
-    X.lo = vh - X.hi + w;
+    let vh  = S.hi + c, vl = c - (vh - S.hi);
+    c = vl + E.lo;
+    X.hi = vh + c;
+    X.lo = c - (X.hi - vh);
     return X;
   }
 
@@ -130,24 +128,24 @@ export default class Double {
     let vh  = S.hi + c, vl = S.hi - vh + c;
     let w = vl + E.lo;
     X.hi = vh + w;
-    X.lo = vh - X.hi + w;
+    X.lo = w - (X.hi - vh);
     return X;
   }
 
-  static mul22(X, Y) {
+  static mul22(X, Y) { // DWTimesDW1 (10 with inlined 1 from [1])
     let S = twoMult(X.hi, Y.hi);
     S.lo += X.hi * Y.lo + X.lo * Y.hi;
     X.hi = S.hi + S.lo;
-    X.lo = S.hi - X.hi + S.lo;
+    X.lo = S.lo - (X.hi - S.hi);
     return X;
   }
 
-  static div22(X, Y) {
+  static div22(X, Y) { // DWDivDW1 (16 with inlined 1 from [1])
     let s = X.hi / Y.hi;
     let T = twoMult(s, Y.hi);
     let e = (X.hi - T.hi - T.lo + X.lo - s * Y.lo) / Y.hi;
     X.hi = s + e;
-    X.lo = s - X.hi+ e;
+    X.lo = e - (X.hi - s);
     return X;
   }
 
@@ -177,7 +175,7 @@ export default class Double {
     Double.mul21(X, s);
     let zl = (1 - X.hi - X.lo) / xh;
     X.hi = s + zl;
-    X.lo = s - X.hi + zl;
+    X.lo = zl - (X.hi - s);
     return X;
   }
 
@@ -186,7 +184,7 @@ export default class Double {
     let c = X.hi * X.lo;
     S.lo += c + c;
     X.hi = S.hi + S.lo;
-    X.lo = S.hi - X.hi + S.lo;
+    X.lo = S.lo - (X.hi - S.hi);
     return X;
   }
 
@@ -195,7 +193,7 @@ export default class Double {
     let T = oneSqr(s);
     let e = (X.hi - T.hi - T.lo + X.lo) * 0.5 / s;
     X.hi = s + e;
-    X.lo = s - X.hi + e;
+    X.lo = e - (X.hi - s);
     return X;
   }
 
@@ -238,36 +236,40 @@ export default class Double {
 
   /* Arithmetic operations with double and single */
 
-  static add21(X, a) {
-    let S = twoSum(X.hi, a);
+  static add21(X, y) { // DWPlusFP (4 with inlined 1 from [1])
+    let S = twoSum(X.hi, y);
     S.lo += X.lo;
     X.hi = S.hi + S.lo;
-    X.lo = S.hi - X.hi + S.lo;
+    X.lo = S.lo - (X.hi - S.hi);
     return X;
   }
 
-  static sub21(X, a) {
-    let S = twoSum(X.hi, -a);
+  static sub21(X, y) {
+    let S = twoSum(X.hi, -y);
     S.lo += X.lo;
     X.hi = S.hi + S.lo;
-    X.lo = S.hi - X.hi + S.lo;
+    X.lo = S.lo - (X.hi - S.hi);
     return X;
   }
 
-  static mul21(X, a) {
-    let S = twoMult(X.hi, a);
-    S.lo += X.lo * a;
-    X.hi = S.hi + S.lo;
-    X.lo = S.hi - X.hi + S.lo;
+  static mul21(X, y) { // DWTimesFP1 (7 with inlined 1 from [1])
+    let C = twoMult(X.hi, y);
+    let cl = X.lo * y;
+    let th = C.hi + cl;
+    X.lo = cl - (th - C.hi);
+    cl = X.lo + C.lo;
+    X.hi = th + cl;
+    X.lo = cl - (X.hi - th);
     return X;
   }
 
-  static div21(X, a) {
-    let s = X.hi / a; 
-    let T = twoMult(s, a);
-    let e = (X.hi - T.hi + (X.lo - T.lo)) / a;
-    X.hi = s + e;
-    X.lo = s - X.hi + e;
+  static div21(X, y) { // DWDivFP1 (13 with inlined 1 from [1])
+    let th = X.hi / y; 
+    let P = twoMult(th, y);
+    let D = twoSum(X.hi, -P.hi);
+    let tl = (D.hi + (D.lo + (X.lo - P.lo))) / y;
+    X.hi = th + tl;
+    X.lo = tl - (X.hi - th);
     return X;
   }
 
@@ -279,16 +281,16 @@ export default class Double {
     return X;
   }
 
-  static pow2n(X, exp) {
-    if (exp === 0) return Double.One;
-    if (exp == 1) return X;
-    let isPositive = exp > 0;
-    if (!isPositive) exp = -exp;
-    let n = Math.floor(Math.log(exp) / Math.log(2));
-    let m = Math.floor(exp - (1 << n));
+  static pow2n(X, n) {
+    if (n === 0) return Double.One;
+    if (n == 1) return X;
+    let isPositive = n > 0;
+    if (!isPositive) n = -n;
+    let i = Math.floor(Math.log(n) / Math.log(2));
+    let j = Math.floor(n - (1 << i));
     let X0 = Double.clone(X);
-    while (n--) Double.sqr2(X);
-    while (m--) Double.mul22(X, X0);
+    while (i--) Double.sqr2(X);
+    while (j--) Double.mul22(X, X0);
     return isPositive ? X : Double.inv2(X);
   }
 

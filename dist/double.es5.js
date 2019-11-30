@@ -38,8 +38,8 @@ var Double = (function () {
   }
 
   /* Basic error-free algorithms */
-  var splitter = 134217729; // Veltkamp’s splitter for 64-bit float (equal to 2^27+1)
-  // Knuth's and Møller's summation (algorithm 4.4 from [1])
+  var splitter = 134217729; // Veltkamp’s splitter (equal to 2^27+1 for 64-bit float)
+  // Møller's and Knuth's summation (algorithm 2 from [1])
 
   var twoSum = function twoSum(a, b) {
     var s = a + b;
@@ -48,7 +48,7 @@ var Double = (function () {
       hi: s,
       lo: a - a1 + (b - (s - a1))
     };
-  }; // Dekker’s multiplication (algorithm 4.7 from [1])
+  }; // Dekker’s multiplication (algorithm 4.7 with inlined 4.6 from [2])
 
 
   var twoMult = function twoMult(a, b) {
@@ -298,14 +298,15 @@ var Double = (function () {
     }, {
       key: "add22",
       value: function add22(X, Y) {
+        // AccurateDWPlusDW (6 with inlined 1 from [1])
         var S = twoSum(X.hi, Y.hi);
         var E = twoSum(X.lo, Y.lo);
         var c = S.lo + E.hi;
         var vh = S.hi + c,
-            vl = S.hi - vh + c;
-        var w = vl + E.lo;
-        X.hi = vh + w;
-        X.lo = vh - X.hi + w;
+            vl = c - (vh - S.hi);
+        c = vl + E.lo;
+        X.hi = vh + c;
+        X.lo = c - (X.hi - vh);
         return X;
       }
     }, {
@@ -318,26 +319,28 @@ var Double = (function () {
             vl = S.hi - vh + c;
         var w = vl + E.lo;
         X.hi = vh + w;
-        X.lo = vh - X.hi + w;
+        X.lo = w - (X.hi - vh);
         return X;
       }
     }, {
       key: "mul22",
       value: function mul22(X, Y) {
+        // DWTimesDW1 (10 with inlined 1 from [1])
         var S = twoMult(X.hi, Y.hi);
         S.lo += X.hi * Y.lo + X.lo * Y.hi;
         X.hi = S.hi + S.lo;
-        X.lo = S.hi - X.hi + S.lo;
+        X.lo = S.lo - (X.hi - S.hi);
         return X;
       }
     }, {
       key: "div22",
       value: function div22(X, Y) {
+        // DWDivDW1 (16 with inlined 1 from [1])
         var s = X.hi / Y.hi;
         var T = twoMult(s, Y.hi);
         var e = (X.hi - T.hi - T.lo + X.lo - s * Y.lo) / Y.hi;
         X.hi = s + e;
-        X.lo = s - X.hi + e;
+        X.lo = e - (X.hi - s);
         return X;
       }
     }, {
@@ -372,7 +375,7 @@ var Double = (function () {
         Double.mul21(X, s);
         var zl = (1 - X.hi - X.lo) / xh;
         X.hi = s + zl;
-        X.lo = s - X.hi + zl;
+        X.lo = zl - (X.hi - s);
         return X;
       }
     }, {
@@ -382,7 +385,7 @@ var Double = (function () {
         var c = X.hi * X.lo;
         S.lo += c + c;
         X.hi = S.hi + S.lo;
-        X.lo = S.hi - X.hi + S.lo;
+        X.lo = S.lo - (X.hi - S.hi);
         return X;
       }
     }, {
@@ -392,7 +395,7 @@ var Double = (function () {
         var T = oneSqr(s);
         var e = (X.hi - T.hi - T.lo + X.lo) * 0.5 / s;
         X.hi = s + e;
-        X.lo = s - X.hi + e;
+        X.lo = e - (X.hi - s);
         return X;
       }
     }, {
@@ -446,39 +449,46 @@ var Double = (function () {
 
     }, {
       key: "add21",
-      value: function add21(X, a) {
-        var S = twoSum(X.hi, a);
+      value: function add21(X, y) {
+        // DWPlusFP (4 with inlined 1 from [1])
+        var S = twoSum(X.hi, y);
         S.lo += X.lo;
         X.hi = S.hi + S.lo;
-        X.lo = S.hi - X.hi + S.lo;
+        X.lo = S.lo - (X.hi - S.hi);
         return X;
       }
     }, {
       key: "sub21",
-      value: function sub21(X, a) {
-        var S = twoSum(X.hi, -a);
+      value: function sub21(X, y) {
+        var S = twoSum(X.hi, -y);
         S.lo += X.lo;
         X.hi = S.hi + S.lo;
-        X.lo = S.hi - X.hi + S.lo;
+        X.lo = S.lo - (X.hi - S.hi);
         return X;
       }
     }, {
       key: "mul21",
-      value: function mul21(X, a) {
-        var S = twoMult(X.hi, a);
-        S.lo += X.lo * a;
-        X.hi = S.hi + S.lo;
-        X.lo = S.hi - X.hi + S.lo;
+      value: function mul21(X, y) {
+        // DWTimesFP1 (7 with inlined 1 from [1])
+        var C = twoMult(X.hi, y);
+        var cl = X.lo * y;
+        var th = C.hi + cl;
+        X.lo = cl - (th - C.hi);
+        cl = X.lo + C.lo;
+        X.hi = th + cl;
+        X.lo = cl - (X.hi - th);
         return X;
       }
     }, {
       key: "div21",
-      value: function div21(X, a) {
-        var s = X.hi / a;
-        var T = twoMult(s, a);
-        var e = (X.hi - T.hi + (X.lo - T.lo)) / a;
-        X.hi = s + e;
-        X.lo = s - X.hi + e;
+      value: function div21(X, y) {
+        // DWDivFP1 (13 with inlined 1 from [1])
+        var th = X.hi / y;
+        var P = twoMult(th, y);
+        var D = twoSum(X.hi, -P.hi);
+        var tl = (D.hi + (D.lo + (X.lo - P.lo))) / y;
+        X.hi = th + tl;
+        X.lo = tl - (X.hi - th);
         return X;
       }
     }, {
@@ -492,20 +502,20 @@ var Double = (function () {
       }
     }, {
       key: "pow2n",
-      value: function pow2n(X, exp) {
-        if (exp === 0) return Double.One;
-        if (exp == 1) return X;
-        var isPositive = exp > 0;
-        if (!isPositive) exp = -exp;
-        var n = Math.floor(Math.log(exp) / Math.log(2));
-        var m = Math.floor(exp - (1 << n));
+      value: function pow2n(X, n) {
+        if (n === 0) return Double.One;
+        if (n == 1) return X;
+        var isPositive = n > 0;
+        if (!isPositive) n = -n;
+        var i = Math.floor(Math.log(n) / Math.log(2));
+        var j = Math.floor(n - (1 << i));
         var X0 = Double.clone(X);
 
-        while (n--) {
+        while (i--) {
           Double.sqr2(X);
         }
 
-        while (m--) {
+        while (j--) {
           Double.mul22(X, X0);
         }
 

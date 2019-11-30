@@ -1,7 +1,7 @@
 {
   "name": "double.js",
-  "version": "0.3.0",
-  "description": "Floating point expansions with 31 accurate decimal digits (100+ bits), also known as double-double arithmetic",
+  "version": "0.3.4",
+  "description": "Floating point expansions with 31 accurate decimal digits (100+ bits), also known as double-word arithmetic",
   "main": "dist/double.js",
   "types": "dist/double.d.ts",
   "scripts": {
@@ -22,13 +22,13 @@
     "float128",
     "quadruple",
     "double-double",
-    "arbitrary-precision",
     "gmp",
     "mpfr",
     "bigfloat",
+    "bigdecimal",
+    "bignumber.js",
     "decimal.js",
-    "big.js",
-    "bignumber.js"
+    "big.js"
   ],
   "author": "munrocket",
   "license": "MIT",

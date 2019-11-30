@@ -35,24 +35,6 @@ function withDoubleJs_FirstVer(buffer, target, i, j) {
   }
   colorizer(buffer, iteration - 1);
 }
-function withDoubleJs_Static(buffer, target, i, j) {
-  let D = Double;
-  let iteration = 0;
-  let x = D.Zero, y = D.Zero;
-  let xx = D.Zero, xy = D.Zero, yy = D.Zero;
-  let tx = new D(target.x), ty = new D(target.y);
-  let tdx = new D(target.dx), tdy = new D(target.dy);
-  let cx = D.add22(D.sub22(tx, tdx), D.div21(D.mul21(tdx, 2 * i), buffer.width));
-  let cy = D.sub22(D.add22(ty, tdy), D.div21(D.mul21(tdy, 2 * j), buffer.height));
-  while (iteration++ < maxIteration && D.lt21(D.add22(D.clone(xx), yy), 4)) {
-    x = D.add22(D.sub22(xx, yy), cx);
-    y = D.add22(D.add22(xy, xy), cy);
-    xx = D.sqr2(D.clone(x));
-    yy = D.sqr2(D.clone(y));
-    xy = D.mul22(x, y);
-  }
-  colorizer(buffer, iteration - 1);
-}
 function withDoubleJs(buffer, target, i, j) {
   let D = Double;
   let iteration = 0;
@@ -235,7 +217,7 @@ window.onload = function() {
         fontFamily: "Sans", fontColor: "#000", fontSize: 16, fontStyle: 'normal' }
       }
     });
-  }, 100));
+  }, 1500));
   setTimeout(() => {
     popups[2].style.display = 'block';
     new Chart(document.getElementById('barChart').getContext('2d'), {

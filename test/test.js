@@ -67,19 +67,19 @@ tape('double-single operations', function (t) {
   diff = expected.sub(actual).abs().toNumber();
   t.ok(diff < eps2, 'add21 with inverted (diff=' + diff + ')');
   expected = D.Pi;
-  actual = D.Pi.sub(1000).sub(-1000);
+  actual = D.Pi.sub(D.E.hi).sub(-D.E.hi);
   diff = expected.sub(actual).abs().toNumber();
   t.ok(diff < eps2, 'sub21 with inverted (diff=' + diff + ')');
   expected = D.Pi;
-  actual = D.mul22(D.mul21(D.Pi, 10), new D('0.1'));
+  actual = D.mul22(D.mul21(D.Pi, D.E.hi), new D(D.E.hi).inv());
   diff = expected.sub(actual).abs().toNumber();
   t.ok(diff < eps2, 'mul21 with inverted (diff=' + diff + ')');
   expected = D.Pi;
-  actual = D.div22(D.div21(D.Pi, 10), new D('0.1'));
+  actual = D.div22(D.div21(D.Pi, D.E.hi), new D(D.E.hi).inv());
   diff = expected.sub(actual).abs().toNumber();
   t.ok(diff < eps2, 'div21 with inverted (diff=' + diff + ')');
   expected = D.E;
-  actual = D.E.mul(1000).div(1000);
+  actual = D.E.mul(D.Pi.hi).div(D.Pi.hi);
   diff = expected.sub(actual).abs().toNumber();
   t.ok(diff < eps2, 'mul21/div21 inverse (diff=' + diff + ')');
   expected = 1e20; expected2 = 1e-20;
@@ -102,6 +102,22 @@ tape('double-double operations', function (t) {
   actual = D.Pi.pow(D.E).pow(D.E.inv());
   diff = expected.sub(actual).abs().toNumber();
   t.ok(diff < eps2, 'pow22 (diff=' + diff + ')');
+  t.end();
+});
+
+tape('fromSum11 / fromMul11 / fromSqr1', function(t) {
+  expected = new D(1024);
+  actual = D.fromSum11(512, 512);
+  diff = expected.sub(actual).abs().toNumber();
+  t.ok(diff < eps2, 'fromSum11 (diff=' + diff + ')');
+  expected = new D(1024);
+  actual = D.fromMul11(32, 32);
+  diff = expected.sub(actual).abs().toNumber();
+  t.ok(diff < eps2, 'fromMul11 (diff=' + diff + ')');
+  expected = new D(1024);
+  actual = D.fromSqr1(32);
+  diff = expected.sub(actual).abs().toNumber();
+  t.ok(diff < eps2, 'fromSqr1 (diff=' + diff + ')');
   t.end();
 });
 
