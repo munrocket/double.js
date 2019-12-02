@@ -45,6 +45,7 @@ export default class Double {
     static get One(): Double;
     static get Zero(): Double;
     static get Infinity(): Double;
+    static get MinusInfinity(): Double;
     static get NaN(): Double;
     static get Pi(): Double;
     static get X2Pi(): Double;

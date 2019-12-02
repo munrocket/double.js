@@ -20,6 +20,7 @@ import pup2ist from 'puppeteer-to-istanbul';
       console.log(str);
       if (str.trim() == '# ok') {
         console.log('\x1b[32m' + 'SUCCESS!');
+        setTimeout(() => process.exit(0), 100);
       } 
     }
   });

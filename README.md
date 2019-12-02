@@ -14,7 +14,7 @@ Number stored as unevaluated sum of two javascript float numbers and uses error-
 You can check [quality](https://munrocket.github.io/double.js/) and [time](https://www.measurethat.net/Benchmarks/Show/6429/0/doublejs-benchmark) of different libraries in your browser.
 
 ### Usage
-Include double.js script to webpage or install npm package. Almost all arithmetic function named similar to WASM.
+Include double.js script to webpage or install npm package. Here some basic examples
 ```javascript
 // example with ES6 modules, also you can use ES5
 import { Double } from 'double.js';
@@ -34,17 +34,18 @@ let dF = (x) => F(x.add(h)).sub(F(x)).div(h);
 // |f'(x)| < 1 ? print(x)
 if (dF(x).abs().lt(1)) { console.log(x.toExponential()); }
 ```
-You can play with library in [sandbox](https://runkit.com/munrocket/double-js-example). API details you can find in [wiki](https://github.com/munrocket/double.js/wiki) page. Be careful when initializing a new floats, for example `new Double(0.1)` is ok only for integer numbers and you should use `new Double('0.1')` to get correct results. All double-word arithmetic functions are accurate and tested, say me if you find something strange. 
+Further API details you can find in [wiki](https://github.com/munrocket/double.js/wiki) page. Also you can play with library in [sandbox](https://runkit.com/munrocket/double-js-example). Be careful when initializing a new floats, for example `new Double(0.1)` is ok only for integer numbers and you should use `new Double('0.1')` to get correct results for fractional numburs. All double-word arithmetic functions are accurate and tested, say me if you find something strange. 
 
 ### Special thanks
 To [Jeffrey Sarnoff](https://github.com/JeffreySarnoff) for help me with books and algorithms.
 
-### AssemblyScript version
-This library will be ported to [wasm](https://github.com/MaxGraey/bignum.wasm).
+### WASM version
+This library will be ported to [AssemblyScript](https://github.com/MaxGraey/bignum.wasm).
 
 ### References
 1. J.-M. Muller, etc. *Tight and rigourous error bounds for basic building blocks of double-word arithmetic.*, 2017. [[PDF](https://hal.archives-ouvertes.fr/hal-01351529v3/document)]
 2. J.-M. Muller, N. Brisebarre, F. deDinechin, etc. *Handbook of Floating-Point Arithmetic*, Chapter 14, 2010.
 3. Theodorus Dekker. *A floating-point technique for extending the available precision*, 1971. [[Viewer](https://gdz.sub.uni-goettingen.de/id/PPN362160546_0018?tify={%22pages%22:[230],%22panX%22:0.306,%22panY%22:0.754,%22view%22:%22info%22,%22zoom%22:0.39})]
-4. Yozo Hida, Xiaoye Li, David Bailey. *Library for Double-Double and Quad-Double Arithmetic*, 2000. [[PDF](http://web.mit.edu/tabbott/Public/quaddouble-debian/qd-2.3.4-old/docs/qd.pdf)]
-5. Christoph Lauter *Basic building blocks for a triple-double intermediate format*, 2006. [[PDF](https://hal.inria.fr/inria-00070314/document)]
+4. David Monniaux *The pitfalls of verifying floating-point computations*, 2008 [[PDF](https://hal.archives-ouvertes.fr/hal-00128124/file/floating-point-article.pdf)]
+5. Yozo Hida, Xiaoye Li, David Bailey. *Library for Double-Double and Quad-Double Arithmetic*, 2000. [[PDF](http://web.mit.edu/tabbott/Public/quaddouble-debian/qd-2.3.4-old/docs/qd.pdf)]
+6. Christoph Lauter *Basic building blocks for a triple-double intermediate format*, 2006. [[PDF](https://hal.inria.fr/inria-00070314/document)]

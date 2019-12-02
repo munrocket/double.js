@@ -7,6 +7,26 @@ let eps2 = 1e-30;
 let abs = Math.abs;
 let diff, diff2, expected, expected2, actual, actual2, actual3;
 
+test('IEEE verification in your browser based on ref. [4]', t => {
+  expected = Infinity;
+  actual = (1e308 + 1e308) / 1e308;
+  t.ok(actual == expected, 'Infinity');
+  actual = 0/0;
+  t.ok(isNaN(actual), 'NaN');
+  expected = 1.0000000000000002;
+  actual = 1 / (1 - Math.pow(2,-53))
+  t.ok(actual == expected, 'double rounding 1');
+  expected = Infinity;
+  actual = 1e1023 * (2 - Math.pow(2, -52))
+  t.ok(actual == expected, 'double rounding 2');
+  expected = 9007199254740994;
+  actual = 1 - 1/65536 + 9007199254740994;
+  t.ok(actual == expected, 'SSE2 rounding 1');
+  expected = 1.1125369292536007e-308;
+  actual = 1.5 * 2.2250738585072014e-308 - 2.2250738585072014e-308;
+  t.ok(actual == expected, 'SSE2 rounding 2');
+});
+
 test('constructor test', t => {
   let d = new D(0.3);
   t.ok(d instanceof D, 'constructed from number');
@@ -99,7 +119,7 @@ test('double-double operations', t => {
   t.ok(diff < eps2, 'pow22 (diff=' + diff + ')');
 });
 
-test('fromSum11 / fromMul11 / fromSqr1',t => {
+test('fromSum11 / fromMul11 / fromSqr1', t => {
   expected = new D(1024);
   actual = D.fromSum11(512, 512);
   diff = expected.sub(actual).abs().toNumber();
@@ -180,14 +200,26 @@ test('fromString', t => {
   t.ok(isNaN(actual) && isNaN(actual2) && isNaN(actual3), 'NaN number');
 });
 
-test('toExponential',t => {
+test('toExponential', t => {
   expected = new D('3.1415926535897932384626433832795');
   actual = new D(new D('3.1415926535897932384626433832795').toExponential());
   diff = expected.sub(actual).abs().toNumber();
   t.ok(diff < eps2, 'double -> string -> double (diff=' + diff + ')');
+  expected = 'NaN';
+  actual = D.NaN.toExponential();
+  t.ok(actual == expected, 'NaN');
+  expected = 'Infinity';
+  actual = D.Infinity.toExponential();
+  t.ok(actual == expected, 'Infinity');
+  expected = '0e+0'
+  actual = new D(0).toExponential();
+  t.ok(actual == expected, 'Zero');
+  expected = '-';
+  actual = new D(-0.5).toExponential().slice(0, 1);
+  t.ok(actual == expected, 'Negative');
 });
 
-test('constants',t => {
+test('constants', t => {
   expected = D.Pi;
   actual = new D('3.1415926535897932384626433832795');
   diff = expected.sub(actual).abs().toNumber();
@@ -213,7 +245,7 @@ test('constants',t => {
   diff = expected.sub(actual).abs().toNumber();
 })
 
-test('comparisons',t => {
+test('comparisons', t => {
   t.ok(D.Pi.eq(D.Pi.mul(D.One)) && D.Pi.ne(D.Log2) && D.Zero.eq(0) && D.One.ne(2), 'eq, ne (true)');
   t.ok(!D.Pi.eq(D.Log2) && !D.Pi.ne(D.Pi) && !D.Zero.eq(D.Log2) && !D.One.ne(1), 'eq, ne (false)');
   t.ok(D.Pi.lt(D.X2Pi) && D.Pi.le(D.X2Pi) && D.Pi.lt(4) && D.Pi.le(4), 'lt, le (true)');
@@ -222,7 +254,22 @@ test('comparisons',t => {
   t.ok(!D.One.gt(D.One) && !D.Pi.ge(4) && !D.Zero.gt(0) && !D.Pi.ge(4), 'gt, ge (false)');
 });
 
-test('extended tests',t => {
+test('exp2 / ln2', t => {
+  expected = Double.One;
+  actual = Double.Zero.exp();
+  t.ok(expected.eq(actual), 'exp(0) = 1');
+  expected = Double.E;
+  actual = Double.One.exp();
+  t.ok(expected.eq(actual), 'exp(1) = e');
+  expected = Double.Zero;
+  actual = Double.One.ln();
+  t.ok(expected.eq(actual), 'ln(1) = 0');
+  expected = Double.MinusInfinity;
+  actual = Double.Zero.ln();
+  t.ok(expected.eq(actual), 'ln(1) = 0');
+});
+
+test('extended tests', t => {
   let phi = new D([5, 0]).sqrt().add(1).div(2);
   expected = new D(phi).add(1);
   actual = new D(phi).sqr();

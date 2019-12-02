@@ -207,8 +207,6 @@ export default class Double {
   static exp2(X: Double) {
     if (Double.eq21(X, 0)) return Double.One;
     if (Double.eq21(X, 1)) return Double.E;
-    if (Double.lt21(X, -709)) return Double.Zero;
-    if (Double.gt21(X, 709)) return Double.Infinity;
     let n = Math.floor(X.hi / Double.Log2.hi + 0.5);
     Double.sub22(X, Double.mul21(Double.Log2, n));
     let U = Double.One, V = Double.One;
@@ -222,7 +220,7 @@ export default class Double {
   }
 
   static ln2(X: Double) {
-    if (Double.le21(X, 0)) return Double.NaN;
+    if (Double.le21(X, 0)) return Double.MinusInfinity;
     if (Double.eq21(X, 1)) return Double.Zero;
     let Z = new Double(Math.log(X.hi));
     Double.sub21(Double.add22(Double.mul22(X, Double.exp2(Double.neg2(Double.clone(Z)))), Z), 1);
@@ -324,6 +322,7 @@ export default class Double {
   static get One() {  let d = new Double();     d.hi = 1; d.lo = 0; return d; }
   static get Zero() { let d = new Double();     d.hi = 0; d.lo = 0; return d; }
   static get Infinity() { let d = new Double(); d.hi = Infinity; d.lo = Infinity; return d; }
+  static get MinusInfinity() { let d = new Double(); d.hi = -Infinity; d.lo = -Infinity; return d; }
   static get NaN() { let d = new Double();      d.hi = NaN; d.lo = NaN; return d; }
   static get Pi() { let d = new Double();       d.hi = 3.141592653589793116; d.lo =  1.224646799147353207e-16; return d; }
   static get X2Pi() { let d = new Double();     d.hi = 6.283185307179586232; d.lo = 2.449293598294706414e-16; return d; }

@@ -386,8 +386,6 @@ var Double = (function () {
       value: function exp2(X) {
         if (Double.eq21(X, 0)) return Double.One;
         if (Double.eq21(X, 1)) return Double.E;
-        if (Double.lt21(X, -709)) return Double.Zero;
-        if (Double.gt21(X, 709)) return Double.Infinity;
         var n = Math.floor(X.hi / Double.Log2.hi + 0.5);
         Double.sub22(X, Double.mul21(Double.Log2, n));
         var U = Double.One,
@@ -408,7 +406,7 @@ var Double = (function () {
     }, {
       key: "ln2",
       value: function ln2(X) {
-        if (Double.le21(X, 0)) return Double.NaN;
+        if (Double.le21(X, 0)) return Double.MinusInfinity;
         if (Double.eq21(X, 1)) return Double.Zero;
         var Z = new Double(Math.log(X.hi));
         Double.sub21(Double.add22(Double.mul22(X, Double.exp2(Double.neg2(Double.clone(Z)))), Z), 1);
@@ -581,6 +579,14 @@ var Double = (function () {
         var d = new Double();
         d.hi = Infinity;
         d.lo = Infinity;
+        return d;
+      }
+    }, {
+      key: "MinusInfinity",
+      get: function get() {
+        var d = new Double();
+        d.hi = -Infinity;
+        d.lo = -Infinity;
         return d;
       }
     }, {
