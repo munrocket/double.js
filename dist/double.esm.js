@@ -262,7 +262,7 @@ class Double {
         let isPositive = n > 0;
         if (!isPositive)
             n = -n;
-        let i = Math.floor(Math.log(n) / Math.log(2));
+        let i = 31 - Math.clz32(n | 1);
         let j = Math.floor(n - (1 << i));
         let X0 = Double.clone(X);
         while (i--)

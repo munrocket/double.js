@@ -483,7 +483,7 @@ var Double = (function () {
         if (n == 1) return X;
         var isPositive = n > 0;
         if (!isPositive) n = -n;
-        var i = Math.floor(Math.log(n) / Math.log(2));
+        var i = 31 - Math.clz32(n | 1);
         var j = Math.floor(n - (1 << i));
         var X0 = Double.clone(X);
 

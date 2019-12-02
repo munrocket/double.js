@@ -11,7 +11,7 @@ Number stored as unevaluated sum of two javascript float numbers and uses error-
 ### Benchmark
 ![](https://habrastorage.org/webt/i0/jk/-h/i0jk-hl2r9tixahe906pl2wj0j0.png)
 
-You can check [quality](https://munrocket.github.io/double.js/) and [time](https://www.measurethat.net/Benchmarks/Show/6429/0/doublejs-benchmark) of different libraries in your browser.
+You can check [quality](https://munrocket.github.io/double.js/), [performance](https://www.measurethat.net/Benchmarks/Show/6429/0/doublejs-benchmark) and [correctness](https://munrocket.github.io/double.js/test.html) of double.js library in your browser.
 
 ### Usage
 Include double.js script to webpage or install npm package. Here some basic examples
@@ -34,7 +34,7 @@ let dF = (x) => F(x.add(h)).sub(F(x)).div(h);
 // |f'(x)| < 1 ? print(x)
 if (dF(x).abs().lt(1)) { console.log(x.toExponential()); }
 ```
-Further API details you can find in [wiki](https://github.com/munrocket/double.js/wiki) page. Also you can play with library in [sandbox](https://runkit.com/munrocket/double-js-example). Be careful when initializing a new floats, for example `new Double(0.1)` is ok only for integer numbers and you should use `new Double('0.1')` to get correct results for fractional numburs. All double-word arithmetic functions are accurate and tested, say me if you find something strange. 
+Further API details you can find in [wiki](https://github.com/munrocket/double.js/wiki) page and check it in [sandbox](https://runkit.com/munrocket/double-js-example). Be careful when initializing a new floats, for example `new Double(0.1)` is ok for integer numbers, but you should use `new Double('0.1')` to get correct results for fractional numburs. All double-word arithmetic functions are accurate and tested, say me if you find something strange. 
 
 ### Special thanks
 To [Jeffrey Sarnoff](https://github.com/JeffreySarnoff) for help me with books and algorithms.
