@@ -11,7 +11,7 @@ Number stored as unevaluated sum of two javascript float numbers and uses error-
 ### Benchmark
 ![](https://habrastorage.org/webt/i0/jk/-h/i0jk-hl2r9tixahe906pl2wj0j0.png)
 
-You can check [quality](https://munrocket.github.io/double.js/), [performance](https://www.measurethat.net/Benchmarks/Show/6429/0/doublejs-benchmark) and [correctness](https://munrocket.github.io/double.js/test.html) of double.js library in your browser.
+You can check [quality](https://munrocket.github.io/double.js/docs/benchmark.html), [performance](https://www.measurethat.net/Benchmarks/Show/6429/0/doublejs-benchmark) and [correctness](https://munrocket.github.io/double.js/docs/test.html) of double.js library in your browser.
 
 ### Usage
 Include double.js script to webpage or install npm package. Here some basic examples
