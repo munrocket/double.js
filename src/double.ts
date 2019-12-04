@@ -324,11 +324,11 @@ export default class Double {
   static get Infinity() { let d = new Double(); d.hi = Infinity; d.lo = Infinity; return d; }
   static get MinusInfinity() { let d = new Double(); d.hi = -Infinity; d.lo = -Infinity; return d; }
   static get NaN() { let d = new Double();      d.hi = NaN; d.lo = NaN; return d; }
-  static get Pi() { let d = new Double();       d.hi = 3.141592653589793116; d.lo =  1.224646799147353207e-16; return d; }
-  static get X2Pi() { let d = new Double();     d.hi = 6.283185307179586232; d.lo = 2.449293598294706414e-16; return d; }
+  static get Pi() { let d = new Double();       d.hi = 3.141592653589793; d.lo = 1.2246467991473532e-16; return d; }
+  static get X2Pi() { let d = new Double();     d.hi = 6.283185307179586; d.lo = 2.4492935982947064e-16; return d; }
   static get E() { let d = new Double();        d.hi = 2.718281828459045; d.lo = 1.4456468917292502e-16; return d; }
-  static get Log2() { let d = new Double();     d.hi = 0.6931471805599453; d.lo = 2.3190468138462996e-17; return d; }
-  static get Phi() { let d = new Double();      d.hi = 1.618033988749895; d.lo = -5.4321152036825055e-17; return d; }
+  static get Log2() { let d = new Double();     d.hi = 0.6931471805599453; d.lo = 2.319046813846299e-17; return d; }
+  static get Phi() { let d = new Double();      d.hi = 1.618033988749895; d.lo = -5.432115203682505e-17; return d; }
   
   /* Repeating static methods to instance */
 

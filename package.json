@@ -10,11 +10,10 @@
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "test": "node --experimental-modules --no-warnings ./docs/puppeteer.js",
-    "serve": "http-server -c-1 -p 1234",
-    "ci": "npm run serve & npm run test && pkill http-server",
-    "cov": "nyc report --reporter=lcov --exit && codecov",
-    "deploy": "npm version minor && git push --tags origin master",
-    "asc": "asc ./src/double-wasm.ts -b ./dist/double.wasm -O3"
+    "http": "http-server -c-1 -p 1234",
+    "cov": "sed -i 's/.nyc_output\\/js/dist/g' .nyc_output/out.json && nyc report --reporter=lcov",
+    "ci": "npm run http & npm run test && npm run cov || pkill http",
+    "deploy": "npm version minor && git push --tags origin master"
   },
   "devDependencies": {
     "@babel/core": "^7.7.4",
