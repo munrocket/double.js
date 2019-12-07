@@ -19,6 +19,7 @@
       <div style="padding-top: 4px;"><canvas id="withDoubleJs" width="15" height="10"></canvas></div>
       <div style="padding-top: 4px;"><canvas id="withDoubleJs_FirstVer" width="15" height="10"></canvas></div>
       <div style="padding-top: 4px;"><canvas id="withDoubleJs_Wasm" width="15" height="10"></canvas></div>
+      <div style="padding-top: 4px;"><canvas id="withDoubleJs_WasmOpt" width="15" height="10"></canvas></div>
       <div style="padding-top: 4px;"><canvas id="withDecimalJs" width="15" height="10"></canvas></div>
       <div style="padding-top: 4px;"><canvas id="withBigNumberJs" width="15" height="10"></canvas></div>
       <div style="padding-top: 4px;"><canvas id="withBigJs" width="15" height="10"></canvas></div>
@@ -40,12 +41,18 @@
 <!-- wasm version -->
 <script>
   let imports = { env: { abort() { console.error("abort called");}}}
-  let wasm;
+  let wasm, wasmOpt;
   fetch('../wasm/mandel.wasm').then(response =>
     response.arrayBuffer()
   ).then(bytes => WebAssembly.instantiate(bytes, imports)).then(results => {
     wasm = results.instance.exports;
     console.log('wasm loaded, test=' + wasm.test());
+  }).catch(console.error);
+  fetch('../wasm/mandelOpt.wasm').then(response =>
+    response.arrayBuffer()
+  ).then(bytes => WebAssembly.instantiate(bytes, imports)).then(results => {
+    wasmOpt = results.instance.exports;
+    console.log('wasmOpt loaded, test=' + wasmOpt.test());
   }).catch(console.error);
 </script>
 
