@@ -1,20 +1,19 @@
-const f64Type = 'number';
-const f64Splitter = 134217729;
+const splitter = 134217729;
 function twoSum(a, b) {
     let s = a + b;
     let a1 = s - b;
     return { hi: s, lo: (a - a1) + (b - (s - a1)) };
 }
 function twoProd(a, b) {
-    let t = f64Splitter * a;
+    let t = splitter * a;
     let ah = t + (a - t), al = a - ah;
-    t = f64Splitter * b;
+    t = splitter * b;
     let bh = t + (b - t), bl = b - bh;
     t = a * b;
     return { hi: t, lo: ((ah * bh - t) + ah * bl + al * bh) + al * bl };
 }
 function oneSqr(a) {
-    let t = f64Splitter * a;
+    let t = splitter * a;
     let ah = t + (a - t), al = a - ah;
     t = a * a;
     let hl = al * ah;
@@ -26,7 +25,7 @@ class Double {
             this.hi = obj.hi;
             this.lo = obj.lo;
         }
-        else if (typeof obj === f64Type) {
+        else if (typeof obj === 'number') {
             this.hi = obj;
             this.lo = 0;
         }
@@ -296,25 +295,25 @@ class Double {
     add(other) {
         if (other instanceof Double)
             return Double.add22(Double.clone(this), other);
-        else if (typeof other == f64Type)
+        else if (typeof other == 'number')
             return Double.add21(Double.clone(this), other);
     }
     sub(other) {
         if (other instanceof Double)
             return Double.sub22(Double.clone(this), other);
-        else if (typeof other == f64Type)
+        else if (typeof other == 'number')
             return Double.sub21(Double.clone(this), other);
     }
     mul(other) {
         if (other instanceof Double)
             return Double.mul22(Double.clone(this), other);
-        else if (typeof other == f64Type)
+        else if (typeof other == 'number')
             return Double.mul21(Double.clone(this), other);
     }
     div(other) {
         if (other instanceof Double)
             return Double.div22(Double.clone(this), other);
-        else if (typeof other == f64Type)
+        else if (typeof other == 'number')
             return Double.div21(Double.clone(this), other);
     }
     pow(exp) { return Double.pow22(Double.clone(this), exp); }
@@ -330,39 +329,39 @@ class Double {
     cosh() { return Double.cosh2(Double.clone(this)); }
     eq(other) {
         if (other instanceof Double)
-            return Double.eq22(Double.clone(this), other);
-        else if (typeof other == f64Type)
-            return Double.eq21(Double.clone(this), other);
+            return Double.eq22(this, other);
+        else if (typeof other == 'number')
+            return Double.eq21(this, other);
     }
     ne(other) {
         if (other instanceof Double)
-            return Double.ne22(Double.clone(this), other);
-        else if (typeof other == f64Type)
-            return Double.ne21(Double.clone(this), other);
+            return Double.ne22(this, other);
+        else if (typeof other == 'number')
+            return Double.ne21(this, other);
     }
     gt(other) {
         if (other instanceof Double)
-            return Double.gt22(Double.clone(this), other);
-        else if (typeof other == f64Type)
-            return Double.gt21(Double.clone(this), other);
+            return Double.gt22(this, other);
+        else if (typeof other == 'number')
+            return Double.gt21(this, other);
     }
     lt(other) {
         if (other instanceof Double)
-            return Double.lt22(Double.clone(this), other);
-        else if (typeof other == f64Type)
-            return Double.lt21(Double.clone(this), other);
+            return Double.lt22(this, other);
+        else if (typeof other == 'number')
+            return Double.lt21(this, other);
     }
     ge(other) {
         if (other instanceof Double)
-            return Double.ge22(Double.clone(this), other);
-        else if (typeof other == f64Type)
-            return Double.ge21(Double.clone(this), other);
+            return Double.ge22(this, other);
+        else if (typeof other == 'number')
+            return Double.ge21(this, other);
     }
     le(other) {
         if (other instanceof Double)
-            return Double.le22(Double.clone(this), other);
-        else if (typeof other == f64Type)
-            return Double.le21(Double.clone(this), other);
+            return Double.le22(this, other);
+        else if (typeof other == 'number')
+            return Double.le21(this, other);
     }
 }
 

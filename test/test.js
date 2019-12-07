@@ -7,7 +7,7 @@ let eps2 = 1e-30;
 let abs = Math.abs;
 let diff, diff2, expected, expected2, actual, actual2, actual3;
 
-test('IEEE verification in your browser based on ref. [4]', t => {
+test('IEEE verification in your browser (based on ref. [4])', t => {
   expected = Infinity;
   actual = (1e308 + 1e308) / 1e308;
   t.ok(actual == expected, 'Infinity');

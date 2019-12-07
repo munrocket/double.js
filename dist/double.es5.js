@@ -37,8 +37,7 @@ var Double = (function () {
     return Constructor;
   }
 
-  var f64Type = 'number';
-  var f64Splitter = 134217729;
+  var splitter = 134217729;
 
   function twoSum(a, b) {
     var s = a + b;
@@ -50,10 +49,10 @@ var Double = (function () {
   }
 
   function twoProd(a, b) {
-    var t = f64Splitter * a;
+    var t = splitter * a;
     var ah = t + (a - t),
         al = a - ah;
-    t = f64Splitter * b;
+    t = splitter * b;
     var bh = t + (b - t),
         bl = b - bh;
     t = a * b;
@@ -64,7 +63,7 @@ var Double = (function () {
   }
 
   function oneSqr(a) {
-    var t = f64Splitter * a;
+    var t = splitter * a;
     var ah = t + (a - t),
         al = a - ah;
     t = a * a;
@@ -84,7 +83,7 @@ var Double = (function () {
       if (obj instanceof Double) {
         this.hi = obj.hi;
         this.lo = obj.lo;
-      } else if (_typeof(obj) === f64Type) {
+      } else if (typeof obj === 'number') {
         this.hi = obj;
         this.lo = 0;
       } else if (typeof obj === 'string') {
@@ -132,22 +131,22 @@ var Double = (function () {
     }, {
       key: "add",
       value: function add(other) {
-        if (other instanceof Double) return Double.add22(Double.clone(this), other);else if (_typeof(other) == f64Type) return Double.add21(Double.clone(this), other);
+        if (other instanceof Double) return Double.add22(Double.clone(this), other);else if (typeof other == 'number') return Double.add21(Double.clone(this), other);
       }
     }, {
       key: "sub",
       value: function sub(other) {
-        if (other instanceof Double) return Double.sub22(Double.clone(this), other);else if (_typeof(other) == f64Type) return Double.sub21(Double.clone(this), other);
+        if (other instanceof Double) return Double.sub22(Double.clone(this), other);else if (typeof other == 'number') return Double.sub21(Double.clone(this), other);
       }
     }, {
       key: "mul",
       value: function mul(other) {
-        if (other instanceof Double) return Double.mul22(Double.clone(this), other);else if (_typeof(other) == f64Type) return Double.mul21(Double.clone(this), other);
+        if (other instanceof Double) return Double.mul22(Double.clone(this), other);else if (typeof other == 'number') return Double.mul21(Double.clone(this), other);
       }
     }, {
       key: "div",
       value: function div(other) {
-        if (other instanceof Double) return Double.div22(Double.clone(this), other);else if (_typeof(other) == f64Type) return Double.div21(Double.clone(this), other);
+        if (other instanceof Double) return Double.div22(Double.clone(this), other);else if (typeof other == 'number') return Double.div21(Double.clone(this), other);
       }
     }, {
       key: "pow",
@@ -207,32 +206,32 @@ var Double = (function () {
     }, {
       key: "eq",
       value: function eq(other) {
-        if (other instanceof Double) return Double.eq22(Double.clone(this), other);else if (_typeof(other) == f64Type) return Double.eq21(Double.clone(this), other);
+        if (other instanceof Double) return Double.eq22(this, other);else if (typeof other == 'number') return Double.eq21(this, other);
       }
     }, {
       key: "ne",
       value: function ne(other) {
-        if (other instanceof Double) return Double.ne22(Double.clone(this), other);else if (_typeof(other) == f64Type) return Double.ne21(Double.clone(this), other);
+        if (other instanceof Double) return Double.ne22(this, other);else if (typeof other == 'number') return Double.ne21(this, other);
       }
     }, {
       key: "gt",
       value: function gt(other) {
-        if (other instanceof Double) return Double.gt22(Double.clone(this), other);else if (_typeof(other) == f64Type) return Double.gt21(Double.clone(this), other);
+        if (other instanceof Double) return Double.gt22(this, other);else if (typeof other == 'number') return Double.gt21(this, other);
       }
     }, {
       key: "lt",
       value: function lt(other) {
-        if (other instanceof Double) return Double.lt22(Double.clone(this), other);else if (_typeof(other) == f64Type) return Double.lt21(Double.clone(this), other);
+        if (other instanceof Double) return Double.lt22(this, other);else if (typeof other == 'number') return Double.lt21(this, other);
       }
     }, {
       key: "ge",
       value: function ge(other) {
-        if (other instanceof Double) return Double.ge22(Double.clone(this), other);else if (_typeof(other) == f64Type) return Double.ge21(Double.clone(this), other);
+        if (other instanceof Double) return Double.ge22(this, other);else if (typeof other == 'number') return Double.ge21(this, other);
       }
     }, {
       key: "le",
       value: function le(other) {
-        if (other instanceof Double) return Double.le22(Double.clone(this), other);else if (_typeof(other) == f64Type) return Double.le21(Double.clone(this), other);
+        if (other instanceof Double) return Double.le22(this, other);else if (typeof other == 'number') return Double.le21(this, other);
       }
     }], [{
       key: "clone",

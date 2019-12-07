@@ -17,24 +17,6 @@ function withNumber(buffer, target, i, j) {
   }
   colorizer(buffer, iteration - 1)
 }
-function withDoubleJs_FirstVer(buffer, target, i, j) {
-  let D = D01;
-  let iteration = 0;
-  let x = D.Zero, y = D.Zero;
-  let xx = D.Zero, xy = D.Zero, yy = D.Zero;
-  let tx = new D(target.x), ty = new D(target.y);
-  let tdx = new D(target.dx), tdy = new D(target.dy);
-  let cx = tx.sub(tdx).add(tdx.mul(2 * i).div(buffer.width));
-  let cy = ty.add(tdy).sub(tdy.mul(2 * j).div(buffer.height));
-  while (iteration++ < maxIteration && xx.add(yy).lt(4)) {
-    x = xx.sub(yy).add(cx);
-    y = xy.add(xy).add(cy);
-    xx = x.mul(x);
-    yy = y.mul(y);
-    xy = x.mul(y);
-  }
-  colorizer(buffer, iteration - 1);
-}
 function withDoubleJs(buffer, target, i, j) {
   let D = Double;
   let iteration = 0;
@@ -47,10 +29,40 @@ function withDoubleJs(buffer, target, i, j) {
   while (iteration++ < maxIteration && xx.add(yy).lt(4)) {
     x = xx.sub(yy).add(cx);
     y = xy.add(xy).add(cy);
-    xx = x.mul(x);
-    yy = y.mul(y);
+    xx = x.sqr();
+    yy = y.sqr();
     xy = x.mul(y);
   }
+  colorizer(buffer, iteration - 1);
+}
+function withDoubleJs_FirstVer(buffer, target, i, j) {
+  let D = D01;
+  let iteration = 0;
+  let x = D.Zero, y = D.Zero;
+  let xx = D.Zero, xy = D.Zero, yy = D.Zero;
+  let tx = new D(target.x), ty = new D(target.y);
+  let tdx = new D(target.dx), tdy = new D(target.dy);
+  let cx = tx.sub(tdx).add(tdx.mul(2 * i).div(buffer.width));
+  let cy = ty.add(tdy).sub(tdy.mul(2 * j).div(buffer.height));
+  while (iteration++ < maxIteration && xx.add(yy).lt(4)) {
+    x = xx.sub(yy).add(cx);
+    y = xy.add(xy).add(cy);
+    xx = x.sqr();
+    yy = y.sqr();
+    xy = x.mul(y);
+  }
+  colorizer(buffer, iteration - 1);
+}
+function withDoubleJs_Wasm(buffer, target, i, j) {
+  let iteration = wasm.mandelbrot(
+    maxIteration,
+    buffer.width,
+    buffer.height,
+    target.x,
+    target.y,
+    target.dx,
+    target.dy,
+    i, j);
   colorizer(buffer, iteration - 1);
 }
 function withDecimalJs(buffer, target, i, j) {
@@ -192,8 +204,10 @@ window.onload = function() {
   let now = () => (typeof performance != 'undefined') ? performance.now() : Date.now();
   target.dx = 3e-16;
   target.dy = 2e-16;
-  let calculators = [withDoubleJs, withDoubleJs_FirstVer, withBigNumberJs, withDecimalJs, withBigJs, withBigFloat32 ]; //withBigFloat53
+  let calculators = [withDoubleJs, withDoubleJs_FirstVer, withDoubleJs_Wasm, withBigNumberJs, withDecimalJs, withBigJs, withBigFloat32 ]; //withBigFloat53
   calculators.forEach((calculator) => setTimeout(() => {
+
+    // show debug
     popups[0].style.display = 'block';
     popups[1].style.display = 'block';
 

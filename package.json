@@ -1,6 +1,6 @@
 {
   "name": "double.js",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "description": "Floating point expansions with 31 accurate decimal digits (100+ bits), also known as double-word arithmetic",
   "main": "dist/double.js",
   "types": "dist/double.d.ts",
@@ -12,7 +12,8 @@
     "test": "node --experimental-modules --no-warnings ./docs/puppeteer.js",
     "http": "http-server -c-1 -p 1234",
     "cov": "sed -i 's/.nyc_output\\/js/dist/g' .nyc_output/out.json && nyc report --reporter=lcov",
-    "ci": "npm run http & npm run test && npm run cov || pkill http",
+    "ci": "npm run http & (npm run test && npm run cov) || pkill http",
+    "wasm": "asc wasm/mandel.ts -b wasm/mandel.wasm -O3",
     "deploy": "npm version minor && git push --tags origin master"
   },
   "devDependencies": {

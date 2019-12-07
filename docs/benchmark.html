@@ -9,16 +9,16 @@
   <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 </head>
 <body>
-  <h1>Split test and benchmark</h1>
+  <h1>Quality test and benchmark</h1>
   <div style="position: relative">
     <canvas id="splitTest" width="400" height="200" style="position: absolute;"></canvas>
     <canvas id="barChart" width="400" height="200" style="position: absolute; padding-left: 420px"></canvas>
     <div class="bench-popup" style="display: none; position: absolute; padding-left: 830px; padding-top: 12px;">debug</div>
     <div class="bench-popup" style="display: none; position: absolute; padding-left: 840px; padding-top: 10px;">
       <div style="padding-top: 4px;"><canvas id="withNumber" width="15" height="10"></canvas></div>
-      <div style="padding-top: 4px;"><canvas id="withDoubleJs_FirstVer" width="15" height="10"></canvas></div>
-      <!-- <div style="padding-top: 4px;"><canvas id="withDoubleJs_Static" width="15" height="10"></canvas></div> -->
       <div style="padding-top: 4px;"><canvas id="withDoubleJs" width="15" height="10"></canvas></div>
+      <div style="padding-top: 4px;"><canvas id="withDoubleJs_FirstVer" width="15" height="10"></canvas></div>
+      <div style="padding-top: 4px;"><canvas id="withDoubleJs_Wasm" width="15" height="10"></canvas></div>
       <div style="padding-top: 4px;"><canvas id="withDecimalJs" width="15" height="10"></canvas></div>
       <div style="padding-top: 4px;"><canvas id="withBigNumberJs" width="15" height="10"></canvas></div>
       <div style="padding-top: 4px;"><canvas id="withBigJs" width="15" height="10"></canvas></div>
@@ -27,16 +27,27 @@
     </div>
   </div>
   <p class="bench-popup" style="display: none; font-family: 'Open Sans', sans; padding-top: 213px">
-    All libraries except native float setted to precision with 31 decimal digits. <br/>
-    To increase DoubleJs_Static performance we used static methods and .sqr() insted of .mul() in some places. <br/>
-    To increase BigJs and BigNumberJs we used .round(31) and .dp(31) after each multiplication without this they become x1000 slower.<br/>
+    All libraries setted to precision with 31 decimal digits. <br/>
+    To increase BigJs and BigNumberJs I used .round(31) and .dp(31) after each multiplication without it they become x1000 slower.<br/>
   </p>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
 
-<!-- test v0.1 version -->
+<!-- v0.1 version -->
 <script src="https://unpkg.com/double.js@0.1.0"></script>
 <script>D01 = Double;</script>
+
+<!-- wasm version -->
+<script>
+  let imports = { env: { abort() { console.error("abort called");}}}
+  let wasm;
+  fetch('../wasm/mandel.wasm').then(response =>
+    response.arrayBuffer()
+  ).then(bytes => WebAssembly.instantiate(bytes, imports)).then(results => {
+    wasm = results.instance.exports;
+    console.log('wasm loaded, test=' + wasm.test());
+  }).catch(console.error);
+</script>
 
 <script src="https://unpkg.com/double.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/decimal.js/10.0.1/decimal.min.js"></script>
