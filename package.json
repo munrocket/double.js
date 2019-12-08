@@ -1,6 +1,6 @@
 {
   "name": "double.js",
-  "version": "0.4.5",
+  "version": "0.4.6",
   "description": "Floating point expansions with 31 accurate decimal digits (100+ bits), also known as double-word arithmetic",
   "main": "dist/double.js",
   "types": "dist/double.d.ts",
@@ -18,7 +18,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.7.4",
-    "@babel/preset-env": "7.7.4",
+    "@babel/preset-env": "7.7.6",
     "assemblyscript": "^0.8.1",
     "codecov": "3.6.1",
     "http-server": "^0.12.0",
