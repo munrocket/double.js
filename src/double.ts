@@ -144,7 +144,7 @@ export default class Double {
     return X;
   }
 
-  // DWDivDW1 (16 with inlined 1 from [1])
+  // unknown algo (must be DWDivDW1 (16 with inlined 1 from [1])
   static div22(X: Double, Y: Double): Double {
     let s = X.hi / Y.hi;
     let T = twoProd(s, Y.hi);

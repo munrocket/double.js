@@ -109,10 +109,9 @@ class Double {
   }
 }
 
-export function test(): number {
+export function test(Eh: number, El: number, Lh: number, Ll: number): number {
   let result: number = 0;
-  const log2 = new Double(0.6931471805599453, 2.319046813846299e-17);
-  const e = new Double(2.718281828459045, 1.4456468917292502e-16);
+  const e = new Double(Eh, El), log2 = new Double(Lh, Ll);
   let diff = e.add(log2).sub(log2).sub(e).abs();
   if (diff > 1e-30) result += 1;
   diff = e.mul(log2).div(log2).sub(e).abs();

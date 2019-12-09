@@ -77,6 +77,18 @@ function withDoubleJs_WasmOpt(buffer, target, i, j) {
     i, j);
   colorizer(buffer, iteration - 1);
 }
+function withDoubleJs_WasmOpt2(buffer, target, i, j) {
+  let iteration = wasmOpt2.mandelbrot(
+    maxIteration,
+    buffer.width,
+    buffer.height,
+    target.x,
+    target.y,
+    target.dx,
+    target.dy,
+    i, j);
+  colorizer(buffer, iteration - 1);
+}
 function withDecimalJs(buffer, target, i, j) {
   let iteration = 0;
   let x = new Decimal(0), y = new Decimal(0);
@@ -216,7 +228,8 @@ window.onload = function() {
   let now = () => (typeof performance != 'undefined') ? performance.now() : Date.now();
   target.dx = 3e-16;
   target.dy = 2e-16;
-  let calculators = [withDoubleJs, withDoubleJs_FirstVer, withDoubleJs_Wasm, withDoubleJs_WasmOpt, withBigNumberJs, withDecimalJs, withBigJs, withBigFloat32 ]; //withBigFloat53
+  let calculators = [ withDoubleJs, withDoubleJs_FirstVer, withDoubleJs_Wasm, withDoubleJs_WasmOpt, withDoubleJs_WasmOpt2,
+                      withBigNumberJs, withDecimalJs, withBigJs, withBigFloat32 ]; //withBigFloat53
   calculators.forEach((calculator) => setTimeout(() => {
 
     // show debug
