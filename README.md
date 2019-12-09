@@ -37,9 +37,8 @@ if (dF(x).abs().lt(1)) { console.log(x.toExponential()); }
 Further API details you can find in [wiki](https://github.com/munrocket/double.js/wiki) page and check it in [sandbox](https://runkit.com/munrocket/double-js-example). Be careful when initializing a new floats, for example `new Double(0.1)` is ok for integer numbers, but you should use `new Double('0.1')` to get correct results for fractional numburs. All double-word arithmetic functions are accurate and tested, say me if you find something strange. 
 
 ### WASM version
-To get speed improvement with wasm, you need to write your entire algorithm with it, because Js<->Wasm interop right now is too heavy.
-And even after that you still need to check your result. In best case you get x2-x5 speed improvement in Firefox and probably nothing in Chrome
-for heavy calculations in loop. Try by yourself for your algo.
+To get speed improvement with wasm, you need to write your entire algorithm with it, because Js<->Wasm interop is too heavy.
+For example for mandelbrot I get x2 in Chrome and x5 in Firefox. Try by yourself for your algo.
 
 ### Special thanks
 To [Jeffrey Sarnoff](https://github.com/JeffreySarnoff) for help me with books and algorithms.

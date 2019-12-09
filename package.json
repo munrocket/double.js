@@ -13,7 +13,7 @@
     "http": "http-server -c-1 -p 1234",
     "cov": "sed -i 's/.nyc_output\\/js/dist/g' .nyc_output/out.json && nyc report --reporter=lcov",
     "ci": "npm run http & (npm run test && npm run cov) || pkill http",
-    "wasm": "asc wasm/mandel.ts -b wasm/mandel.wasm -O3 && asc wasm/mandelOpt.ts -b wasm/mandelOpt.wasm -O3 && wat2wasm mandelOpt2.wat",
+    "wasm": "asc wasm/mandel.ts -b wasm/mandel.wasm -O3 --runtime none && asc wasm/mandelOpt.ts -b wasm/mandelOpt.wasm -O3 --runtime none && wat2wasm wasm/mandelOpt2.wat",
     "deploy": "npm version minor && git push --tags origin master"
   },
   "devDependencies": {
