@@ -1,24 +1,22 @@
 {
   "name": "double.js",
-  "version": "0.4.6",
+  "version": "0.4.8",
   "description": "Floating point expansions with 31 accurate decimal digits (100+ bits), also known as double-word arithmetic",
   "main": "dist/double.js",
   "types": "dist/double.d.ts",
   "module": "dist/double.esm.js",
   "type": "module",
   "scripts": {
-    "build": "rollup -c",
-    "dev": "rollup -c -w",
+    "build": "rollup -c && asc wasm/mandel.ts -b wasm/mandel.wasm -O3 --runtime none",
     "test": "node --experimental-modules --no-warnings ./docs/puppeteer.js",
     "http": "http-server -c-1 -p 1234",
     "cov": "sed -i 's/.nyc_output\\/js/dist/g' .nyc_output/out.json && nyc report --reporter=lcov",
     "ci": "npm run http & (npm run test && npm run cov) || pkill http",
-    "wasm": "asc wasm/mandel.ts -b wasm/mandel.wasm -O3 --runtime none && asc wasm/mandelOpt.ts -b wasm/mandelOpt.wasm -O3 --runtime none && wat2wasm wasm/mandelOpt2.wat",
     "deploy": "npm version minor && git push --tags origin master"
   },
   "devDependencies": {
     "@babel/core": "^7.7.4",
-    "@babel/preset-env": "7.7.6",
+    "@babel/preset-env": "7.7.7",
     "assemblyscript": "^0.8.1",
     "codecov": "3.6.1",
     "http-server": "^0.12.0",
@@ -53,6 +51,5 @@
     "big.js"
   ],
   "author": "munrocket",
-  "license": "MIT",
-  "dependencies": {}
+  "license": "MIT"
 }

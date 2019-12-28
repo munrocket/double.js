@@ -17,10 +17,8 @@
     <div class="bench-popup" style="display: none; position: absolute; padding-left: 840px; padding-top: 10px;">
       <div style="padding-top: 4px;"><canvas id="withNumber" width="15" height="10"></canvas></div>
       <div style="padding-top: 4px;"><canvas id="withDoubleJs" width="15" height="10"></canvas></div>
-      <div style="padding-top: 4px;"><canvas id="withDoubleJs_FirstVer" width="15" height="10"></canvas></div>
+      <div style="padding-top: 4px;"><canvas id="withDoubleJs_Ver01" width="15" height="10"></canvas></div>
       <div style="padding-top: 4px;"><canvas id="withDoubleJs_Wasm" width="15" height="10"></canvas></div>
-      <div style="padding-top: 4px;"><canvas id="withDoubleJs_WasmOpt" width="15" height="10"></canvas></div>
-      <div style="padding-top: 4px;"><canvas id="withDoubleJs_WasmOpt2" width="15" height="10"></canvas></div>
       <div style="padding-top: 4px;"><canvas id="withDecimalJs" width="15" height="10"></canvas></div>
       <div style="padding-top: 4px;"><canvas id="withBigNumberJs" width="15" height="10"></canvas></div>
       <div style="padding-top: 4px;"><canvas id="withBigJs" width="15" height="10"></canvas></div>
@@ -29,8 +27,8 @@
     </div>
   </div>
   <p class="bench-popup" style="display: none; font-family: 'Open Sans', sans; padding-top: 213px">
-    All libraries setted to precision with 31 decimal digits. <br/>
-    To increase BigJs and BigNumberJs I used .round(31) and .dp(31) after each multiplication without it they become x1000 slower.<br/>
+    Probably ChartJS visualization not work on mobile phones. All libraries in benchmark setted to precision with 31 decimal digits.<br/>
+    To increase BigJs and BigNumberJs I used .round(31) and .dp(31) after each multiplication without rouding they become x1000 slower.<br/>
   </p>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
@@ -41,44 +39,17 @@
 
 <!-- wasm version -->
 <script>
-  let imports = { env: { abort() { console.error("abort called");}}}
-  let wasm, wasmOpt, wasmOpt2;
-  let el = [2.718281828459045, 1.4456468917292502e-16, 0.6931471805599453, 2.319046813846299e-17];
+  let imports = { env: { abort() { console.error("abort called");}}};
   fetch('../wasm/mandel.wasm').then(response =>
     response.arrayBuffer()
   ).then(bytes => WebAssembly.instantiate(bytes, imports)).then(results => {
     wasm = results.instance.exports;
+    let el = [2.718281828459045, 1.4456468917292502e-16, 0.6931471805599453, 2.319046813846299e-17];
     console.log('wasm loaded, test=' + wasm.test(...el));
-  }).catch(console.error);
-  
-  fetch('../wasm/mandelOpt.wasm').then(response =>
-    response.arrayBuffer()
-  ).then(bytes => WebAssembly.instantiate(bytes, imports)).then(results => {
-    wasmOpt = results.instance.exports;
-    console.log('wasmOpt loaded, test=' + wasmOpt.test(...el));
-  
-    fetch('../wasm/mandelOpt2.wasm').then(response =>
-      response.arrayBuffer()
-    ).then(bytes => WebAssembly.instantiate(bytes, imports)).then(results => {
-      wasmOpt2 = results.instance.exports;
-      console.log('wasmOpt2 loaded, test=' + wasmOpt2.test(...el));
-      let result = 0;
-      let Eh = el[0], El = el[1], Lh = el[2], Ll = el[3];
-      let Rh = wasmOpt2.sub22(wasmOpt2.sub22(wasmOpt2.add22(Eh, El, Lh, Ll),
-                              wasmOpt2.LO(), Lh, Ll), wasmOpt2.LO(), Eh, El); let Rl = wasmOpt2.LO();
-      let diff = Math.abs(Rh + Rl);
-      if (diff > 1e-30) result += 1.;
-      Rh = wasmOpt2.sub22(wasmOpt2.div22(wasmOpt2.mul22(Eh, El, Lh, Ll),
-                          wasmOpt2.LO(), Lh, Ll), wasmOpt2.LO(), Eh, El); Rl = wasmOpt2.LO();
-      diff = Math.abs(Rh + Rl);
-      if (diff > 1e-30) result += 2.;
-      console.log('extended test=', result);
-
-    }).catch(console.error);
   }).catch(console.error);
 </script>
 
-<script src="https://unpkg.com/double.js"></script>
+<script src="/dist/double.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/decimal.js/10.0.1/decimal.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bignumber.js/7.2.1/bignumber.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/big.js/5.1.2/big.min.js"></script>

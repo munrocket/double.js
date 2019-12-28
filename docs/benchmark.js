@@ -1,4 +1,4 @@
-let maxIteration, pixelId;
+let maxIteration, pixelId, wasm;
 
 /* different calculators */
 
@@ -24,8 +24,8 @@ function withDoubleJs(buffer, target, i, j) {
   let xx = D.Zero, xy = D.Zero, yy = D.Zero;
   let tx = new D(target.x), ty = new D(target.y);
   let tdx = new D(target.dx), tdy = new D(target.dy);
-  let cx = tx.sub(tdx).add(tdx.mul(2 * i).div(buffer.width));
-  let cy = ty.add(tdy).sub(tdy.mul(2 * j).div(buffer.height));
+  let cx = tx.sub(tdx).add(tdx.mul(new D(2 * i)).div(new D(buffer.width)));
+  let cy = ty.add(tdy).sub(tdy.mul(new D(2 * j)).div(new D(buffer.height)));
   while (iteration++ < maxIteration && xx.add(yy).lt(4)) {
     x = xx.sub(yy).add(cx);
     y = xy.add(xy).add(cy);
@@ -35,7 +35,7 @@ function withDoubleJs(buffer, target, i, j) {
   }
   colorizer(buffer, iteration - 1);
 }
-function withDoubleJs_FirstVer(buffer, target, i, j) {
+function withDoubleJs_Ver01(buffer, target, i, j) {
   let D = D01;
   let iteration = 0;
   let x = D.Zero, y = D.Zero;
@@ -55,30 +55,6 @@ function withDoubleJs_FirstVer(buffer, target, i, j) {
 }
 function withDoubleJs_Wasm(buffer, target, i, j) {
   let iteration = wasm.mandelbrot(
-    maxIteration,
-    buffer.width,
-    buffer.height,
-    target.x,
-    target.y,
-    target.dx,
-    target.dy,
-    i, j);
-  colorizer(buffer, iteration - 1);
-}
-function withDoubleJs_WasmOpt(buffer, target, i, j) {
-  let iteration = wasmOpt.mandelbrot(
-    maxIteration,
-    buffer.width,
-    buffer.height,
-    target.x,
-    target.y,
-    target.dx,
-    target.dy,
-    i, j);
-  colorizer(buffer, iteration - 1);
-}
-function withDoubleJs_WasmOpt2(buffer, target, i, j) {
-  let iteration = wasmOpt2.mandelbrot(
     maxIteration,
     buffer.width,
     buffer.height,
@@ -224,47 +200,51 @@ window.onload = function() {
 
   let popups = document.getElementsByClassName('bench-popup');
 
-  //benchmark
-  let now = () => (typeof performance != 'undefined') ? performance.now() : Date.now();
-  target.dx = 3e-16;
-  target.dy = 2e-16;
-  let calculators = [ withDoubleJs, withDoubleJs_FirstVer, withDoubleJs_Wasm, withDoubleJs_WasmOpt, withDoubleJs_WasmOpt2,
-                      withBigNumberJs, withDecimalJs, withBigJs, withBigFloat32 ]; //withBigFloat53
-  calculators.forEach((calculator) => setTimeout(() => {
+  fetch('../wasm/mandel.wasm').then(response =>
+    response.arrayBuffer()
+  ).then(bytes => WebAssembly.instantiate(bytes, imports)).then(results => {
+    wasm = results.instance.exports;
 
-    // show debug
-    popups[0].style.display = 'block';
-    popups[1].style.display = 'block';
+    //benchmark
+    target.dx = 3e-16;
+    target.dy = 2e-16;
+    let now = () => (typeof performance != 'undefined') ? performance.now() : Date.now();
+    let calculators = [ withDoubleJs, withDoubleJs_Ver01, withDoubleJs_Wasm,
+                        withBigNumberJs, withDecimalJs, withBigJs, withBigFloat32 ]; //withBigFloat53
+    calculators.forEach((calculator) => setTimeout(() => {
 
-    let start = now();
-    let end = start;
-    let counter = 0;
-    while (end < start + 1500) {
-      counter++;
-      draw(calculator, target);
-      end = now();
-    };
-    calculator.benchmark = counter / (end - start);
+      // show debug
+      popups[0].style.display = 'block';
+      popups[1].style.display = 'block';
 
-    //barChart
-    new Chart(document.getElementById('barChart').getContext('2d'), {
-      type: 'horizontalBar',
-      data: { labels: calculators.map(x => x.name.slice(4)), datasets: [{ borderWidth: 1, data: calculators.map(x => x.benchmark) }]},
-      options: { responsive: false, legend: false, title: {
-        display: true, text: 'Mandelbrot benchmark (bigger is better)',
-        fontFamily: "Sans", fontColor: "#000", fontSize: 16, fontStyle: 'normal' }
-      }
-    });
-  }, 1500));
-  setTimeout(() => {
-    popups[2].style.display = 'block';
-    new Chart(document.getElementById('barChart').getContext('2d'), {
-      type: 'horizontalBar',
-      data: { labels: calculators.map(x => x.name.slice(4)), datasets: [{ borderWidth: 1, data: calculators.map(x => x.benchmark) }]},
-      options: { responsive: false, legend: false, title: {
-        display: true, text: 'Mandelbrot benchmark (bigger is better)',
-        fontFamily: "Sans", fontColor: "#000", fontSize: 16, fontStyle: 'normal' }
-      }
-    });
-  }, 7000);
+      let start = now();
+      let end = start;
+      let counter = 0;
+      while (end < start + 1500) {
+        counter++;
+        draw(calculator, target);
+        end = now();
+      };
+      calculator.benchmark = counter / (end - start);
+
+      //barChart
+      new Chart(document.getElementById('barChart').getContext('2d'), {
+        type: 'horizontalBar',
+        data: { labels: calculators.map(x => x.name.slice(4)), datasets: [{ borderWidth: 1, data: calculators.map(x => x.benchmark) }]},
+        options: { responsive: false, legend: false, title: {
+          display: true, text: 'Mandelbrot benchmark (bigger is better)',
+          fontFamily: "Sans", fontColor: "#000", fontSize: 16, fontStyle: 'normal' }
+        }
+      });
+    }, 1500));
+    setTimeout(() => {
+      var p = document.createElement('p');
+      calculators.forEach(calc => {
+        p.innerHTML += '<br>' + calc.name + ': ' + calc.benchmark;
+      });
+      document.body.appendChild(p);
+      popups[2].style.display = 'block';
+    }, calculators.length * 1500);
+  });
+
 }

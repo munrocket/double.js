@@ -1,3 +1,5 @@
+;; hand written wat for testing purpuses (it have an error somewhere and slow)
+
 (module
 
   ;; Temporary global variable
