@@ -1,5 +1,5 @@
 type float = f64;
-type int = i16;
+type int = i32;
 let LO: float = 0.;
 const splitter: float = 134217729.;
 

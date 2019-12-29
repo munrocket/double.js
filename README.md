@@ -16,7 +16,7 @@ theoretical limitations to javascript language since ECMAScript uses 64 bit IEEE
 round-to-nearest-even after each operation and without FMA instruction.
 
 ### Benchmark
-![](https://habrastorage.org/webt/z7/hs/dm/z7hsdmkih7thtszq6j2eycbaydm.png)
+![](https://habrastorage.org/webt/lh/gs/17/lhgs17hfb-kitfh-iv0mejkugcy.png)
 
 You can check [quality](https://munrocket.github.io/double.js/docs/benchmark.html), [performance](https://www.measurethat.net/Benchmarks/Show/6429/0/doublejs-benchmark) and [correctness](https://munrocket.github.io/double.js/docs/test.html) of double.js library in your browser.
 
@@ -45,7 +45,7 @@ Further API details you can find in [wiki](https://github.com/munrocket/double.j
 
 ### WebAssembly version
 To get speed improvement with wasm, you need to write your entire algorithm with it, because Js<->Wasm interop is too heavy.
-For example you can get x3 boost in Chrome, x4.5 in Safari and x7.5 in Firefox for mandelbrot set. Try by yourself for your algo.
+For example I got x3 boost in Chrome, x4.5 in Safari and x7.5 in Firefox for mandelbrot set algo.
 
 ### Special thanks
 To [Jeffrey Sarnoff](https://github.com/JeffreySarnoff) for help me with books and algorithms.

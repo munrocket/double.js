@@ -1,4 +1,4 @@
-let maxIteration, pixelId, wasm;
+let maxIteration, pixelId;
 
 /* different calculators */
 
@@ -200,51 +200,48 @@ window.onload = function() {
 
   let popups = document.getElementsByClassName('bench-popup');
 
-  fetch('../wasm/mandel.wasm').then(response =>
-    response.arrayBuffer()
-  ).then(bytes => WebAssembly.instantiate(bytes, imports)).then(results => {
-    wasm = results.instance.exports;
+  //benchmark
+  target.dx = 3e-16;
+  target.dy = 2e-16;
+  let now = () => (typeof performance != 'undefined') ? performance.now() : Date.now();
+  let calculators = [ withDoubleJs_Wasm, withDoubleJs, //withDoubleJs_Ver01, 
+                      withBigNumberJs, withDecimalJs, withBigJs, withBigFloat32 ]; //withBigFloat53
+  calculators.forEach((calculator) => setTimeout(() => {
 
-    //benchmark
-    target.dx = 3e-16;
-    target.dy = 2e-16;
-    let now = () => (typeof performance != 'undefined') ? performance.now() : Date.now();
-    let calculators = [ withDoubleJs, withDoubleJs_Ver01, withDoubleJs_Wasm,
-                        withBigNumberJs, withDecimalJs, withBigJs, withBigFloat32 ]; //withBigFloat53
-    calculators.forEach((calculator) => setTimeout(() => {
+    // show debug
+    popups[0].style.display = 'block';
+    popups[1].style.display = 'block';
 
-      // show debug
-      popups[0].style.display = 'block';
-      popups[1].style.display = 'block';
+    let start = now();
+    let end = start;
+    let counter = 0;
+    while (end < start + 1500) {
+      counter++;
+      draw(calculator, target);
+      end = now();
+    };
+    calculator.benchmark = counter / (end - start);
 
-      let start = now();
-      let end = start;
-      let counter = 0;
-      while (end < start + 1500) {
-        counter++;
-        draw(calculator, target);
-        end = now();
-      };
-      calculator.benchmark = counter / (end - start);
-
-      //barChart
-      new Chart(document.getElementById('barChart').getContext('2d'), {
-        type: 'horizontalBar',
-        data: { labels: calculators.map(x => x.name.slice(4)), datasets: [{ borderWidth: 1, data: calculators.map(x => x.benchmark) }]},
-        options: { responsive: false, legend: false, title: {
-          display: true, text: 'Mandelbrot benchmark (bigger is better)',
-          fontFamily: "Sans", fontColor: "#000", fontSize: 16, fontStyle: 'normal' }
-        }
-      });
-    }, 1500));
-    setTimeout(() => {
-      var p = document.createElement('p');
-      calculators.forEach(calc => {
-        p.innerHTML += '<br>' + calc.name + ': ' + calc.benchmark;
-      });
-      document.body.appendChild(p);
-      popups[2].style.display = 'block';
-    }, calculators.length * 1500);
-  });
+    //barChart
+    new Chart(document.getElementById('barChart').getContext('2d'), {
+      type: 'horizontalBar',
+      data: {
+        labels: calculators.map(x => x.name.slice(4) + '      '),
+        datasets: [{ borderWidth: 1, data: calculators.map(x => x.benchmark) }]
+      },
+      options: { responsive: false, legend: false, title: {
+        display: true, text: 'Mandelbrot benchmark (bigger is better)',
+        fontFamily: "Sans", fontColor: "#000", fontSize: 16, fontStyle: 'normal' }
+      }
+    });
+  }, 1500));
+  setTimeout(() => {
+    var p = document.createElement('p');
+    calculators.forEach(calc => {
+      p.innerHTML += '<br>' + calc.name + ': ' + calc.benchmark;
+    });
+    document.body.appendChild(p);
+    popups[2].style.display = 'block';
+  }, calculators.length * 1500);
 
 }
