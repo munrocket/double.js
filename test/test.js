@@ -193,7 +193,8 @@ test('fromString', t => {
   t.ok(actual === 0, 'Zero number');
   actual = new D(Infinity).toNumber();
   actual2 = new D('-Infinity').toNumber();
-  t.ok(actual === Infinity && actual2 === -Infinity, 'Infinity number');
+  actual3 = new D('Infinity').toNumber();
+  t.ok(actual === Infinity && actual2 === -Infinity && actual3 === Infinity, 'Infinity number');
   actual = D.NaN.toNumber();
   actual2 = new D('SDLFK').toNumber();
   actual3 = new D('  ').toNumber();

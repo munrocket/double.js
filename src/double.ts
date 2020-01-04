@@ -1,16 +1,18 @@
 /* Basic error-free transformation algorithms */
 
-const splitter = 134217729; // Veltkamp’s splitter (= 2^27+1 for 64-bit float)
+type float = number;
+type int = number;
+const splitter = 134217729.; // Veltkamp’s splitter (= 2^27+1 for 64-bit float)
 
 // Møller's and Knuth's summation (algorithm 2 from [1])
-function twoSum(a: number, b: number) {
+function twoSum(a: float, b: float) {
   let s = a + b;
   let a1  = s - b;
   return { hi: s, lo: (a - a1) + (b - (s - a1)) };
 }
 
 // Dekker’s multiplication (algorithm 4.7 with inlined 4.6 from [2])
-function twoProd(a: number, b: number) {
+function twoProd(a: float, b: float) {
   let t = splitter * a;
   let ah = t + (a - t), al = a - ah;
   t = splitter * b;
@@ -18,7 +20,7 @@ function twoProd(a: number, b: number) {
   t = a * b;
   return { hi: t, lo: ((ah * bh - t) + ah * bl + al * bh) + al * bl };
 }
-function oneSqr(a: number) {
+function oneSqr(a: float) {
   let t = splitter * a;
   let ah = t + (a - t), al = a - ah;
   t = a * a;
@@ -30,8 +32,8 @@ function oneSqr(a: number) {
 
 export default class Double {
 
-  hi: number;
-  lo: number;
+  hi: float;
+  lo: float;
 
   constructor(obj?: any) {
     if (obj instanceof Double) {
@@ -39,7 +41,7 @@ export default class Double {
       this.lo = obj.lo;
     } else if (typeof obj === 'number') {
       this.hi = obj;
-      this.lo = 0;
+      this.lo = 0.;
     } else if (typeof obj === 'string') {
       let d = Double.fromString(obj);
       this.hi = d.hi;
@@ -56,9 +58,9 @@ export default class Double {
   /* Static constructors */
     
   static clone(X: Double): Double { let d = new Double(); d.hi = X.hi; d.lo = X.lo; return d; }
-  static fromSum11(a: number, b: number): Double { return new Double(twoSum(a, b)); }
-  static fromMul11(a: number, b: number): Double { return new Double(twoProd(a, b)); }
-  static fromSqr1(a: number): Double { return new Double(oneSqr(a)); }
+  static fromSum11(a: float, b: float): Double { return new Double(twoSum(a, b)); }
+  static fromMul11(a: float, b: float): Double { return new Double(twoProd(a, b)); }
+  static fromSqr1(a: float): Double { return new Double(oneSqr(a)); }
   static fromString(s: string): Double {
     let isPositive = (/^\s*-/.exec(s) === null);
     s = s.replace(/^\s*[+-]?/, '');
@@ -70,13 +72,13 @@ export default class Double {
     let exp = (rex[2] !== undefined) ? parseInt(rex[2]) : 0;
     let dotId = rex[0].indexOf('.');
     if (dotId == -1) dotId = digits.length;
-    if (exp + dotId - 1 < -300) return isPositive ? Double.Zero : Double.neg2(Double.Zero);
-    if (exp + dotId - 1 > 300) return isPositive ? Double.Infinity : Double.neg2(Double.Infinity);
+    if (exp + dotId - 1. < -300.) return isPositive ? Double.Zero : Double.neg2(Double.Zero);
+    if (exp + dotId - 1. > 300.) return isPositive ? Double.Infinity : Double.neg2(Double.Infinity);
 
     let nextDigs: string, shift: Double, result = Double.Zero;
     for (let i = 0; i < digits.length; i += 15) {
       nextDigs = digits.slice(i, i + 15);
-      shift = Double.pow2n(new Double(10), exp + dotId - i - nextDigs.length);
+      shift = Double.pow2n(new Double(10.), exp + dotId - i - nextDigs.length);
       Double.add22(result, Double.mul21(shift, parseInt(nextDigs)));
     }
     return (isPositive) ? result : Double.neg2(result);
@@ -84,16 +86,16 @@ export default class Double {
 
   /* Convertations */
 
-  toNumber() {
+  toNumber(): float {
     return this.hi + this.lo;
   }
 
-  toExponential(precision: number) {
+  toExponential(precision: int): string {
     if (precision === undefined) precision = 33;
-    let result = (this.hi < 0) ? '-' :  '';
+    let result = (this.hi < 0.) ? '-' :  '';
     if (isNaN(this.hi)) return 'NaN';
     if (!isFinite(this.hi)) return result + 'Infinity';
-    if (this.toNumber() == 0) return '0e+0';
+    if (this.toNumber() == 0.) return '0e+0';
     let exp = this.hi.toExponential().split('e')[1];
     
     let str: Array<string>, nextDigs: string, shift: Double, isPositive: boolean;
@@ -124,14 +126,15 @@ export default class Double {
     return X;
   }
 
+  // AccurateDWPlusDW with negated Y
   static sub22(X: Double, Y: Double): Double {
     let S = twoSum(X.hi, -Y.hi);
     let E = twoSum(X.lo, -Y.lo);
     let c = S.lo + E.hi;
-    let vh  = S.hi + c, vl = S.hi - vh + c;
-    let w = vl + E.lo;
-    X.hi = vh + w;
-    X.lo = w - (X.hi - vh);
+    let vh  = S.hi + c, vl = c - (vh - S.hi);
+    c = vl + E.lo;
+    X.hi = vh + c;
+    X.lo = c - (X.hi - vh);
     return X;
   }
 
@@ -144,24 +147,62 @@ export default class Double {
     return X;
   }
 
-  // unknown algo (must be DWDivDW1 (16 with inlined 1 from [1])
+  // Dekker division (div2 from [3])
   static div22(X: Double, Y: Double): Double {
     let s = X.hi / Y.hi;
     let T = twoProd(s, Y.hi);
-    let e = (X.hi - T.hi - T.lo + X.lo - s * Y.lo) / Y.hi;
+    let e = ((((X.hi - T.hi) - T.lo) + X.lo) - s * Y.lo) / Y.hi;
     X.hi = s + e;
     X.lo = e - (X.hi - s);
     return X;
   }
 
-  static pow22(base: Double, exp: Double): Double {
-    return Double.exp2(Double.mul22(Double.ln2(base), exp));
+  /* Arithmetic operations with double and single */
+
+  // DWPlusFP (4 with inlined 1 from [1])
+  static add21(X: Double, f: float): Double {
+    let S = twoSum(X.hi, f);
+    S.lo += X.lo;
+    X.hi = S.hi + S.lo;
+    X.lo = S.lo - (X.hi - S.hi);
+    return X;
+  }
+
+  static sub21(X: Double, f: float): Double {
+    let S = twoSum(X.hi, -f);
+    S.lo += X.lo;
+    X.hi = S.hi + S.lo;
+    X.lo = S.lo - (X.hi - S.hi);
+    return X;
+  }
+
+  // DWTimesFP1 (7 with inlined 1 from [1])
+  static mul21(X: Double, f: float): Double {
+    let C = twoProd(X.hi, f);
+    let cl = X.lo * f;
+    let th = C.hi + cl;
+    X.lo = cl - (th - C.hi);
+    cl = X.lo + C.lo;
+    X.hi = th + cl;
+    X.lo = cl - (X.hi - th);
+    return X;
+  }
+
+  // DWDivFP1 (13 with inlined 1 from [1])
+  static div21(X: Double, f: float): Double {
+    let th = X.hi / f; 
+    let P = twoProd(th, f);
+    let D = twoSum(X.hi, -P.hi);
+    let tl = (D.hi + (D.lo + (X.lo - P.lo))) / f;
+    X.hi = th + tl;
+    X.lo = tl - (X.hi - th);
+    return X;
   }
 
   /* Unar operators with double */
 
   static abs2(X: Double): Double {
-    if (X.hi < 0) {
+    if (X.hi < 0.) {
       X.hi = -X.hi;
       X.lo = -X.lo;
     }
@@ -176,9 +217,9 @@ export default class Double {
 
   static inv2(X: Double): Double {
     var xh = X.hi;
-    let s = 1 / xh;
+    let s = 1. / xh;
     Double.mul21(X, s);
-    let zl = (1 - X.hi - X.lo) / xh;
+    let zl = (1. - X.hi - X.lo) / xh;
     X.hi = s + zl;
     X.lo = zl - (X.hi - s);
     return X;
@@ -202,9 +243,39 @@ export default class Double {
     return X;
   }
 
+  /* Comparisons */
+
+  static eq22(X: Double, Y: Double): boolean { return (X.hi === Y.hi && X.lo === Y.lo); }
+  static ne22(X: Double, Y: Double): boolean { return (X.hi !== Y.hi || X.lo !== Y.lo); }
+  static gt22(X: Double, Y: Double): boolean { return (X.hi > Y.hi || (X.hi === Y.hi && X.lo > Y.lo)); }
+  static lt22(X: Double, Y: Double): boolean { return (X.hi < Y.hi || (X.hi === Y.hi && X.lo < Y.lo)); }
+  static ge22(X: Double, Y: Double): boolean { return (X.hi > Y.hi || (X.hi === Y.hi && X.lo >= Y.lo)); }
+  static le22(X: Double, Y: Double): boolean { return (X.hi < Y.hi || (X.hi === Y.hi && X.lo <= Y.lo)); }
+  static eq21(X: Double, f: float): boolean { return (X.hi === f && X.lo === 0.); }
+  static ne21(X: Double, f: float): boolean { return (X.hi !== f || X.lo !== 0.); }
+  static gt21(X: Double, f: float): boolean { return (X.hi > f || (X.hi === f && X.lo > 0.)); }
+  static lt21(X: Double, f: float): boolean { return (X.hi < f || (X.hi === f && X.lo < 0.)); }
+  static ge21(X: Double, f: float): boolean { return (X.hi > f || (X.hi === f && X.lo >= 0.)); }
+  static le21(X: Double, f: float): boolean { return (X.hi < f || (X.hi === f && X.lo <= 0.)); }
+
+  /* Double constants */
+
+  static get One(): Double {  let d = new Double();     d.hi = 1.; d.lo = 0.; return d; }
+  static get Zero(): Double { let d = new Double();     d.hi = 0.; d.lo = 0.; return d; }
+  static get Infinity(): Double { let d = new Double(); d.hi = Infinity; d.lo = Infinity; return d; }
+  static get MinusInfinity() { let d = new Double(); d.hi = -Infinity; d.lo = -Infinity; return d; }
+  static get NaN(): Double { let d = new Double();      d.hi = NaN; d.lo = NaN; return d; }
+  static get Pi(): Double { let d = new Double();       d.hi = 3.141592653589793; d.lo = 1.2246467991473532e-16; return d; }
+  static get X2Pi(): Double { let d = new Double();     d.hi = 6.283185307179586; d.lo = 2.4492935982947064e-16; return d; }
+  static get E(): Double { let d = new Double();        d.hi = 2.718281828459045; d.lo = 1.4456468917292502e-16; return d; }
+  static get Log2(): Double { let d = new Double();     d.hi = 0.6931471805599453; d.lo = 2.319046813846299e-17; return d; }
+  static get Phi(): Double { let d = new Double();      d.hi = 1.618033988749895; d.lo = -5.432115203682505e-17; return d; }
+  
+  /* Elementary functions with double */
+
   static exp2(X: Double): Double {
-    if (Double.eq21(X, 0)) return Double.One;
-    if (Double.eq21(X, 1)) return Double.E;
+    if (Double.eq21(X, 0.)) return Double.One;
+    if (Double.eq21(X, 1.)) return Double.E;
     let n = Math.floor(X.hi / Double.Log2.hi + 0.5);
     Double.sub22(X, Double.mul21(Double.Log2, n));
     let U = Double.One, V = Double.One;
@@ -221,73 +292,35 @@ export default class Double {
     if (Double.le21(X, 0)) return Double.MinusInfinity;
     if (Double.eq21(X, 1)) return Double.Zero;
     let Z = new Double(Math.log(X.hi));
-    Double.sub21(Double.add22(Double.mul22(X, Double.exp2(Double.neg2(Double.clone(Z)))), Z), 1);
+    Double.sub21(Double.add22(Double.mul22(X, Double.exp2(Double.neg2(Double.clone(Z)))), Z), 1.);
     return X;
   }
 
   static sinh2(X: Double): Double {
     var exp = Double.exp2(X);
-    X = Double.mul21pow2(Double.sub22(new Double(exp), Double.inv2(exp)), -1);
+    X = Double.mul21pow2(Double.sub22(new Double(exp), Double.inv2(exp)), -1.);
     return X;
   }
 
   static cosh2(X: Double): Double {
     var exp = Double.exp2(X);
-    X = Double.mul21pow2(Double.add22(new Double(exp), Double.inv2(exp)), -1);
+    X = Double.mul21pow2(Double.add22(new Double(exp), Double.inv2(exp)), -1.);
     return X;
   }
 
-  /* Arithmetic operations with double and single */
-
-  // DWPlusFP (4 with inlined 1 from [1])
-  static add21(X: Double, f: number): Double {
-    let S = twoSum(X.hi, f);
-    S.lo += X.lo;
-    X.hi = S.hi + S.lo;
-    X.lo = S.lo - (X.hi - S.hi);
-    return X;
+  static pow22(base: Double, exp: Double): Double {
+    return Double.exp2(Double.mul22(Double.ln2(base), exp));
   }
 
-  static sub21(X: Double, f: number): Double {
-    let S = twoSum(X.hi, -f);
-    S.lo += X.lo;
-    X.hi = S.hi + S.lo;
-    X.lo = S.lo - (X.hi - S.hi);
-    return X;
-  }
-
-  // DWTimesFP1 (7 with inlined 1 from [1])
-  static mul21(X: Double, f: number): Double {
-    let C = twoProd(X.hi, f);
-    let cl = X.lo * f;
-    let th = C.hi + cl;
-    X.lo = cl - (th - C.hi);
-    cl = X.lo + C.lo;
-    X.hi = th + cl;
-    X.lo = cl - (X.hi - th);
-    return X;
-  }
-
-  // DWDivFP1 (13 with inlined 1 from [1])
-  static div21(X: Double, f: number): Double {
-    let th = X.hi / f; 
-    let P = twoProd(th, f);
-    let D = twoSum(X.hi, -P.hi);
-    let tl = (D.hi + (D.lo + (X.lo - P.lo))) / f;
-    X.hi = th + tl;
-    X.lo = tl - (X.hi - th);
-    return X;
-  }
-
-  static mul21pow2(X: Double, n: number): Double {
-    let c = 1 << Math.abs(n);
+  static mul21pow2(X: Double, n: int): Double {
+    let c = 1. << Math.abs(n);
     if (n < 0) c = 1 / c;
     X.hi = X.hi * c;
     X.lo = X.lo * c;
     return X;
   }
 
-  static pow2n(X: Double, n: number): Double {
+  static pow2n(X: Double, n: int): Double {
     if (n === 0) return Double.One;
     if (n == 1) return X;
     let isPositive = n > 0;
@@ -300,34 +333,6 @@ export default class Double {
     return isPositive ? X : Double.inv2(X);
   }
 
-  /* Different comparisons */
-
-  static eq22(X: Double, Y: Double): boolean { return (X.hi === Y.hi && X.lo === Y.lo); }
-  static ne22(X: Double, Y: Double): boolean { return (X.hi !== Y.hi || X.lo !== Y.lo); }
-  static gt22(X: Double, Y: Double): boolean { return (X.hi > Y.hi || (X.hi === Y.hi && X.lo > Y.lo)); }
-  static lt22(X: Double, Y: Double): boolean { return (X.hi < Y.hi || (X.hi === Y.hi && X.lo < Y.lo)); }
-  static ge22(X: Double, Y: Double): boolean { return (X.hi > Y.hi || (X.hi === Y.hi && X.lo >= Y.lo)); }
-  static le22(X: Double, Y: Double): boolean { return (X.hi < Y.hi || (X.hi === Y.hi && X.lo <= Y.lo)); }
-  static eq21(X: Double, f: number): boolean { return (X.hi === f && X.lo === 0); }
-  static ne21(X: Double, f: number): boolean { return (X.hi !== f || X.lo !== 0); }
-  static gt21(X: Double, f: number): boolean { return (X.hi > f || (X.hi === f && X.lo > 0)); }
-  static lt21(X: Double, f: number): boolean { return (X.hi < f || (X.hi === f && X.lo < 0)); }
-  static ge21(X: Double, f: number): boolean { return (X.hi > f || (X.hi === f && X.lo >= 0)); }
-  static le21(X: Double, f: number): boolean { return (X.hi < f || (X.hi === f && X.lo <= 0)); }
-
-  /* Double constants */
-
-  static get One(): Double {  let d = new Double();     d.hi = 1; d.lo = 0; return d; }
-  static get Zero(): Double { let d = new Double();     d.hi = 0; d.lo = 0; return d; }
-  static get Infinity(): Double { let d = new Double(); d.hi = Infinity; d.lo = Infinity; return d; }
-  static get MinusInfinity() { let d = new Double(); d.hi = -Infinity; d.lo = -Infinity; return d; }
-  static get NaN(): Double { let d = new Double();      d.hi = NaN; d.lo = NaN; return d; }
-  static get Pi(): Double { let d = new Double();       d.hi = 3.141592653589793; d.lo = 1.2246467991473532e-16; return d; }
-  static get X2Pi(): Double { let d = new Double();     d.hi = 6.283185307179586; d.lo = 2.4492935982947064e-16; return d; }
-  static get E(): Double { let d = new Double();        d.hi = 2.718281828459045; d.lo = 1.4456468917292502e-16; return d; }
-  static get Log2(): Double { let d = new Double();     d.hi = 0.6931471805599453; d.lo = 2.319046813846299e-17; return d; }
-  static get Phi(): Double { let d = new Double();      d.hi = 1.618033988749895; d.lo = -5.432115203682505e-17; return d; }
-  
   /* Repeating static methods to instance */
 
   add(other: any): Double {
@@ -346,17 +351,6 @@ export default class Double {
     if (other instanceof Double) return Double.div22(Double.clone(this), other);
     else if (typeof other == 'number') return Double.div21(Double.clone(this), other);
   }
-  pow(exp: Double): Double { return Double.pow22(Double.clone(this), exp); }
-  pown(exp: number): Double { return Double.pow2n(Double.clone(this), exp); }
-  abs(): Double { return Double.abs2(Double.clone(this)); }
-  neg(): Double { return Double.neg2(Double.clone(this)); }
-  inv(): Double { return Double.inv2(Double.clone(this)); }
-  sqr(): Double { return Double.sqr2(Double.clone(this)); }
-  sqrt(): Double { return Double.sqrt2(Double.clone(this)); }
-  exp(): Double { return Double.exp2(Double.clone(this)); }
-  ln(): Double { return Double.ln2(Double.clone(this)); }
-  sinh(): Double { return Double.sinh2(Double.clone(this)); }
-  cosh(): Double { return Double.cosh2(Double.clone(this)); }
   eq(other: any): boolean {
     if (other instanceof Double) return Double.eq22(this, other);
     else if (typeof other == 'number') return Double.eq21(this, other);
@@ -381,4 +375,15 @@ export default class Double {
     if (other instanceof Double) return Double.le22(this, other);
     else if (typeof other == 'number') return Double.le21(this, other);
   }
+  abs(): Double { return Double.abs2(Double.clone(this)); }
+  neg(): Double { return Double.neg2(Double.clone(this)); }
+  inv(): Double { return Double.inv2(Double.clone(this)); }
+  sqr(): Double { return Double.sqr2(Double.clone(this)); }
+  sqrt(): Double { return Double.sqrt2(Double.clone(this)); }
+  exp(): Double { return Double.exp2(Double.clone(this)); }
+  ln(): Double { return Double.ln2(Double.clone(this)); }
+  sinh(): Double { return Double.sinh2(Double.clone(this)); }
+  cosh(): Double { return Double.cosh2(Double.clone(this)); }
+  pow(exp: Double): Double { return Double.pow22(Double.clone(this), exp); }
+  pown(exp: float): Double { return Double.pow2n(Double.clone(this), exp); }
 }

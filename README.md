@@ -3,8 +3,8 @@
 [![Build Status](https://travis-ci.org/munrocket/double.js.svg?branch=master)](https://travis-ci.org/munrocket/double.js)
 [![Codecov](https://img.shields.io/codecov/c/github/munrocket/double.js.svg)](https://codecov.io/gh/munrocket/double.js)
 
-Floating point expansions with 31 accurate decimal digits (100+ bits), also known as double-word arithmetic.
-This library can be useful for fast calculation with extended precision. For example in computational
+Floating point expansion with 31 accurate decimal digits (100+ bits), also known as double-double arithmetic or
+emulated float128. This library can be useful for fast calculation with extended precision. For example in computational
 geometry and numerically unstable algorithms such as performing triangulation, polygon clipping,
 inverting matrix and finding differentials.
 
@@ -41,7 +41,7 @@ let dF = (x) => F(x.add(h)).sub(F(x)).div(h);
 // |f'(x)| < 1 ? print(x)
 if (dF(x).abs().lt(1)) { console.log(x.toExponential()); }
 ```
-Further API details you can find in [wiki](https://github.com/munrocket/double.js/wiki) page and check it in [sandbox](https://runkit.com/munrocket/double-js-example). Be careful when initializing a new floats, for example `new Double(0.1)` is ok for integer numbers, but you should use `new Double('0.1')` to get correct results for fractional numburs. All double-word arithmetic functions are accurate and tested, say me if you find something strange. 
+Further API details you can find in [wiki](https://github.com/munrocket/double.js/wiki) page and check it in [sandbox](https://runkit.com/munrocket/double-js-example). Be careful when initializing a new floats, for example `new Double(0.1)` is ok for integer numbers, but you should use `new Double('0.1')` to get correct results for fractional numburs. All double-double arithmetic functions are accurate and tested, say me if you find something strange. 
 
 ### WebAssembly version
 To get speed improvement with wasm, you need to write your entire algorithm with it, because Js<->Wasm interop is too heavy.

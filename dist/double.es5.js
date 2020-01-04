@@ -37,7 +37,7 @@ var Double = (function () {
     return Constructor;
   }
 
-  var splitter = 134217729;
+  var splitter = 134217729.;
 
   function twoSum(a, b) {
     var s = a + b;
@@ -85,7 +85,7 @@ var Double = (function () {
         this.lo = obj.lo;
       } else if (typeof obj === 'number') {
         this.hi = obj;
-        this.lo = 0;
+        this.lo = 0.;
       } else if (typeof obj === 'string') {
         var d = Double.fromString(obj);
         this.hi = d.hi;
@@ -108,10 +108,10 @@ var Double = (function () {
       key: "toExponential",
       value: function toExponential(precision) {
         if (precision === undefined) precision = 33;
-        var result = this.hi < 0 ? '-' : '';
+        var result = this.hi < 0. ? '-' : '';
         if (isNaN(this.hi)) return 'NaN';
         if (!isFinite(this.hi)) return result + 'Infinity';
-        if (this.toNumber() == 0) return '0e+0';
+        if (this.toNumber() == 0.) return '0e+0';
         var exp = this.hi.toExponential().split('e')[1];
         var str, nextDigs, shift, isPositive;
 
@@ -149,14 +149,34 @@ var Double = (function () {
         if (other instanceof Double) return Double.div22(Double.clone(this), other);else if (typeof other == 'number') return Double.div21(Double.clone(this), other);
       }
     }, {
-      key: "pow",
-      value: function pow(exp) {
-        return Double.pow22(Double.clone(this), exp);
+      key: "eq",
+      value: function eq(other) {
+        if (other instanceof Double) return Double.eq22(this, other);else if (typeof other == 'number') return Double.eq21(this, other);
       }
     }, {
-      key: "pown",
-      value: function pown(exp) {
-        return Double.pow2n(Double.clone(this), exp);
+      key: "ne",
+      value: function ne(other) {
+        if (other instanceof Double) return Double.ne22(this, other);else if (typeof other == 'number') return Double.ne21(this, other);
+      }
+    }, {
+      key: "gt",
+      value: function gt(other) {
+        if (other instanceof Double) return Double.gt22(this, other);else if (typeof other == 'number') return Double.gt21(this, other);
+      }
+    }, {
+      key: "lt",
+      value: function lt(other) {
+        if (other instanceof Double) return Double.lt22(this, other);else if (typeof other == 'number') return Double.lt21(this, other);
+      }
+    }, {
+      key: "ge",
+      value: function ge(other) {
+        if (other instanceof Double) return Double.ge22(this, other);else if (typeof other == 'number') return Double.ge21(this, other);
+      }
+    }, {
+      key: "le",
+      value: function le(other) {
+        if (other instanceof Double) return Double.le22(this, other);else if (typeof other == 'number') return Double.le21(this, other);
       }
     }, {
       key: "abs",
@@ -204,34 +224,14 @@ var Double = (function () {
         return Double.cosh2(Double.clone(this));
       }
     }, {
-      key: "eq",
-      value: function eq(other) {
-        if (other instanceof Double) return Double.eq22(this, other);else if (typeof other == 'number') return Double.eq21(this, other);
+      key: "pow",
+      value: function pow(exp) {
+        return Double.pow22(Double.clone(this), exp);
       }
     }, {
-      key: "ne",
-      value: function ne(other) {
-        if (other instanceof Double) return Double.ne22(this, other);else if (typeof other == 'number') return Double.ne21(this, other);
-      }
-    }, {
-      key: "gt",
-      value: function gt(other) {
-        if (other instanceof Double) return Double.gt22(this, other);else if (typeof other == 'number') return Double.gt21(this, other);
-      }
-    }, {
-      key: "lt",
-      value: function lt(other) {
-        if (other instanceof Double) return Double.lt22(this, other);else if (typeof other == 'number') return Double.lt21(this, other);
-      }
-    }, {
-      key: "ge",
-      value: function ge(other) {
-        if (other instanceof Double) return Double.ge22(this, other);else if (typeof other == 'number') return Double.ge21(this, other);
-      }
-    }, {
-      key: "le",
-      value: function le(other) {
-        if (other instanceof Double) return Double.le22(this, other);else if (typeof other == 'number') return Double.le21(this, other);
+      key: "pown",
+      value: function pown(exp) {
+        return Double.pow2n(Double.clone(this), exp);
       }
     }], [{
       key: "clone",
@@ -268,15 +268,15 @@ var Double = (function () {
         var exp = rex[2] !== undefined ? parseInt(rex[2]) : 0;
         var dotId = rex[0].indexOf('.');
         if (dotId == -1) dotId = digits.length;
-        if (exp + dotId - 1 < -300) return isPositive ? Double.Zero : Double.neg2(Double.Zero);
-        if (exp + dotId - 1 > 300) return isPositive ? Double.Infinity : Double.neg2(Double.Infinity);
+        if (exp + dotId - 1. < -300.) return isPositive ? Double.Zero : Double.neg2(Double.Zero);
+        if (exp + dotId - 1. > 300.) return isPositive ? Double.Infinity : Double.neg2(Double.Infinity);
         var nextDigs,
             shift,
             result = Double.Zero;
 
         for (var i = 0; i < digits.length; i += 15) {
           nextDigs = digits.slice(i, i + 15);
-          shift = Double.pow2n(new Double(10), exp + dotId - i - nextDigs.length);
+          shift = Double.pow2n(new Double(10.), exp + dotId - i - nextDigs.length);
           Double.add22(result, Double.mul21(shift, parseInt(nextDigs)));
         }
 
@@ -302,10 +302,10 @@ var Double = (function () {
         var E = twoSum(X.lo, -Y.lo);
         var c = S.lo + E.hi;
         var vh = S.hi + c,
-            vl = S.hi - vh + c;
-        var w = vl + E.lo;
-        X.hi = vh + w;
-        X.lo = w - (X.hi - vh);
+            vl = c - (vh - S.hi);
+        c = vl + E.lo;
+        X.hi = vh + c;
+        X.lo = c - (X.hi - vh);
         return X;
       }
     }, {
@@ -325,104 +325,6 @@ var Double = (function () {
         var e = (X.hi - T.hi - T.lo + X.lo - s * Y.lo) / Y.hi;
         X.hi = s + e;
         X.lo = e - (X.hi - s);
-        return X;
-      }
-    }, {
-      key: "pow22",
-      value: function pow22(base, exp) {
-        return Double.exp2(Double.mul22(Double.ln2(base), exp));
-      }
-    }, {
-      key: "abs2",
-      value: function abs2(X) {
-        if (X.hi < 0) {
-          X.hi = -X.hi;
-          X.lo = -X.lo;
-        }
-
-        return X;
-      }
-    }, {
-      key: "neg2",
-      value: function neg2(X) {
-        X.hi = -X.hi;
-        X.lo = -X.lo;
-        return X;
-      }
-    }, {
-      key: "inv2",
-      value: function inv2(X) {
-        var xh = X.hi;
-        var s = 1 / xh;
-        Double.mul21(X, s);
-        var zl = (1 - X.hi - X.lo) / xh;
-        X.hi = s + zl;
-        X.lo = zl - (X.hi - s);
-        return X;
-      }
-    }, {
-      key: "sqr2",
-      value: function sqr2(X) {
-        var S = oneSqr(X.hi);
-        var c = X.hi * X.lo;
-        S.lo += c + c;
-        X.hi = S.hi + S.lo;
-        X.lo = S.lo - (X.hi - S.hi);
-        return X;
-      }
-    }, {
-      key: "sqrt2",
-      value: function sqrt2(X) {
-        var s = Math.sqrt(X.hi);
-        var T = oneSqr(s);
-        var e = (X.hi - T.hi - T.lo + X.lo) * 0.5 / s;
-        X.hi = s + e;
-        X.lo = e - (X.hi - s);
-        return X;
-      }
-    }, {
-      key: "exp2",
-      value: function exp2(X) {
-        if (Double.eq21(X, 0)) return Double.One;
-        if (Double.eq21(X, 1)) return Double.E;
-        var n = Math.floor(X.hi / Double.Log2.hi + 0.5);
-        Double.sub22(X, Double.mul21(Double.Log2, n));
-        var U = Double.One,
-            V = Double.One;
-        var padeCoef = [1, 272, 36720, 3255840, 211629600, 10666131840, 430200650880, 14135164243200, 381649434566400, 8481098545920000, 154355993535744030, 2273242813890047700, 26521166162050560000, 236650405753681870000, 1.5213240369879552e+21, 6.288139352883548e+21, 1.2576278705767096e+22];
-
-        for (var i = 0, cLen = padeCoef.length; i < cLen; i++) {
-          Double.add21(Double.mul22(U, X), padeCoef[i]);
-        }
-
-        for (var _i = 0, _cLen = padeCoef.length; _i < _cLen; _i++) {
-          Double.add21(Double.mul22(V, X), padeCoef[_i] * (_i % 2 ? -1 : 1));
-        }
-
-        X = Double.mul21pow2(Double.div22(U, V), n);
-        return X;
-      }
-    }, {
-      key: "ln2",
-      value: function ln2(X) {
-        if (Double.le21(X, 0)) return Double.MinusInfinity;
-        if (Double.eq21(X, 1)) return Double.Zero;
-        var Z = new Double(Math.log(X.hi));
-        Double.sub21(Double.add22(Double.mul22(X, Double.exp2(Double.neg2(Double.clone(Z)))), Z), 1);
-        return X;
-      }
-    }, {
-      key: "sinh2",
-      value: function sinh2(X) {
-        var exp = Double.exp2(X);
-        X = Double.mul21pow2(Double.sub22(new Double(exp), Double.inv2(exp)), -1);
-        return X;
-      }
-    }, {
-      key: "cosh2",
-      value: function cosh2(X) {
-        var exp = Double.exp2(X);
-        X = Double.mul21pow2(Double.add22(new Double(exp), Double.inv2(exp)), -1);
         return X;
       }
     }, {
@@ -467,34 +369,52 @@ var Double = (function () {
         return X;
       }
     }, {
-      key: "mul21pow2",
-      value: function mul21pow2(X, n) {
-        var c = 1 << Math.abs(n);
-        if (n < 0) c = 1 / c;
-        X.hi = X.hi * c;
-        X.lo = X.lo * c;
+      key: "abs2",
+      value: function abs2(X) {
+        if (X.hi < 0.) {
+          X.hi = -X.hi;
+          X.lo = -X.lo;
+        }
+
         return X;
       }
     }, {
-      key: "pow2n",
-      value: function pow2n(X, n) {
-        if (n === 0) return Double.One;
-        if (n == 1) return X;
-        var isPositive = n > 0;
-        if (!isPositive) n = -n;
-        var i = 31 - Math.clz32(n | 1);
-        var j = Math.floor(n - (1 << i));
-        var X0 = Double.clone(X);
-
-        while (i--) {
-          Double.sqr2(X);
-        }
-
-        while (j--) {
-          Double.mul22(X, X0);
-        }
-
-        return isPositive ? X : Double.inv2(X);
+      key: "neg2",
+      value: function neg2(X) {
+        X.hi = -X.hi;
+        X.lo = -X.lo;
+        return X;
+      }
+    }, {
+      key: "inv2",
+      value: function inv2(X) {
+        var xh = X.hi;
+        var s = 1. / xh;
+        Double.mul21(X, s);
+        var zl = (1. - X.hi - X.lo) / xh;
+        X.hi = s + zl;
+        X.lo = zl - (X.hi - s);
+        return X;
+      }
+    }, {
+      key: "sqr2",
+      value: function sqr2(X) {
+        var S = oneSqr(X.hi);
+        var c = X.hi * X.lo;
+        S.lo += c + c;
+        X.hi = S.hi + S.lo;
+        X.lo = S.lo - (X.hi - S.hi);
+        return X;
+      }
+    }, {
+      key: "sqrt2",
+      value: function sqrt2(X) {
+        var s = Math.sqrt(X.hi);
+        var T = oneSqr(s);
+        var e = (X.hi - T.hi - T.lo + X.lo) * 0.5 / s;
+        X.hi = s + e;
+        X.lo = e - (X.hi - s);
+        return X;
       }
     }, {
       key: "eq22",
@@ -529,47 +449,127 @@ var Double = (function () {
     }, {
       key: "eq21",
       value: function eq21(X, f) {
-        return X.hi === f && X.lo === 0;
+        return X.hi === f && X.lo === 0.;
       }
     }, {
       key: "ne21",
       value: function ne21(X, f) {
-        return X.hi !== f || X.lo !== 0;
+        return X.hi !== f || X.lo !== 0.;
       }
     }, {
       key: "gt21",
       value: function gt21(X, f) {
-        return X.hi > f || X.hi === f && X.lo > 0;
+        return X.hi > f || X.hi === f && X.lo > 0.;
       }
     }, {
       key: "lt21",
       value: function lt21(X, f) {
-        return X.hi < f || X.hi === f && X.lo < 0;
+        return X.hi < f || X.hi === f && X.lo < 0.;
       }
     }, {
       key: "ge21",
       value: function ge21(X, f) {
-        return X.hi > f || X.hi === f && X.lo >= 0;
+        return X.hi > f || X.hi === f && X.lo >= 0.;
       }
     }, {
       key: "le21",
       value: function le21(X, f) {
-        return X.hi < f || X.hi === f && X.lo <= 0;
+        return X.hi < f || X.hi === f && X.lo <= 0.;
+      }
+    }, {
+      key: "exp2",
+      value: function exp2(X) {
+        if (Double.eq21(X, 0.)) return Double.One;
+        if (Double.eq21(X, 1.)) return Double.E;
+        var n = Math.floor(X.hi / Double.Log2.hi + 0.5);
+        Double.sub22(X, Double.mul21(Double.Log2, n));
+        var U = Double.One,
+            V = Double.One;
+        var padeCoef = [1, 272, 36720, 3255840, 211629600, 10666131840, 430200650880, 14135164243200, 381649434566400, 8481098545920000, 154355993535744030, 2273242813890047700, 26521166162050560000, 236650405753681870000, 1.5213240369879552e+21, 6.288139352883548e+21, 1.2576278705767096e+22];
+
+        for (var i = 0, cLen = padeCoef.length; i < cLen; i++) {
+          Double.add21(Double.mul22(U, X), padeCoef[i]);
+        }
+
+        for (var _i = 0, _cLen = padeCoef.length; _i < _cLen; _i++) {
+          Double.add21(Double.mul22(V, X), padeCoef[_i] * (_i % 2 ? -1 : 1));
+        }
+
+        X = Double.mul21pow2(Double.div22(U, V), n);
+        return X;
+      }
+    }, {
+      key: "ln2",
+      value: function ln2(X) {
+        if (Double.le21(X, 0)) return Double.MinusInfinity;
+        if (Double.eq21(X, 1)) return Double.Zero;
+        var Z = new Double(Math.log(X.hi));
+        Double.sub21(Double.add22(Double.mul22(X, Double.exp2(Double.neg2(Double.clone(Z)))), Z), 1.);
+        return X;
+      }
+    }, {
+      key: "sinh2",
+      value: function sinh2(X) {
+        var exp = Double.exp2(X);
+        X = Double.mul21pow2(Double.sub22(new Double(exp), Double.inv2(exp)), -1.);
+        return X;
+      }
+    }, {
+      key: "cosh2",
+      value: function cosh2(X) {
+        var exp = Double.exp2(X);
+        X = Double.mul21pow2(Double.add22(new Double(exp), Double.inv2(exp)), -1.);
+        return X;
+      }
+    }, {
+      key: "pow22",
+      value: function pow22(base, exp) {
+        return Double.exp2(Double.mul22(Double.ln2(base), exp));
+      }
+    }, {
+      key: "mul21pow2",
+      value: function mul21pow2(X, n) {
+        var c = 1. << Math.abs(n);
+        if (n < 0) c = 1 / c;
+        X.hi = X.hi * c;
+        X.lo = X.lo * c;
+        return X;
+      }
+    }, {
+      key: "pow2n",
+      value: function pow2n(X, n) {
+        if (n === 0) return Double.One;
+        if (n == 1) return X;
+        var isPositive = n > 0;
+        if (!isPositive) n = -n;
+        var i = 31 - Math.clz32(n | 1);
+        var j = Math.floor(n - (1 << i));
+        var X0 = Double.clone(X);
+
+        while (i--) {
+          Double.sqr2(X);
+        }
+
+        while (j--) {
+          Double.mul22(X, X0);
+        }
+
+        return isPositive ? X : Double.inv2(X);
       }
     }, {
       key: "One",
       get: function get() {
         var d = new Double();
-        d.hi = 1;
-        d.lo = 0;
+        d.hi = 1.;
+        d.lo = 0.;
         return d;
       }
     }, {
       key: "Zero",
       get: function get() {
         var d = new Double();
-        d.hi = 0;
-        d.lo = 0;
+        d.hi = 0.;
+        d.lo = 0.;
         return d;
       }
     }, {
