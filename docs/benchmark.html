@@ -14,20 +14,22 @@
     <canvas id="splitTest" width="400" height="200" style="position: absolute;"></canvas>
     <canvas id="barChart" width="400" height="200" style="position: absolute; padding-left: 420px"></canvas>
     <div class="bench-popup" style="display: none; position: absolute; padding-left: 524px; padding-top: 37px;">
-      <div style="padding-top: 4px;"><canvas id="withDoubleJs_Wasm" width="15" height="10"></canvas></div>
-      <div style="padding-top: 4px;"><canvas id="withDoubleJs" width="15" height="10"></canvas></div>
-      <!-- <div style="padding-top: 4px;"><canvas id="withDoubleJs_Ver01" width="15" height="10"></canvas></div> -->
-      <div style="padding-top: 4px;"><canvas id="withDecimalJs" width="15" height="10"></canvas></div>
-      <div style="padding-top: 4px;"><canvas id="withBigNumberJs" width="15" height="10"></canvas></div>
-      <div style="padding-top: 4px;"><canvas id="withBigJs" width="15" height="10"></canvas></div>
-      <div style="padding-top: 4px;"><canvas id="withBigFloat32" width="15" height="10"></canvas></div>
-      <!-- <div style="padding-top: 4px;"><canvas id="withBigFloat53" width="15" height="10"></canvas></div> -->
+      <div style="padding-top: 1px;"><canvas id="withDoubleJs_Wasm" width="15" height="10"></canvas></div>
+      <div style="padding-top: 1px;"><canvas id="withDoubleJs" width="15" height="10"></canvas></div>
+      <!-- <div style="padding-top: 1px;"><canvas id="withDoubleJs_Ver01" width="15" height="10"></canvas></div> -->
+      <div style="padding-top: 1px;"><canvas id="withDecimalJs" width="15" height="10"></canvas></div>
+      <div style="padding-top: 1px;"><canvas id="withBigNumberJs" width="15" height="10"></canvas></div>
+      <div style="padding-top: 1px;"><canvas id="withBigJs" width="15" height="10"></canvas></div>
+      <div style="padding-top: 1px;"><canvas id="withBigFloat32" width="15" height="10"></canvas></div>
+      <div style="padding-top: 1px;"><canvas id="withFractionJs" width="15" height="10"></canvas></div>
+      <!-- <div style="padding-top: 1px;"><canvas id="withBigFloat53" width="15" height="10"></canvas></div> -->
     </div>
   </div>
   <p class="bench-popup" style="display: none; font-family: 'Open Sans', sans; padding-top: 213px">
     Probably ChartJS visualization not working in Safari and mobile phones.<br/>
     All libraries in benchmark spending 1500 milliseconds and setted to precision with 31 decimal digits.<br/>
-    To increase BigJs and BigNumberJs I used .round(31) and .dp(31) after each multiplication without rouding they become much slower.<br/>
+    To increase Big.js and BigNumber.js I used .round(31) and .dp(31) after each multiplication without rouding they become much slower.<br/>
+    Fraction.js (Math.js) simply can't hold repetitive calculations and you shouldn't use it for repetitive calculations right now.
   </p>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
@@ -52,9 +54,10 @@
 </script>
 
 <script src="/dist/double.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/decimal.js/10.2.0/decimal.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bignumber.js/9.0.0/bignumber.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/big.js/5.2.2/big.min.js"></script>
+<script src="https://unpkg.com/decimal.js"></script>
+<script src="https://unpkg.com/bignumber.js"></script>
+<script src="https://unpkg.com/big.js"></script>
+<script src="https://unpkg.com/fraction.js"></script>
 <script src="https://unpkg.com/bigfloat"></script>
 
 <script src="./benchmark.js"></script>

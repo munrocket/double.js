@@ -135,6 +135,23 @@ function withBigFloat32(buffer, target, i, j) {
   }
   colorizer(buffer, iteration - 1);
 }
+function withFractionJs(buffer, target, i, j) {
+  let iteration = 0;
+  let x = new Fraction(0), y = new Fraction(0);
+  let xx = new Fraction(0), xy = new Fraction(0), yy = new Fraction(0);
+  let tx = new Fraction(target.x), ty = new Fraction(target.y);
+  let tdx = new Fraction(target.dx), tdy = new Fraction(target.dy);
+  let cx = tx.sub(tdx).add(tdx.mul(2 * i).div(buffer.width));
+  let cy = ty.add(tdy).sub(tdy.mul(2 * j).div(buffer.height));
+  while (iteration++ < maxIteration && xx.add(yy).compare(4) < 0) {
+    x = xx.sub(yy).add(cx);
+    y = xy.add(xy).add(cy);
+    xx = x.mul(x);
+    yy = y.mul(y);
+    xy = x.mul(y);
+  }
+  colorizer(buffer, iteration - 1);
+}
 
 /* mandelbrot drawing */
 
@@ -205,7 +222,7 @@ window.onload = function() {
   target.dy = 2e-16;
   let now = () => (typeof performance != 'undefined') ? performance.now() : Date.now();
   let calculators = [ withDoubleJs_Wasm, withDoubleJs, //withDoubleJs_Ver01, 
-                      withBigNumberJs, withDecimalJs, withBigJs, withBigFloat32 ]; //withBigFloat53
+                      withBigNumberJs, withDecimalJs, withBigJs, withBigFloat32, withFractionJs ]; //withBigFloat53
   calculators.forEach((calculator) => setTimeout(() => {
 
     // show debug
@@ -234,14 +251,13 @@ window.onload = function() {
         fontFamily: "Sans", fontColor: "#000", fontSize: 16, fontStyle: 'normal' }
       }
     });
-  }, 1500));
+  }, 1700));
   setTimeout(() => {
     var p = document.createElement('p');
     calculators.forEach(calc => {
-      p.innerHTML += '<br>' + calc.name + ': ' + calc.benchmark;
+      p.innerHTML += '<br>' + calc.name.slice(4) + ': ' + calc.benchmark;
     });
     document.body.appendChild(p);
-    popups[2].style.display = 'block';
   }, calculators.length * 1500);
 
 }
