@@ -26,7 +26,7 @@ import pup2ist from 'puppeteer-to-istanbul';
   });
 
   // navigate to unit test page
-  await page.goto('http://127.0.0.1:1234/docs/test.html');
+  await page.goto('http://127.0.0.1:1234/test/test.html');
 
   // disable coverage
   const jsCoverage = await page.coverage.stopJSCoverage();

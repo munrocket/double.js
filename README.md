@@ -16,9 +16,9 @@ theoretical limitations to javascript language since ECMAScript uses 64 bit IEEE
 round-to-nearest-even after each operation and without FMA instruction.
 
 ### Benchmark
-![](https://habrastorage.org/webt/pv/x7/pn/pvx7pnc60y9vxvgm5gmi2xswkbs.png)
+![](https://habrastorage.org/webt/zy/1e/5u/zy1e5ur2yb2l_z-hwz6bkcygdk8.png)
 
-You can check [quality](https://munrocket.github.io/double.js/docs/benchmark.html), [performance](https://www.measurethat.net/Benchmarks/Show/6429/0/doublejs-benchmark) and [correctness](https://munrocket.github.io/double.js/docs/test.html) of double.js library in your browser.
+You can check [quality](https://munrocket.github.io/double.js/test/benchmark.html), [performance](https://www.measurethat.net/Benchmarks/Show/6429/0/doublejs-benchmark) and [correctness](https://munrocket.github.io/double.js/test/test.html) of double.js library in your browser.
 
 ### Usage
 Include double.js script to webpage or install npm package. Here some basic examples

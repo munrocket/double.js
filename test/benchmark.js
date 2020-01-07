@@ -17,6 +17,7 @@ function withNumber(buffer, target, i, j) {
   }
   colorizer(buffer, iteration - 1)
 }
+
 function withDoubleJs(buffer, target, i, j) {
   let D = Double;
   let iteration = 0;
@@ -35,6 +36,7 @@ function withDoubleJs(buffer, target, i, j) {
   }
   colorizer(buffer, iteration - 1);
 }
+
 function withDoubleJs_Ver01(buffer, target, i, j) {
   let D = D01;
   let iteration = 0;
@@ -53,6 +55,7 @@ function withDoubleJs_Ver01(buffer, target, i, j) {
   }
   colorizer(buffer, iteration - 1);
 }
+
 function withDoubleJs_Wasm(buffer, target, i, j) {
   let iteration = wasm.mandelbrot(
     maxIteration,
@@ -65,6 +68,7 @@ function withDoubleJs_Wasm(buffer, target, i, j) {
     i, j);
   colorizer(buffer, iteration - 1);
 }
+
 function withDecimalJs(buffer, target, i, j) {
   let iteration = 0;
   let x = new Decimal(0), y = new Decimal(0);
@@ -82,6 +86,7 @@ function withDecimalJs(buffer, target, i, j) {
   }
   colorizer(buffer, iteration - 1);
 }
+
 function withBigNumberJs(buffer, target, i, j) {
   let BN = BigNumber;
   let iteration = 0;
@@ -100,6 +105,7 @@ function withBigNumberJs(buffer, target, i, j) {
   }
   colorizer(buffer, iteration - 1); 
 }
+
 function withBigJs(buffer, target, i, j) {
   let iteration = 0;
   let x = new Big(0), y = new Big(0);
@@ -117,6 +123,7 @@ function withBigJs(buffer, target, i, j) {
   }
   colorizer(buffer, iteration - 1); 
 }
+
 function withBigFloat32(buffer, target, i, j) {
   let BF = bigfloat.BigFloat32;
   let iteration = 0;
@@ -135,6 +142,7 @@ function withBigFloat32(buffer, target, i, j) {
   }
   colorizer(buffer, iteration - 1);
 }
+
 function withFractionJs(buffer, target, i, j) {
   let iteration = 0;
   let x = new Fraction(0), y = new Fraction(0);
@@ -162,6 +170,7 @@ function colorizer(buffer, iteration) {
   buffer.data[pixelId++] = color;
   buffer.data[pixelId++] = 255;
 }
+
 function mandelbrot(calculator, buffer, target) {
   for (let j = 0; j < buffer.height; j++) {
     for (let i = 0; i < buffer.width; i++) {
@@ -169,6 +178,7 @@ function mandelbrot(calculator, buffer, target) {
     }
   }
 }
+
 function mandelbrotSplitTest(buffer, target, calculator1, calculator2) {
   for (let j = 0; j < buffer.height; j++) {
     for (let i = 0; i < buffer.width; i++) {
@@ -180,12 +190,14 @@ function mandelbrotSplitTest(buffer, target, calculator1, calculator2) {
     }
   }
 }
+
 function draw(calculator, target) {
   let canvas = document.getElementById(calculator.name);
   let buffer = canvas.getContext('2d').createImageData(canvas.width, canvas.height);
   pixelId = 0; mandelbrot(calculator, buffer, target);
   canvas.getContext('2d').putImageData(buffer, 0, 0);
 }
+
 function drawSplitTest(calc1, calc2, target) {
   let canvas = document.getElementById("splitTest");
   let ctx = canvas.getContext('2d');
@@ -218,8 +230,6 @@ window.onload = function() {
   let popups = document.getElementsByClassName('bench-popup');
 
   //benchmark
-  target.dx = 3e-16;
-  target.dy = 2e-16;
   let now = () => (typeof performance != 'undefined') ? performance.now() : Date.now();
   let calculators = [ withDoubleJs_Wasm, withDoubleJs, //withDoubleJs_Ver01, 
                       withBigNumberJs, withDecimalJs, withBigJs, withBigFloat32, withFractionJs ]; //withBigFloat53
@@ -251,7 +261,8 @@ window.onload = function() {
         fontFamily: "Sans", fontColor: "#000", fontSize: 16, fontStyle: 'normal' }
       }
     });
-  }, 1700));
+  }, 100));
+
   setTimeout(() => {
     var p = document.createElement('p');
     calculators.forEach(calc => {
