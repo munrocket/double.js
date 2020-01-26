@@ -9,6 +9,7 @@ after_success:
 
 deploy:
   provider: npm
+  edge: true
   email: $NPM_EMAIL
   api_key: $NPM_TOKEN
   on:
