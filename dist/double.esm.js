@@ -366,3 +366,4 @@ class Double {
 }
 
 export default Double;
+export { Double };

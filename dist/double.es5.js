@@ -1,4 +1,4 @@
-var Double = (function () {
+var Double = (function (exports) {
   'use strict';
 
   function _typeof(obj) {
@@ -641,6 +641,9 @@ var Double = (function () {
     return Double;
   }();
 
-  return Double;
+  exports.Double = Double;
+  exports.default = Double;
 
-}());
+  return exports;
+
+}({}));
