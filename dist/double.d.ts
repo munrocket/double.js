@@ -1,6 +1,6 @@
 declare type float = number;
 declare type int = number;
-export default class Double {
+export declare class Double {
     hi: float;
     lo: float;
     constructor(obj?: any);
@@ -75,4 +75,4 @@ export default class Double {
     pow(exp: Double): Double;
     pown(exp: float): Double;
 }
-export {};
+export { Double as default };
