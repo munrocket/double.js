@@ -1,6 +1,6 @@
 {
   "name": "double.js",
-  "version": "0.4.27",
+  "version": "0.4.28",
   "description": "Emulated float128 or double-double arithmetic. A floating point expansion with 31 accurate decimal digits.",
   "main": "dist/double.js",
   "types": "dist/double.d.ts",
@@ -26,7 +26,7 @@
     "puppeteer-to-istanbul": "^1.2.2",
     "rollup": "^1.27.14",
     "rollup-plugin-babel": "^4.3.3",
-    "rollup-plugin-typescript2": "^0.25.3",
+    "rollup-plugin-typescript2": "^0.26.0",
     "typescript": "^3.7.4",
     "zora": "^3.1.8"
   },
