@@ -12,7 +12,7 @@
     "test": "node --experimental-modules --no-warnings ./test/puppeteer.js",
     "http": "http-server -c-1 -p 1234",
     "cov": "sed -i 's/.nyc_output\\/js/dist/g' .nyc_output/out.json && nyc report --reporter=lcov",
-    "ci": "npm run http & npm run test && npm run cov; pkill http",
+    "ci": "npm run http & sleep 3 && npm run test && npm run cov; pkill http",
     "deploy": "npm version minor && git push --tags origin master"
   },
   "devDependencies": {
