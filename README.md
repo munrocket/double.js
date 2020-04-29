@@ -18,7 +18,7 @@ round-to-nearest-even after each operation and without FMA instruction.
 ### Benchmark
 ![](https://habrastorage.org/webt/zy/1e/5u/zy1e5ur2yb2l_z-hwz6bkcygdk8.png)
 
-You can check [quality](https://munrocket.github.io/double.js/test/benchmark.html), [performance](https://www.measurethat.net/Benchmarks/Show/6429/0/doublejs-benchmark) and [correctness](https://munrocket.github.io/double.js/test/test.html) of double.js library in your browser.
+You can check [quality](https://munrocket.github.io/double.js/test/benchmark.html), [performance](https://www.measurethat.net/Benchmarks/Show/8072/0/doublejs-benchmark3) and [correctness](https://munrocket.github.io/double.js/test/test.html) of double.js library in your browser.
 
 ### Usage
 Include double.js script to webpage or install npm package. Here some basic examples
@@ -41,7 +41,7 @@ let dF = (x) => F(x.add(h)).sub(F(x)).div(h);
 // |f'(x)| < 1 ? print(x)
 if (dF(x).abs().lt(1)) { console.log(x.toExponential()); }
 ```
-Further API details you can find in [wiki](https://github.com/munrocket/double.js/wiki) page and check it in [sandbox](https://runkit.com/munrocket/double-js-example). Be careful when initializing a new floats, for example `new Double(0.1)` is ok for integer numbers, but you should use `new Double('0.1')` to get correct results for fractional numburs. All double-double arithmetic functions are accurate and tested, say me if you find something strange. 
+Further API details you can find in [wiki](https://github.com/munrocket/double.js/wiki) page and check it in [sandbox](https://runkit.com/munrocket/double-js-example). Be careful when initializing a new floats, for example `new Double(0.1)` is ok for integer numbers, but you should use `new Double('0.1')` to get correct results for fractional numburs. All double-double arithmetic functions are accurate and tested, say me if you find something strange.
 
 ### WebAssembly version
 To get speed improvement with wasm, you need to write your entire algorithm with it, because Js<->Wasm interop is too heavy.
