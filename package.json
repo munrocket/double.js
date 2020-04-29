@@ -5,11 +5,10 @@
   "main": "dist/double.js",
   "types": "dist/double.d.ts",
   "module": "dist/double.esm.js",
-  "type": "module",
   "scripts": {
     "build": "rollup -c && npm run wasm",
     "wasm": "cd wasm && mv mandel.as f.ts && asc f.ts -b mandel.wasm -O3 --runtime none; mv f.ts mandel.as",
-    "test": "node --experimental-modules --no-warnings ./test/puppeteer.js",
+    "test": "node --experimental-modules --no-warnings ./test/puppeteer.mjs",
     "http": "http-server -c-1 -p 1234",
     "cov": "sed -i 's/.nyc_output\\/js/dist/g' .nyc_output/out.json && nyc report --reporter=lcov",
     "ci": "npm run http & sleep 3 && npm run test && npm run cov",
