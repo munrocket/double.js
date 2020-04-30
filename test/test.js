@@ -218,6 +218,9 @@ test('toExponential', t => {
   expected = '-';
   actual = new D(-0.5).toExponential().slice(0, 1);
   t.ok(actual == expected, 'Negative');
+  expected = '9.007199254740993e+15';
+  actual = new D('9007199254740992').add(new Double('1')).toExponential();
+  t.ok(actual == expected, '2**53+1');
 });
 
 test('constants', t => {

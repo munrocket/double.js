@@ -95,7 +95,7 @@ export class Double {
     if (!isFinite(this.hi) || this.toNumber() == 0.) return this.hi.toExponential(precision);
     let remainder = Double.clone(this);
     let str = remainder.hi.toExponential(precision).split('e');
-    if (str[0].length > 17) str[0] = str[0].slice(0, 17)
+    if (str[0].length > 16) str[0] = str[0].slice(0, 16)
     let result = str[0];
     let i = str[0].length - str[0].indexOf('.') - 1;
     if (str[0].indexOf('.') < 0) i--;
@@ -129,7 +129,8 @@ export class Double {
       result += nextDigs;
       i += nextLength;
       if (i >= 33) break;
-      Double.sub22(remainder, new Double(nextDigs + 'e' + next[1]))
+      let sub = nextDigs[0] + '.' + nextDigs.slice(1)
+      Double.sub22(remainder, new Double(sub + 'e' + next[1]))
     }
     return result + 'e' + str[1];
   }
