@@ -82,29 +82,62 @@
           return this.hi + this.lo;
       }
       toExponential(precision) {
-          if (precision === undefined)
-              precision = 33;
-          let result = (this.hi < 0.) ? '-' : '';
           if (isNaN(this.hi))
               return 'NaN';
-          if (!isFinite(this.hi))
-              return result + 'Infinity';
-          if (this.toNumber() == 0.)
-              return '0e+0';
-          let exp = this.hi.toExponential().split('e')[1];
-          let str, nextDigs, shift, isPositive;
-          for (let i = 0; i < precision; i += 15) {
-              str = this.hi.toExponential().split('e');
-              isPositive = (str[0][0] != '-');
-              nextDigs = str[0].replace(/^0\.|\./, '').slice(0, 15);
-              if (!isPositive)
-                  nextDigs = nextDigs.slice(1);
-              shift = Double.pow2n(new Double(10), parseInt(str[1]) - 14);
-              Double.sub22(this, Double.mul21(shift, parseInt(nextDigs) * ((isPositive) ? 1 : -1)));
-              nextDigs = nextDigs.slice(0, precision - i);
-              result += (i != 0) ? nextDigs : nextDigs.slice(0, 1) + '.' + nextDigs.slice(1);
+          if (!isFinite(this.hi) || this.toNumber() == 0.)
+              return this.hi.toExponential(precision);
+          let remainder = Double.clone(this);
+          let str = remainder.hi.toExponential(precision).split('e');
+          if (str[0].length > 17)
+              str[0] = str[0].slice(0, 17);
+          let result = str[0];
+          let i = str[0].length - str[0].indexOf('.') - 1;
+          if (str[0].indexOf('.') < 0)
+              i--;
+          Double.sub22(remainder, new Double(result + 'e' + str[1]));
+          if (remainder.hi < 0.)
+              Double.mul21(remainder, -1.0);
+          if (precision !== undefined && precision > 33)
+              precision = 33;
+          while (true) {
+              let nextPrecision = undefined;
+              if (precision === undefined) {
+                  if (remainder.toNumber() <= 0.)
+                      break;
+              }
+              else {
+                  if (i >= precision)
+                      break;
+                  if (remainder.toNumber() <= 0.) {
+                      result += '0';
+                      i++;
+                      continue;
+                  }
+                  nextPrecision = precision - i;
+                  if (nextPrecision > 14)
+                      nextPrecision = 14;
+              }
+              let next = remainder.hi.toExponential(nextPrecision).split('e');
+              let nextDigs = next[0].replace(/^0\.|\./, '');
+              let nextLength = nextDigs.length;
+              if (nextLength > 15)
+                  nextLength = 15;
+              if (precision === undefined) {
+                  if ((nextLength + i) > 33)
+                      nextLength = 33 - i;
+              }
+              else {
+                  if ((nextLength + i) > precision)
+                      nextLength = precision - i;
+              }
+              nextDigs = nextDigs.slice(0, nextLength);
+              result += nextDigs;
+              i += nextLength;
+              if (i >= 33)
+                  break;
+              Double.sub22(remainder, new Double(nextDigs + 'e' + next[1]));
           }
-          return result + 'e' + exp;
+          return result + 'e' + str[1];
       }
       static add22(X, Y) {
           let S = twoSum(X.hi, Y.hi);
