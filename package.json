@@ -1,6 +1,6 @@
 {
   "name": "double.js",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Emulated float128 or double-double arithmetic. A floating point expansion with 31 accurate decimal digits.",
   "main": "dist/double.js",
   "types": "dist/double.d.ts",
