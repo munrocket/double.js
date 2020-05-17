@@ -1,5 +1,6 @@
 import pkg from './package.json';
 import typescript from 'rollup-plugin-typescript2';
+import { asc } from "rollup-plugin-assemblyscript";
 import babel from 'rollup-plugin-babel';
 
 const tsconfig = {
@@ -32,5 +33,20 @@ export default [
     input: pkg.module,
     output: { file: './dist/double.es5.js', name: 'Double', format: 'iife' },
     plugins: [ babel({ exclude: 'node_modules/**' }) ]
+  },
+  {
+    input: 'wasm/mandel.as',
+    //output: { dir: "wasm" },
+    plugins: [
+      asc({
+        compilerOptions: {
+          //outFile: 'wasm/mandel.wasm',
+          optimizeLevel: 3,
+          shrinkLevel: 2,
+          runtime: 'none',
+          importMemory: true
+        }
+      })
+    ]
   }
 ];
