@@ -15,17 +15,17 @@
     "deploy": "npm version minor && git push --tags origin master"
   },
   "devDependencies": {
-    "@babel/core": "^7.10.4",
+    "@babel/core": "^7.10.5",
     "@babel/preset-env": "7.10.3",
     "assemblyscript": "^0.12.5",
     "nyc": "^15.1.0",
     "puppeteer": "4.0.1",
     "puppeteer-to-istanbul": "^1.4.0",
-    "rollup": "^2.19.0",
+    "rollup": "^2.22.1",
     "rollup-plugin-babel": "^4.4.0",
     "rollup-plugin-typescript2": "^0.27.1",
     "servez": "^1.10.0",
-    "typescript": "^3.9.6",
+    "typescript": "^3.9.7",
     "zora": "^4.0.0"
   },
   "eslintIgnore": [
