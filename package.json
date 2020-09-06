@@ -1,6 +1,6 @@
 {
   "name": "double.js",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Emulated float128 or double-double arithmetic. A floating point expansion with 31 accurate decimal digits.",
   "main": "dist/double.js",
   "types": "dist/double.d.ts",
@@ -16,7 +16,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.10.5",
-    "@babel/preset-env": "7.11.0",
+    "@babel/preset-env": "7.11.5",
     "assemblyscript": "^0.14.0",
     "nyc": "^15.1.0",
     "puppeteer": "4.0.1",
