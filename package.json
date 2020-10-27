@@ -55,6 +55,10 @@
     "bits",
     "eft"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/munrocket/double.js.git"
+  },
   "author": "munrocket",
   "license": "MIT"
 }
