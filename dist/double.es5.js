@@ -2,6 +2,8 @@ var Double = (function (exports) {
   'use strict';
 
   function _typeof(obj) {
+    "@babel/helpers - typeof";
+
     if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
       _typeof = function (obj) {
         return typeof obj;
@@ -74,9 +76,7 @@ var Double = (function (exports) {
     };
   }
 
-  var Double =
-  /*#__PURE__*/
-  function () {
+  var Double = /*#__PURE__*/function () {
     function Double(obj) {
       _classCallCheck(this, Double);
 

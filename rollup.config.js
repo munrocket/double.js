@@ -1,23 +1,7 @@
 import pkg from './package.json';
+import tsconfig from './tsconfig.json';
 import typescript from 'rollup-plugin-typescript2';
 import babel from 'rollup-plugin-babel';
-
-const tsconfig = {
-  "compilerOptions": {
-    "target": "es6",
-    "module": "es6",
-    "moduleResolution": "node",
-    "noImplicitAny": true,
-    "removeComments": true,
-    "preserveConstEnums": true,
-    "outDir": "./dist",
-    "sourceMap": false,
-    "declaration": true,
-    "lib": ["es2018"]
-  },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "**/*.spec.ts"]
-}
 
 export default [
   {

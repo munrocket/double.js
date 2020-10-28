@@ -1,13 +1,13 @@
 {
   "name": "double.js",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Emulated float128 or double-double arithmetic. A floating point expansion with 31 accurate decimal digits.",
   "main": "dist/double.js",
   "types": "dist/double.d.ts",
   "module": "dist/double.esm.js",
   "scripts": {
     "build": "rollup -c && npm run wasm",
-    "wasm": "cd wasm && mv mandel.as f.ts && asc f.ts -b mandel.wasm -O3 --runtime none; mv f.ts mandel.as",
+    "wasm": "cd wasm && asc --extension .as mandel.as -b mandel.wasm -O3 --runtime none",
     "test": "node --experimental-modules --no-warnings ./test/puppeteer.mjs",
     "http": "servez -p 1234",
     "cov": "sed -i 's/.nyc_output\\/js/dist/g' .nyc_output/out.json && nyc report --reporter=lcov",

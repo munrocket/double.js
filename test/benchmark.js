@@ -19,7 +19,7 @@ function withNumber(buffer, target, i, j) {
 }
 
 function withDoubleJs(buffer, target, i, j) {
-  let D = Double;
+  let D = Double.Double;
   let iteration = 0;
   let x = D.Zero, y = D.Zero;
   let xx = D.Zero, xy = D.Zero, yy = D.Zero;
@@ -231,8 +231,17 @@ window.onload = function() {
 
   //benchmark
   let now = () => (typeof performance != 'undefined') ? performance.now() : Date.now();
-  let calculators = [ withDoubleJs_Wasm, withDoubleJs, //withDoubleJs_Ver01, 
-                      withBigNumberJs, withDecimalJs, withBigJs, withBigFloat32, withFractionJs ]; //withBigFloat53
+  let calculators = [
+    withDoubleJs_Wasm,
+    withDoubleJs,
+    //withDoubleJs_Ver01, 
+    withBigNumberJs,
+    withDecimalJs,
+    withBigJs,
+    withBigFloat32,
+    //withFractionJs //completely broken thing
+    //withBigFloat53 //broken for some reason
+  ];
   calculators.forEach((calculator) => setTimeout(() => {
 
     // show debug

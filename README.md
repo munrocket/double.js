@@ -42,7 +42,7 @@ Further API details you can find in [wiki](https://github.com/munrocket/double.j
 
 ### WebAssembly version
 To get speed improvement with wasm, you need to write your entire algorithm with it, because Js<->Wasm interop is too heavy.
-For example I got x3 boost in Chrome, x4.5 in Safari and x7.5 in Firefox for mandelbrot set algo.
+For example I got x3 boost in Chrome, x3.5 in Safari and x7 in Firefox for mandelbrot set algo.
 
 ### Special thanks
 To [Jeffrey Sarnoff](https://github.com/JeffreySarnoff) for help me with books and algorithms.
