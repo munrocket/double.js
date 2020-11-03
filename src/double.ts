@@ -296,6 +296,7 @@ export class Double {
   
   /* Elementary functions with double */
 
+  // [16/16] pade of exp(x)
   static exp2(X: Double): Double {
     if (Double.eq21(X, 0.)) return Double.One;
     if (Double.eq21(X, 1.)) return Double.E;

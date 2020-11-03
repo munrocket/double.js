@@ -3,11 +3,11 @@
 Floating point expansion with 31 accurate decimal digits (100+ bits), also known as double-double arithmetic or
 emulated float128. This library can be useful for fast calculation with extended precision. For example in computational
 geometry and numerically unstable algorithms such as performing triangulation, polygon clipping,
-inverting matrix and finding differentials.
+inverting matrix and finding differentials. If you need more precision check this [library](https://github.com/munrocket/jampary).
 
 ### Algorithm
-Number stored as unevaluated sum of two javascript float numbers and uses error-free arithmetic algorithms
-from references below. This brings accuracy and significant increase in performance in comparison to
+Number stored as unevaluated sum of two javascript float numbers and uses error-free arithmetic algorithms.
+This brings accuracy and significant increase in performance in comparison to
 digit-wise approach, because this float arithmetic is implemented in hardware. Note that there are no
 theoretical limitations to javascript language since ECMAScript uses 64 bit IEEE 754 with
 round-to-nearest-even after each operation and without FMA instruction.
