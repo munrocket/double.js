@@ -9,7 +9,7 @@
     "build": "rollup -c && npm run wasm",
     "wasm": "cd wasm && asc --extension .as mandel.as -b mandel.wasm -O3 --runtime none",
     "test": "node --experimental-modules --no-warnings ./test/puppeteer.mjs",
-    "http": "servez -p 1234",
+    "serve": "servez -p 1234",
     "cov": "sed -i 's/.nyc_output\\/js/dist/g' .nyc_output/out.json && nyc report --reporter=lcov",
     "ci": "npm run http & sleep 3 && npm run test && npm run cov",
     "deploy": "npm version minor && git push --tags origin master"

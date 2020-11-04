@@ -9,56 +9,39 @@
   <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 </head>
 <body>
-  <h1>Quality test and benchmark</h1>
-  <div style="position: relative">
-    <canvas id="splitTest" width="400" height="200" style="position: absolute;"></canvas>
-    <canvas id="barChart" width="400" height="200" style="position: absolute; padding-left: 420px"></canvas>
-    <div class="bench-popup" style="display: none; position: absolute; padding-left: 524px; padding-top: 37px;">
-      <div style="padding-top: 1px;"><canvas id="withDoubleJs_Wasm" width="15" height="10"></canvas></div>
-      <div style="padding-top: 1px;"><canvas id="withDoubleJs" width="15" height="10"></canvas></div>
-      <!-- <div style="padding-top: 1px;"><canvas id="withDoubleJs_Ver01" width="15" height="10"></canvas></div> -->
-      <div style="padding-top: 1px;"><canvas id="withDecimalJs" width="15" height="10"></canvas></div>
-      <div style="padding-top: 1px;"><canvas id="withBigNumberJs" width="15" height="10"></canvas></div>
-      <div style="padding-top: 1px;"><canvas id="withBigJs" width="15" height="10"></canvas></div>
-      <div style="padding-top: 1px;"><canvas id="withBigFloat32" width="15" height="10"></canvas></div>
-      <div style="padding-top: 1px;"><canvas id="withFractionJs" width="15" height="10"></canvas></div>
-      <!-- <div style="padding-top: 1px;"><canvas id="withBigFloat53" width="15" height="10"></canvas></div> -->
+  <h1 id="title">Loading libraries...</h1>
+  <div style="display: flex; justify-content: left; align-items: center; height: 200px;">
+    <div style="width: 400px; align-content: center;">
+      <canvas id="split-test" style="width: 400px; height: 200px;"></canvas>
     </div>
+    <div id="bar-chart" style="padding-left: 10px; width: 500px; height: 200px;"></div>
   </div>
-  <p class="bench-popup" style="display: none; font-family: 'Open Sans', sans; padding-top: 213px">
-    Probably ChartJS visualization not working in Safari and mobile phones.<br/>
-    All libraries in benchmark spending 1500 milliseconds and setted to precision with 31 decimal digits.<br/>
-    To increase Big.js and BigNumber.js I used .round(31) and .dp(31) after each multiplication without rouding they become much slower.<br/>
-    Fraction.js (Math.js) simply can't hold repetitive calculations and you shouldn't use it for repetitive calculations right now.
-  </p>
+  <div class="bench-popup" style="display: none; font-family: 'Open Sans', sans; padding-top: 10px">
+    All libraries in benchmark spending 1000 milliseconds and setted to precision with 46 decimal digits. <br>
+    To increase Big.js and BigNumber.js performance .round(31) and .dp(31) is used. <br>
+    Fraction.js/Math.js simply can't hold repetitive calculations and you shouldn't use it for calculations right now.
+  </div>
+  <div style="padding-top: 10px">
+    <canvas id="withDoubleJs_Wasm" width="15" height="10"></canvas>
+    <canvas id="withDoubleJs" width="15" height="10"></canvas>
+    <!-- <canvas id="withDoubleJs_Ver01" width="15" height="10"></canvas> -->
+    <canvas id="withDecimalJs" width="15" height="10"></canvas>
+    <canvas id="withBigNumberJs" width="15" height="10"></canvas>
+    <canvas id="withBigJs" width="15" height="10"></canvas>
+    <canvas id="withBigFloat32" width="15" height="10"></canvas>
+    <canvas id="withFractionJs" width="15" height="10"></canvas>
+    <!-- <div style="padding-top: 1px;"><canvas id="withBigFloat53" width="15" height="10"></canvas> -->
+  </div>
 </body>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+<script src="https://www.gstatic.com/charts/loader.js"></script>
 
-<!-- v0.1 version -->
-<script src="https://unpkg.com/double.js@0.1.0"></script>
-<script>D01 = Double;</script>
-
-<!-- wasm version -->
-<script>
-  let wasm, imports = { env: { abort() { console.error("abort called");}}};
-  fetch('../wasm/mandel.wasm').then(response =>
-    response.arrayBuffer()
-  ).then(bytes => WebAssembly.instantiate(bytes, imports)).then(results => {
-    wasm = results.instance.exports;
-    let el = [2.718281828459045, 1.4456468917292502e-16, 0.6931471805599453, 2.319046813846299e-17];
-    console.log('wasm loaded, test=' + wasm.test(...el));
-  }).catch(() => {
-    wasm = { mandelbrot: () => 1 };
-    console.log('wasm not supported and stabbed!');
-  });
-</script>
-
+<script src="https://unpkg.com/double.js@0.1.0"></script><script>D01 = Double;</script>
 <script src="/dist/double.js"></script>
 <script src="https://unpkg.com/decimal.js"></script>
 <script src="https://unpkg.com/bignumber.js"></script>
 <script src="https://unpkg.com/big.js"></script>
-<!-- <script src="https://unpkg.com/fraction.js"></script> -->
 <script src="https://unpkg.com/bigfloat"></script>
+<!-- <script src="https://unpkg.com/fraction.js"></script> -->
 
 <script src="./benchmark.js"></script>
 </html>
