@@ -1,7 +1,7 @@
 # double.js [![bundlephobia](https://badgen.net/bundlephobia/minzip/double.js)](https://bundlephobia.com/result?p=double.js) [![Codecov](https://img.shields.io/codecov/c/github/munrocket/double.js.svg)](https://codecov.io/gh/munrocket/double.js)
 
 Floating point expansion with 31 accurate decimal digits (106 bits), also known as double-double arithmetic or
-emulated float128. This library can be useful for fast calculation with extended precision. For example in computational
+emulated float128. This library can be useful for fast calculation with extended precision. For example in orbital mechanics, computational
 geometry and numerically unstable algorithms such as performing triangulation, polygon clipping,
 inverting matrix and finding differentials.
 
