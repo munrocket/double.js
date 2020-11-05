@@ -1,9 +1,9 @@
 # double.js [![bundlephobia](https://badgen.net/bundlephobia/minzip/double.js)](https://bundlephobia.com/result?p=double.js) [![Codecov](https://img.shields.io/codecov/c/github/munrocket/double.js.svg)](https://codecov.io/gh/munrocket/double.js)
 
-Floating point expansion with 31 accurate decimal digits (100+ bits), also known as double-double arithmetic or
+Floating point expansion with 31 accurate decimal digits (106 bits), also known as double-double arithmetic or
 emulated float128. This library can be useful for fast calculation with extended precision. For example in computational
 geometry and numerically unstable algorithms such as performing triangulation, polygon clipping,
-inverting matrix and finding differentials. If you need more precision check this [library](https://github.com/munrocket/jampary).
+inverting matrix and finding differentials.
 
 ### Algorithm
 Number stored as unevaluated sum of two javascript float numbers and uses error-free arithmetic algorithms.
@@ -40,12 +40,15 @@ if (dF(x).abs().lt(1)) { console.log(x.toExponential()); }
 ```
 Further API details you can find in [wiki](https://github.com/munrocket/double.js/wiki) page and check it in [sandbox](https://runkit.com/munrocket/double-js-example). Be careful when initializing a new floats, for example `new Double(0.1)` is ok for integer numbers, but you should use `new Double('0.1')` to get correct results for fractional numburs. All double-double arithmetic functions are accurate and tested, say me if you find something strange.
 
-### WebAssembly version
-To get speed improvement with wasm, you need to write your entire algorithm with it, because Js<->Wasm interop is too heavy.
-For example I got x3 boost in Chrome, x3.5 in Safari and x7 in Firefox for mandelbrot set algo.
+### Want more functions / more precision?
+If you want more functions (trigonometric for example) open an issue. For more precision with fast performance consider this [library](https://github.com/munrocket/jampary).
 
 ### Special thanks
-To [Jeffrey Sarnoff](https://github.com/JeffreySarnoff) for help me with books and algorithms.
+To [Jeffrey Sarnoff](https://github.com/JeffreySarnoff) for help me with books and algorithms. [Sergey Yanovich](https://github.com/yanovich) for fixing issues with toExponential(). To [Max Graey](https://github.com/MaxGraey) for AssemblyScript remarks.
+
+### WebAssembly version
+To get speed improvement with wasm, you need to write your entire algorithm with it, because Js<->Wasm interop is too heavy.
+For example I got x3 boost in Chrome, x3.5 in Safari and x7 in Firefox for mandelbrot set algo, but with hardcoded global variables.
 
 ### References
 1. J.-M. Muller, etc. *Tight and rigourous error bounds for basic building blocks of double-word arithmetic.*, 2017. [[PDF](https://hal.archives-ouvertes.fr/hal-01351529v3/document)]
