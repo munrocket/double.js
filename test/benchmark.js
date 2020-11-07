@@ -29,9 +29,9 @@ window.onload = function() {
       setTimeout(() => {
 
         // set equal precision and params
-        Big.DP = 46;
-        Decimal.set({ precision: 46 });
-        BigNumber.set({ DECIMAL_PLACES: 46 });
+        Big.DP = 31;
+        Decimal.set({ precision: 31 });
+        BigNumber.set({ DECIMAL_PLACES: 31 });
   
         // benchmark
         let popups = document.getElementsByClassName('bench-popup');
