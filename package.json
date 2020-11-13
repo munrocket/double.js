@@ -1,6 +1,6 @@
 {
   "name": "double.js",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "Emulated float128 or double-double arithmetic. A floating point expansion with 31 accurate decimal digits.",
   "main": "dist/double.js",
   "types": "dist/double.d.ts",
@@ -11,7 +11,7 @@
     "test": "node --experimental-modules --no-warnings ./test/puppeteer.mjs",
     "serve": "servez -p 1234",
     "cov": "sed -i 's/.nyc_output\\/js/dist/g' .nyc_output/out.json && nyc report --reporter=lcov",
-    "ci": "npm run http & sleep 3 && npm run test && npm run cov",
+    "ci": "npm run serve & sleep 3 && npm run test && npm run cov",
     "deploy": "npm version minor && git push --tags origin master"
   },
   "devDependencies": {
