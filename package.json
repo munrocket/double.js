@@ -38,9 +38,10 @@
     ]
   },
   "keywords": [
+    "double-double",
+    "doubledouble",
     "float128",
     "quadruple",
-    "doubledouble",
     "qd",
     "bigfloat",
     "precision",
