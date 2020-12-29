@@ -15,7 +15,7 @@ round-to-nearest-even after each operation and without FMA instruction.
 ### Benchmark
 ![](https://habrastorage.org/webt/zy/1e/5u/zy1e5ur2yb2l_z-hwz6bkcygdk8.png)
 
-You can check [quality](https://munsocket.github.io/double.js/test/benchmark.html), [performance](https://www.measurethat.net/Benchmarks/Show/8072/0/doublejs-benchmark3) and [correctness](https://munsocket.github.io/double.js/test/test.html) of double.js library in your browser.
+You can check [quality](https://munsocket.github.io/double.js/test/benchmark.html), [performance](https://www.measurethat.net/Benchmarks/Show/11028/0/doublejs-benchmark5) and [correctness](https://munrocket.github.io/double.js/test/test.html) of double.js library in your browser.
 
 ### Usage
 Include double.js script to webpage or install npm package. Here some basic examples
@@ -47,7 +47,7 @@ For example I got x3 boost in Chrome, x3.5 in Safari and x7 in Firefox for mande
 If you want more functions (trigonometric for example) open an issue. For more precision with fast performance consider this [library](https://github.com/munsocket/jampary).
 
 ### Special thanks
-To [Jeffrey Sarnoff](https://github.com/JeffreySarnoff) for help me with books and algorithms. [Sergey Yanovich](https://github.com/yanovich) for fixing issues with toExponential(). To [Max Graey](https://github.com/MaxGraey) for AssemblyScript remarks.
+To [Jeffrey Sarnoff](https://github.com/JeffreySarnoff) for help me with books and algorithms. [Sergey Yanovich](https://github.com/yanovich) for fixing issues with toExponential(). To [Max Graey](https://github.com/MaxGraey) for AssemblyScript remarks. To [Yaffle](https://github.com/Yaffle) for fixing benchmark.
 
 ### References
 1. J.-M. Muller, etc. *Tight and rigourous error bounds for basic building blocks of double-word arithmetic.*, 2017. [[PDF](https://hal.archives-ouvertes.fr/hal-01351529v3/document)]

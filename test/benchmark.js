@@ -148,7 +148,7 @@ function withDecimalJs(maxIter, target, buffer, pixel) {
   let tdx = new Decimal(target.dx), tdy = new Decimal(target.dy);
   let cx = tx.sub(tdx).add(tdx.mul(2 * pixel.i).div(buffer.width));
   let cy = ty.add(tdy).sub(tdy.mul(2 * pixel.j).div(buffer.height));
-  while (iter++ < maxIter && xx.add(yy).toString() < 4) {
+  while (iter++ < maxIter && xx.add(yy).lt(4)) {
     x = xx.sub(yy).add(cx);
     y = xy.add(xy).add(cy);
     xx = x.mul(x);
@@ -167,7 +167,7 @@ function withBigNumberJs(maxIter, target, buffer, pixel) {
   let tdx = new BN(target.dx), tdy = new BN(target.dy);
   let cx = tx.minus(tdx).plus(tdx.times(2 * pixel.i).div(buffer.width)).dp(31);
   let cy = ty.plus(tdy).minus(tdy.times(2 * pixel.j).div(buffer.height)).dp(31);
-  while (iter++ < maxIter && xx.plus(yy).toString() < 4) {
+  while (iter++ < maxIter && xx.plus(yy).lt(4)) {
     x = xx.minus(yy).plus(cx);
     y = xy.plus(xy).plus(cy);
     xx = x.times(x).dp(31);
@@ -185,7 +185,7 @@ function withBigJs(maxIter, target, buffer, pixel) {
   let tdx = new Big(target.dx), tdy = new Big(target.dy);
   let cx = tx.sub(tdx).add(tdx.mul(2 * pixel.i).div(buffer.width)).round(31);
   let cy = ty.add(tdy).sub(tdy.mul(2 * pixel.j).div(buffer.height)).round(31);
-  while (iter++ < maxIter && xx.add(yy).toString() < 4) {
+  while (iter++ < maxIter && xx.add(yy).lt(4)) {
     x = xx.sub(yy).add(cx);
     y = xy.add(xy).add(cy);
     xx = x.mul(x).round(31);
@@ -204,7 +204,7 @@ function withBigFloat32(maxIter, target, buffer, pixel) {
   let tdx = new BF(target.dx), tdy = new BF(target.dy);
   let cx = tx.sub(tdx).add(tdx.mul(2 * pixel.i).mul(1/buffer.width)).round(31);
   let cy = ty.add(tdy).sub(tdy.mul(2 * pixel.j).mul(1/buffer.height)).round(31);
-  while (iter++ < maxIter && xx.add(yy).toString() < 4) {
+  while (iter++ < maxIter && xx.add(yy).cmp(4)) {
     x = xx.sub(yy).add(cx);
     y = xy.add(xy).add(cy);
     xx = x.mul(x).round(31);
