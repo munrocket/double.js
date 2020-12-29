@@ -204,7 +204,7 @@ function withBigFloat32(maxIter, target, buffer, pixel) {
   let tdx = new BF(target.dx), tdy = new BF(target.dy);
   let cx = tx.sub(tdx).add(tdx.mul(2 * pixel.i).mul(1/buffer.width)).round(31);
   let cy = ty.add(tdy).sub(tdy.mul(2 * pixel.j).mul(1/buffer.height)).round(31);
-  while (iter++ < maxIter && xx.add(yy).cmp(4)) {
+  while (iter++ < maxIter && xx.add(yy).cmp(4) < 0) {
     x = xx.sub(yy).add(cx);
     y = xy.add(xy).add(cy);
     xx = x.mul(x).round(31);
