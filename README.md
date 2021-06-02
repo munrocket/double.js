@@ -15,7 +15,7 @@ round-to-nearest-even after each operation and without FMA instruction.
 ### Benchmark
 ![](https://habrastorage.org/webt/zy/1e/5u/zy1e5ur2yb2l_z-hwz6bkcygdk8.png)
 
-You can check [quality](https://munsocket.github.io/double.js/test/benchmark.html), [performance](https://www.measurethat.net/Benchmarks/Show/11028/0/doublejs-benchmark5) and [correctness](https://munrocket.github.io/double.js/test/test.html) of double.js library in your browser.
+You can check [quality](https://munsocket.github.io/double.js/test/benchmark.html), [performance](https://www.measurethat.net/Benchmarks/Show/11028/0/doublejs-benchmark5) and [correctness](https://munsocket.github.io/double.js/test/test.html) of double.js library in your browser.
 
 ### Usage
 Include double.js script to webpage or install npm package. Here some basic examples
