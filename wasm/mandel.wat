@@ -1,4 +1,4 @@
-;; hand written wat for testing purpuses (it have an error somewhere and slow)
+;; hand written wat. don't use it, it have an error and slower than AS version
 
 (module
 
