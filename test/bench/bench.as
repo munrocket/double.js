@@ -1,9 +1,4 @@
-import { add22, sub22, mul22, div22} from '../wasm/double';
-
-type float = f64;
-type int = i32;
-let LO: float = 0.;
-const splitter: float = 134217729.;
+import { add22, sub22, mul22, div22, LO, float, int} from '../../wasm/double';
 
 function abs(Xh: float, Xl: float): float {
   return Math.abs(Xh + Xl);

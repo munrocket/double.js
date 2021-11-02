@@ -92,4 +92,4 @@ function sqr2(Xh: float, Xl: float): float {
   return Xh;
 }
 
-export { add22, sub22, mul22, div22, sqr2 }
+export { add22, sub22, mul22, div22, sqr2, LO, int, float }

@@ -39,12 +39,12 @@ if (dF(x).abs().lt(1)) { console.log(x.toExponential()); }
 ```
 Further API details you can find in [wiki](https://github.com/munrocket/double.js/wiki) page and check it in [sandbox](https://runkit.com/munrocket/double-js-example). Be careful when initializing a new floats, for example `new Double(0.1)` is ok for integer numbers, but you should use `new Double('0.1')` to get correct results for fractional numburs. All double-double arithmetic functions are accurate and tested, say me if you find something strange.
 
-### Webassembly version
+### WebAssembly version
 To get speed improvement with wasm, you need to write your entire algorithm with it, because Js<->Wasm interop is too heavy.
 For example I got x3 boost in Chrome, x3.5 in Safari and x7 in Firefox for mandelbrot set algo, but with hardcoded global variables.
 
 ### WebGL/WebGPU versions
-Just copy/paste the code with MIT copyright.
+Just copy/paste the code with MIT copyright. (2do: testing)
 
 ### Special thanks
 To [Jeffrey Sarnoff](https://github.com/JeffreySarnoff) for help me with books and algorithms. [Sergey Yanovich](https://github.com/yanovich) for fixing issues with toExponential(). To [Max Graey](https://github.com/MaxGraey) for AssemblyScript remarks. To [Yaffle](https://github.com/Yaffle) for fixing benchmark.
