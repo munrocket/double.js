@@ -26,8 +26,7 @@ vec2 add22(vec2 X, vec2 Y) {
   vec2 S = twoSum(X[0], Y[0]);
   vec2 E = twoSum(X[1], Y[1]);
   vec2 v = fastTwoSum(S[0], add(S[1], E[0]));
-  v[1] = add(v[1], E[1]);
-  return fastTwoSum(v[0], v[1]);
+  return fastTwoSum(v[0], add(v[1], E[1]));
 }
 
 vec2 sub22(vec2 X, vec2 Y) {

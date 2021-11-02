@@ -9,7 +9,7 @@ Number stored as unevaluated sum of two javascript float numbers and uses error-
 This brings accuracy and significant increase in performance in comparison to
 digit-wise approach, because this float arithmetic is implemented in hardware. Note that there are no
 theoretical limitations to javascript language since ECMAScript uses 64 bit IEEE 754 with
-round-to-nearest-even after each operation and without FMA instruction.
+round-to-nearest-even after each operation.
 
 ### Benchmark
 ![](https://habrastorage.org/webt/zy/1e/5u/zy1e5ur2yb2l_z-hwz6bkcygdk8.png)
