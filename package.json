@@ -1,32 +1,29 @@
 {
   "name": "double.js",
-  "version": "1.0.15",
+  "version": "1.1.0",
   "description": "Emulated float128 or double-double arithmetic. A floating point expansion with 31 accurate decimal digits.",
   "main": "dist/double.js",
-  "types": "dist/double.d.ts",
   "module": "dist/double.esm.js",
   "scripts": {
-    "build": "rollup -c && npm run wasm",
-    "wasm": "cd wasm && asc --extension .as mandel.as -b mandel.wasm -O3 --runtime none",
-    "test": "node --experimental-modules --no-warnings ./test/puppeteer.mjs",
+    "build": "npm run build-esm && npm run build-browser && npm run build-wasm",
+    "build-esm": "esbuild ./src/double.ts --outfile=./dist/double.esm.js",
+    "build-browser": "esbuild ./src/double.ts --bundle --minify --outfile=./dist/double.js",
+    "build-wasm": "asc --extension=.as test/bench.as wasm/double.as -b test/bench.wasm -O3",
+    "test": "node -r esm ./test/test.js",
+    "ci": "npm run serve & sleep 3 && npm run e2e && npm run cov",
     "serve": "servez -p 1234",
-    "cov": "sed -i 's/.nyc_output\\/js/dist/g' .nyc_output/out.json && nyc report --reporter=lcov",
-    "ci": "npm run serve & sleep 3 && npm run test && npm run cov",
-    "deploy": "npm version minor && git push --tags origin master"
+    "e2e": "node --experimental-modules --no-warnings ./test/e2e.mjs",
+    "cov": "sed -i 's/.nyc_output\\/js/dist/g' .nyc_output/out.json && nyc report --reporter=lcov"
   },
   "devDependencies": {
-    "@babel/core": "^7.10.5",
-    "@babel/preset-env": "7.12.11",
-    "assemblyscript": "^0.17.0",
+    "assemblyscript": "^0.19.0",
+    "esbuild": "^0.13.12",
+    "esm": "^3.2.25",
     "nyc": "^15.1.0",
-    "puppeteer": "4.0.1",
+    "puppeteer": "10.4.0",
     "puppeteer-to-istanbul": "^1.4.0",
-    "rollup": "^2.22.1",
-    "rollup-plugin-babel": "^4.4.0",
-    "rollup-plugin-typescript2": "^0.29.0",
     "servez": "^1.10.0",
-    "typescript": "^4.0.0",
-    "zora": "^4.0.0"
+    "zora": "^5.0.0"
   },
   "eslintIgnore": [
     "dist",

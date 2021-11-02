@@ -9,7 +9,7 @@ window.onload = function() {
 
   // load wasm
   let imports = { env: { abort() { console.error("abort called");}}};
-  fetch('../wasm/mandel.wasm').then(response =>
+  fetch('../bench/bench.wasm').then(response =>
     response.arrayBuffer()
   ).then(bytes => WebAssembly.instantiate(bytes, imports)).then(results => {
     wasm = results.instance.exports;
@@ -89,7 +89,7 @@ function withNumber(maxIter, target, buffer, pixel) {
 }
 
 function withDoubleJs(maxIter, target, buffer, pixel) {
-  let D = Double.Double;
+  let D = Double;
   let iter = 0;
   let x = D.Zero, y = D.Zero;
   let xx = D.Zero, xy = D.Zero, yy = D.Zero;

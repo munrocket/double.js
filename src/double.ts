@@ -412,4 +412,4 @@ export class Double {
   pown(exp: float): Double { return Double.pow2n(Double.clone(this), exp); }
 }
 
-export { Double as default };
+export default { Double };
