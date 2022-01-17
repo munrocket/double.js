@@ -5,6 +5,7 @@
   "main": "dist/double.js",
   "module": "dist/double.esm.js",
   "scripts": {
+    "watch": "onchange 'src/*.ts' -- npm run build",
     "build": "npm run build-esm && npm run build-browser && npm run build-wasm",
     "build-esm": "esbuild ./src/double.ts --outfile=./dist/double.esm.js",
     "build-browser": "esbuild ./src/double.ts --bundle --minify --outfile=./dist/double.js",
@@ -20,6 +21,7 @@
     "esbuild": "^0.13.12",
     "esm": "^3.2.25",
     "nyc": "^15.1.0",
+    "onchange": "^7.1.0",
     "puppeteer": "10.4.0",
     "puppeteer-to-istanbul": "^1.4.0",
     "servez": "^1.10.0",
