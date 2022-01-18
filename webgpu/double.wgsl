@@ -1,3 +1,5 @@
+// MIT License. © 2021 munrocket
+
 fn add(a: f32, b: f32) -> f32 { return select(a, a + b, b != 0.); }
 fn sub(a: f32, b: f32) -> f32 { return select(a, a - b, b != 0.); }
 fn mul(a: f32, b: f32) -> f32 { return select(a, a * b, b != 1.); }
