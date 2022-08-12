@@ -12,7 +12,7 @@ fn fastTwoSum(a: f32, b: f32) -> vec2<f32> {
 
 fn twoSum(a: f32, b: f32) -> vec2<f32> {
   let s = add(a, b);
-  let a1  = sub(s, b);
+  let a1 = sub(s, b);
   return vec2<f32>(s, add(sub(a, a1), sub(b, sub(s, a1))));
 }
 
@@ -39,8 +39,8 @@ fn mul22(X: vec2<f32>, Y: vec2<f32>) -> vec2<f32> {
 }
 
 fn div22(X: vec2<f32>, Y: vec2<f32>) -> vec2<f32> {
-  let s = X[0] / Y[0];
+  let s = div(X[0], Y[0]);
   let T = twoProd(s, Y[0]);
-  let e = ((((X[0] - T[0]) - T[1]) + X[1]) - s * Y[1]) / Y[0];
+  let e = div(sub(add(sub(sub(X[0], T[0]), T[1]), X[1]), mul(s, Y[1])), Y[0]);
   return fastTwoSum(s, e);
 }
