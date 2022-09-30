@@ -2,19 +2,13 @@
 
 float add(float a, float b) { return (b != 0.) ? a + b : a; }
 float sub(float a, float b) { return (b != 0.) ? a - b : a; }
-float mul(float a, float b) { return (a != 0.) ? a * b : 0.; }
-float div(float a, float b) { return (a != 0.) ? a / b : 0.; }
+float mul(float a, float b) { return (b != 1.) ? a * b : a; }
+float div(float a, float b) { return (b != 1.) ? a / b : a; }
 float fma(float a, float b, float c) { return a * b + c; }
 
 vec2 fastTwoSum(float a, float b) {
   float s = add(a, b);
   return vec2(s, sub(b, sub(s, a)));
-}
-
-vec2 twoSum(float a, float b) {
-  float s = add(a, b);
-  float a1  = sub(s, b);
-  return vec2(s, add(sub(a, a1), sub(b, sub(s, a1))));
 }
 
 vec2 twoProd(float a, float b) {
@@ -23,10 +17,10 @@ vec2 twoProd(float a, float b) {
 }
 
 vec2 add22(vec2 X, vec2 Y) {
-  vec2 S = twoSum(X[0], Y[0]);
-  vec2 E = twoSum(X[1], Y[1]);
-  vec2 v = fastTwoSum(S[0], add(S[1], E[0]));
-  return fastTwoSum(v[0], add(v[1], E[1]));
+  float s = add(X[0], Y[0]);
+  float c = sub(s, X[0]);
+  float e = add(add(add(sub(Y[0], c), sub(X[0], sub(s, c))), X[1]), Y[1]);
+  return fastTwoSum(s, e);
 }
 
 vec2 sub22(vec2 X, vec2 Y) {

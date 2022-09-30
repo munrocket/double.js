@@ -38,9 +38,9 @@ window.onload = function() {
         popups[0].style.display = 'block';
         let now = () => (typeof performance != 'undefined') ? performance.now() : Date.now();
         let calculators = [
-          withDoubleJs_Wasm,
           withDoubleJs,
           //withDoubleJs_Ver01, 
+          //withDoubleJs_Wasm,
           withBigNumberJs,
           withDecimalJs,
           withBigJs,
