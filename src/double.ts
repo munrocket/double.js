@@ -4,11 +4,11 @@ type float = number;
 type int = number;
 const splitter = 134217729.; // Veltkamp’s splitter (= 2^27+1 for 64-bit float)
 
-// Møller's and Knuth's summation (algorithm 2 from [1])
+// Møller's and Knuth's summation (algorithm 2 from [1], reordered to work on gpu)
 function twoSum(a: float, b: float) {
   let s = a + b;
-  let a1  = s - b;
-  return { hi: s, lo: (a - a1) + (b - (s - a1)) };
+  let b1  = s - a;
+  return { hi: s, lo: (b - b1) + (a - (s - b1)) };
 }
 
 // Dekker’s multiplication (algorithm 4.7 with inlined 4.6 from [2])

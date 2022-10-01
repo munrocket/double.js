@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebGL 2e2 test</title>
+</head>
+<body>
+  <script src="https://cdn.jsdelivr.net/npm/shaderpen@0.1.1/dist/shaderpen.umd.min.js"></script>
+  <script>
+    new ShaderPen(`
+// MIT License. © 2022 munrocket
+//
+// Emulated double precision lib with mandelbrot set
+// Bottom is always pixelated, top is smooth with double
+// Algorithm using fma for faster dd multimplication
+// More information: https://github.com/munrocket/double.js
+
+float add(float a, float b) { return (b != 0.) ? a + b : a; }
+float sub(float a, float b) { return (b != 0.) ? a - b : a; }
+float mul(float a, float b) { return (b != 1.) ? a * b : a; }
+float div(float a, float b) { return (b != 1.) ? a / b : a; }
+float fma(float a, float b, float c) { return a * b + c; }
+
+vec2 fastTwoSum(float a, float b) {
+  float s = add(a, b);
+  return vec2(s, sub(b, sub(s, a)));
+}
+
+vec2 twoSum(float a, float b) {
+  float s = add(a, b);
+  float b1 = sub(s, a);
+  return vec2(s, add(sub(b, b1), sub(a, sub(s, b1))));
+}
+
+vec2 twoProd(float a, float b) {
+  float ab = mul(a, b);
+  return vec2(ab, fma(a, b, -ab));
+}
+
+vec2 add22(vec2 X, vec2 Y) {
+  vec2 S = twoSum(X[0], Y[0]);
+  vec2 T = twoSum(X[1], Y[1]);
+  vec2 V = fastTwoSum(S[0], add(S[1], T[0]));
+  return fastTwoSum(V[0], add(T[1], V[1]));
+}
+
+vec2 sub22(vec2 X, vec2 Y) {
+  return add22(X, -Y);
+}
+
+vec2 mul22(vec2 X, vec2 Y) {
+  vec2 S = twoProd(X[0], Y[0]);
+  float t = mul(X[0], Y[1]);
+  float c = fma(X[1], Y[0], mul(X[0], Y[1]));
+  return fastTwoSum(S[0], add(S[1], c));
+}
+
+vec2 div22(vec2 X, vec2 Y) {
+  float s = X[0] / Y[0];
+  vec2 T = twoProd(s, Y[0]);
+  float e = ((((X[0] - T[0]) - T[1]) + X[1]) - s * Y[1]) / Y[0];
+  return fastTwoSum(s, e);
+}
+
+//////// end of the library, begin mandelbrot example /////////
+
+vec4 dcadd(vec4 a, vec4 b){
+  return vec4(add22(a.xy, b.xy), add22(a.zw, b.zw));
+}
+
+vec4 dcsub(vec4 a, vec4 b){
+  return vec4(sub22(a.xy, b.xy), sub22(a.zw, b.zw));
+}
+
+vec4 dcmul(vec4 a, vec4 b){
+  return vec4(sub22(mul22(a.xy, b.xy), mul22(a.zw, b.zw)),
+              add22(mul22(a.xy, b.zw), mul22(a.zw, b.xy)));
+}
+
+vec2 dclen(vec4 a) {
+  return add22(mul22(a.xy, a.xy), mul22(a.zw, a.zw));
+}
+
+vec4 fcmul(vec4 c, vec2 k) {
+  return vec4(mul22(c.xy, k), mul22(c.zw, k));
+}
+
+const float zoom = 7.4e5;
+const vec4 p0 = vec4(-0.2351255, -1e-8, 0.8272157, -1e-9);
+const vec4 color = vec4(1, 2, 2.9,0);
+vec2 d(float a) { return vec2(a, 0); }
+vec4 dc(vec2 c) { return vec4(c.x, 0, c.y, 0); }
+
+vec4 single_fractal(vec4 o) {
+  vec2 c = iResolution.xy, z = gl_FragCoord.xy;
+  c = z = (z-.5*c)/c.y/zoom + p0.xz;
+  for (float i; i < 1.; i += 1e-3) {
+    dot(z = mat2(z,-z.y,z.x)*z + c, z) > 4. ? o = cos(color*log(i*i)) : o;
+  }
+  return o;
+}
+
+vec4 double_fractal(vec4 o) {
+  vec2 c0 = iResolution.xy, z0 = gl_FragCoord.xy;
+  vec4 z, c = z = dcadd(
+    fcmul(dcsub(dc(z0), dc(.5*c0)), div22(d(1.), twoProd(c0.y, zoom))), p0);
+  for (float i; i < 1.; i += 1e-3) {
+    dclen(z = dcadd(dcmul(z, z), c)).x > 4. ? o = cos(color*log(i*i)) : o;
+  }
+  return o;
+}
+
+void mainImage( out vec4 o, in vec2 fc ) {
+  if (fc.y / iResolution.y + fc.x / iResolution.x < 1.) {
+    o = single_fractal(o);
+  } else {
+    o = double_fractal(o);
+  }
+  o += .02;
+}
+    `);
+  </script>
+</body>
+</html>

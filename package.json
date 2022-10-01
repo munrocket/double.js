@@ -5,19 +5,19 @@
   "main": "dist/double.js",
   "module": "dist/double.esm.js",
   "scripts": {
+    "start": "servez -S",
     "watch": "onchange 'src/*.ts' -- npm run build",
     "build": "npm run build-esm && npm run build-browser && npm run build-wasm",
     "build-esm": "esbuild ./src/double.ts --outfile=./dist/double.esm.js",
     "build-browser": "esbuild ./src/double.ts --bundle --minify --outfile=./dist/double.js",
     "build-wasm": "asc --extension=.as test/bench/bench.as wasm/double.as -b test/bench/bench.wasm -O3",
     "test": "node -r esm ./test/test.js",
-    "ci": "npm run serve & sleep 3 && npm run e2e && npm run cov",
-    "serve": "servez -S",
+    "ci": "npm run start & sleep 3 && npm run e2e && npm run cov",
     "e2e": "node --experimental-modules --no-warnings ./test/e2e.mjs",
     "cov": "sed -i 's/.nyc_output\\/js/dist/g' .nyc_output/out.json && nyc report --reporter=lcov"
   },
   "devDependencies": {
-    "assemblyscript": "^0.20.0",
+    "assemblyscript": "0.19.23",
     "esbuild": "^0.14.0",
     "esm": "^3.2.25",
     "nyc": "^15.1.0",

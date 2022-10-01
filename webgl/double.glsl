@@ -11,16 +11,22 @@ vec2 fastTwoSum(float a, float b) {
   return vec2(s, sub(b, sub(s, a)));
 }
 
+vec2 twoSum(float a, float b) {
+  float s = add(a, b);
+  float b1 = sub(s, a);
+  return vec2(s, add(sub(b, b1), sub(a, sub(s, b1))));
+}
+
 vec2 twoProd(float a, float b) {
   float ab = mul(a, b);
   return vec2(ab, fma(a, b, -ab));
 }
 
 vec2 add22(vec2 X, vec2 Y) {
-  float s = add(X[0], Y[0]);
-  float c = sub(s, X[0]);
-  float e = add(add(add(sub(Y[0], c), sub(X[0], sub(s, c))), X[1]), Y[1]);
-  return fastTwoSum(s, e);
+  vec2 S = twoSum(X[0], Y[0]);
+  vec2 T = twoSum(X[1], Y[1]);
+  vec2 V = fastTwoSum(S[0], add(S[1], T[0]));
+  return fastTwoSum(V[0], add(T[1], V[1]));
 }
 
 vec2 sub22(vec2 X, vec2 Y) {
@@ -29,6 +35,7 @@ vec2 sub22(vec2 X, vec2 Y) {
 
 vec2 mul22(vec2 X, vec2 Y) {
   vec2 S = twoProd(X[0], Y[0]);
+  float t = mul(X[0], Y[1]);
   float c = fma(X[1], Y[0], mul(X[0], Y[1]));
   return fastTwoSum(S[0], add(S[1], c));
 }

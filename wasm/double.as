@@ -8,8 +8,8 @@ const splitter: float = 134217729.;
 @inline
 function twoSum(a: float, b: float): float {
   let s = a + b;
-  let a1  = s - b;
-  LO = (a - a1) + (b - (s - a1));
+  let b1  = s - a;
+  let LO = (b - b1) + (a - (s - b1));
   return s;
 }
 

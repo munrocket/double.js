@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebGPU e2eest</title>
+</head>
+<body>
+<script>
+
+// MIT License. © 2022 munrocket
+//
+// Emulated double precision lib with mandelbrot set
+// Bottom is always pixelated, top is smooth with double
+// Algorithm using fma for faster dd multimplication
+// More information: https://github.com/munrocket/double.js
+
+const GPUConst = {
+  BufferUsage: {
+    MAP_READ: 0x0001,
+    MAP_WRITE: 0x0002,
+    COPY_SRC: 0x0004,
+    COPY_DST: 0x0008,
+    INDEX: 0x0010,
+    VERTEX: 0x0020,
+    UNIFORM: 0x0040,
+    STORAGE: 0x0080,
+    INDIRECT: 0x0100,
+    QUERY_RESOLVE: 0x0200,
+  }
+};
+
+(async () => {
+
+  const vertexShaderWgslCode = /* wgsl */`
+    @vertex
+    fn main(@builtin(vertex_index) VertexIndex : u32) -> @builtin(position) vec4<f32> {
+      var pos : array<vec2<f32>, 6> = array<vec2<f32>, 6>(
+        vec2<f32>(-1., -1.), vec2<f32>(-1., 1.), vec2<f32>(1., 1.),
+        vec2<f32>(1., -1.), vec2<f32>(-1., -1.), vec2<f32>(1., 1.)
+      );
+
+      return vec4<f32>(pos[VertexIndex], 0., 1.0);
+    }`;
+
+  const fragmentShaderWgslCode = `
+    struct Uniforms {
+      resolution: vec2<f32>
+    };
+
+    @binding(0) @group(0) var<uniform> U : Uniforms;
+
+    // ========== UNCOMMENT WITH PRECISE MATH ===========
+    // fn add(a: f32, b: f32) -> f32 { return a + b; }
+    // fn mul(a: f32, b: f32) -> f32 { return a * b; }
+    // fn sub(a: f32, b: f32) -> f32 { return a * b; }
+    // fn div(a: f32, b: f32) -> f32 { return a / b; }
+    // fn twoProd(a: f32, b: f32) -> vec2<f32> {
+    //   let cona = mul(a, 8193.);
+    //   let conb = mul(b, 8193.);
+    //   let a1 = sub(cona, sub(cona, a));
+    //   let b1 = sub(conb, sub(conb, b));
+    //   let a2 = sub(a, a1);
+    //   let b2 = sub(b, b1);
+    //   let c11 = mul(a, b);
+    //   return vec2<f32>(c11, add(mul(a2, b2), add(mul(a2, b1), add(mul(a1, b2), sub(mul(a1, b1), c11)))));
+    // }
+    // ==================================================
+
+    fn add(a: f32, b: f32) -> f32 { return select(a, a + b, b != 0.); }
+    fn sub(a: f32, b: f32) -> f32 { return select(a, a - b, b != 0.); }
+    fn mul(a: f32, b: f32) -> f32 { return select(a, a * b, b != 1.); }
+    fn div(a: f32, b: f32) -> f32 { return select(a, a / b, b != 1.); }
+
+    fn fastTwoSum(a: f32, b: f32) -> vec2<f32> {
+      let s = add(a, b);
+      return vec2<f32>(s, sub(b, sub(s, a)));
+    }
+
+    fn twoSum(a: f32, b: f32) -> vec2<f32> {
+      let s = add(a, b);
+      let b1 = sub(s, a);
+      return vec2(s, add(sub(b, b1), sub(a, sub(s, b1))));
+    }
+
+    fn twoProd(a: f32, b: f32) -> vec2<f32> {
+      let ab = mul(a, b);
+      return vec2<f32>(ab, fma(a, b, -ab));
+    }
+
+    fn add22(X: vec2<f32>, Y: vec2<f32>) -> vec2<f32> {
+      let S = twoSum(X[0], Y[0]);
+      let T = twoSum(X[1], Y[1]);
+      let V = fastTwoSum(S[0], add(S[1], T[0]));
+      return fastTwoSum(V[0], add(T[1], V[1]));
+    }
+
+    fn sub22(X: vec2<f32>, Y: vec2<f32>) -> vec2<f32> {
+      return add22(X, -Y);
+    }
+
+    fn mul22(X: vec2<f32>, Y: vec2<f32>) -> vec2<f32> {
+      let S = twoProd(X[0], Y[0]);
+      let c = fma(X[1], Y[0], mul(X[0], Y[1]));
+      return fastTwoSum(S[0], add(S[1], c));
+    }
+
+    fn div22(X: vec2<f32>, Y: vec2<f32>) -> vec2<f32> {
+      let s = div(X[0], Y[0]);
+      let T = twoProd(s, Y[0]);
+      let e = div(sub(add(sub(sub(X[0], T[0]), T[1]), X[1]), mul(s, Y[1])), Y[0]);
+      return fastTwoSum(s, e);
+    }
+
+    //////// end of the library, begin mandelbrot example /////////
+
+    fn dcadd(a: vec4<f32>, b: vec4<f32>) -> vec4<f32> {
+      return vec4<f32>(add22(a.xy, b.xy), add22(a.zw, b.zw));
+    }
+
+    fn dcsub(a: vec4<f32>, b: vec4<f32>) -> vec4<f32> {
+      return vec4<f32>(sub22(a.xy, b.xy), sub22(a.zw, b.zw));
+    }
+
+    fn dcmul(a: vec4<f32>, b: vec4<f32>) -> vec4<f32> {
+      return vec4<f32>(sub22(mul22(a.xy, b.xy), mul22(a.zw, b.zw)), add22(mul22(a.xy, b.zw), mul22(a.zw, b.xy)));
+    }
+
+    fn dclen(a: vec4<f32>) -> vec2<f32> {
+      return add22(mul22(a.xy, a.xy), mul22(a.zw, a.zw));
+    }
+
+    fn fcmul(c: vec4<f32>, k: vec2<f32>) -> vec4<f32> {
+      return vec4<f32>(mul22(c.xy, k), mul22(c.zw, k));
+    }
+
+    var<private> zoom: f32 = 7.4e5;
+    var<private> p0: vec4<f32> = vec4<f32>(-0.2351255, -1e-8, 0.8272157, -1e-9);
+    var<private> color: vec4<f32> = vec4<f32>(1, 2, 2.9,0);
+    fn d(a: f32) -> vec2<f32> { return vec2<f32>(a, 0); }
+    fn dc(c: vec2<f32>) -> vec4<f32> { return vec4<f32>(c.x, 0, c.y, 0); }
+
+    fn single_fractal(o: vec4<f32>, fc: vec2<f32>) -> vec4<f32> {
+    	var c: vec2<f32> = U.resolution.xy; var z: vec2<f32> = fc.xy;
+      z = (z - .5 * c) / c.y / zoom + p0.xz; c = z;
+      var oo: vec4<f32> = o;
+      for (var i: f32 = 0.; i < 1.; i += 1e-3) {
+        z = mat2x2<f32>(z.x,z.y,-z.y,z.x) * z + c;
+        if (dot(z, z) > 4.) {
+          oo = cos(color * log(i * i));
+        }
+      }
+      return oo;
+    }
+
+    fn double_fractal(o: vec4<f32>, fc: vec2<f32>) -> vec4<f32>{
+      let c0: vec2<f32> = U.resolution.xy; let z0: vec2<f32> = fc;
+      var z: vec4<f32>; var c: vec4<f32>;
+      z = dcadd(fcmul(dcsub(dc(z0), dc(.5*c0)), div22(d(1.), twoProd(c0.y, zoom))), p0);
+      c = z; var oo: vec4<f32> = o;
+      for (var i: f32 = 0.; i < 1.; i += 1e-3) {
+        z = dcadd(dcmul(z, z), c);
+        if (dclen(z).x > 4.) {
+          oo = cos(color * log(i * i));
+        }
+      }
+      return oo;
+    }
+
+    @fragment
+    fn main(@builtin(position) FragCoord : vec4<f32>) -> @location(0) vec4<f32> {
+      var o: vec4<f32>;
+      if (-FragCoord.y / U.resolution.y + FragCoord.x / U.resolution.x < 1.) {
+        o = single_fractal(o, FragCoord.xy);
+      } else {
+        o = double_fractal(o, FragCoord.xy);
+      }
+      return o + .02;
+    }`;
+
+    const canvas = document.getElementById('canvas')
+    canvas.width = canvas.clientWidth * window.devicePixelRatio;
+    canvas.height = canvas.clientHeight * window.devicePixelRatio;
+
+    const context = canvas.getContext('webgpu');
+
+    if (!context || !navigator.gpu) {
+      document.getElementById('error').style.display = 'block';
+      return;
+    }
+
+    const adapter = await navigator.gpu.requestAdapter();
+    const device = await adapter.requestDevice();
+
+    const contextFormat = 'bgra8unorm';
+
+    context.configure({
+      device,
+      format: contextFormat
+    });
+
+    const pipeline = device.createRenderPipeline({
+      vertex: {
+        module: device.createShaderModule({
+          code: vertexShaderWgslCode,
+        }),
+        entryPoint: 'main',
+      },
+      fragment: {
+        module: device.createShaderModule({
+          code: fragmentShaderWgslCode,
+        }),
+        entryPoint: 'main',
+        targets: [
+          {
+            format: contextFormat,
+          },
+        ],
+      },
+      primitive: {
+        topology: 'triangle-list',
+      },
+    });
+
+    // Create time & resolution buffers
+    const uniformsBuffer = device.createBuffer({
+      size: 4 * 2,
+      usage: GPUConst.BufferUsage.UNIFORM | GPUConst.BufferUsage.COPY_DST,
+    });
+    //Create bind groups
+    const uniformsBindGroup = device.createBindGroup({
+      layout: pipeline.getBindGroupLayout(0),
+      entries: [
+        {
+          binding: 0,
+          resource: {
+            buffer: uniformsBuffer,
+          },
+        }
+      ],
+    });
+
+    const uniformsArrayBuffer = new Float32Array(2);
+
+    uniformsArrayBuffer[0] = canvas.width;
+    uniformsArrayBuffer[1] = canvas.height;
+
+    let screenshotCount = 0;
+    window.doScreenshot = false;
+    const link = document.createElement("a");
+
+    function frame(t) {
+
+      const commandEncoder = device.createCommandEncoder();
+      const textureView = context.getCurrentTexture().createView();
+
+      const renderPassDescriptor = {
+        colorAttachments: [
+          {
+            view: textureView,
+            loadValue: { r: 0., g: 0., b: 0., a: 1. },
+            storeOp: 'store',
+          },
+        ],
+      };
+
+      device.queue.writeBuffer(
+        uniformsBuffer,
+        0,
+        uniformsArrayBuffer.buffer,
+        uniformsArrayBuffer.byteOffset,
+        uniformsArrayBuffer.byteLength
+      );
+
+      const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
+      passEncoder.setPipeline(pipeline);
+      passEncoder.setBindGroup(0, uniformsBindGroup);
+      passEncoder.draw(6, 1, 0, 0);
+      passEncoder.endPass();
+
+      device.queue.submit([commandEncoder.finish()]);
+
+      screenshotCount++;
+      if (window.doScreenshot) {
+        canvas.toBlob(
+          (blob) => {
+            link.download = "Screenshot a" + Date.now() + ".png";
+            link.href = URL.createObjectURL(blob);
+            link.dispatchEvent(new MouseEvent("click"));
+          },
+          "image/png",
+          1
+        );
+        window.doScreenshot = false;
+      }
+      //requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  })();
+</script>
+</body>
+</html>

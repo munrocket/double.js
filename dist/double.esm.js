@@ -1,8 +1,8 @@
 const splitter = 134217729;
 function twoSum(a, b) {
   let s = a + b;
-  let a1 = s - b;
-  return { hi: s, lo: a - a1 + (b - (s - a1)) };
+  let b1 = s - a;
+  return { hi: s, lo: b - b1 + (a - (s - b1)) };
 }
 function twoProd(a, b) {
   let t = splitter * a;
