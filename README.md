@@ -12,7 +12,7 @@ theoretical limitations to javascript language since ECMAScript uses 64 bit IEEE
 round-to-nearest-even after each operation.
 
 ### Benchmark
-![](https://i.imgur.com/bo5JSqO.jpg)
+![](https://i.imgur.com/dXeSYKO.png)
 
 You can check [quality/performance](https://munrocket.github.io/double.js/test/bench/bench.html) and [correctness](https://munrocket.github.io/double.js/test/e2e.html) of double.js library in your browser.
 
@@ -43,7 +43,7 @@ Further API details you can find in [wiki](https://github.com/munrocket/double.j
 I got x3 boost in Chrome, x3.5 in Safari and x7 in Firefox for mandelbrot set algo with hardcoded global variables. To get speed improvement with wasm, you need to write your entire algorithm with it, because Js<->Wasm interop is too heavy.
 
 ### WebGL/WebGPU versions
-Just copy/paste the code with MIT copyright.
+Just copy/paste the code with MIT copyright, here [shadertoy](https://www.shadertoy.com/view/flyBWw).
 
 ### Special thanks
 To [Jeffrey Sarnoff](https://github.com/JeffreySarnoff) for help me with books and algorithms. [Sergey Yanovich](https://github.com/yanovich) for fixing issues with toExponential(). To [Max Graey](https://github.com/MaxGraey) for AssemblyScript remarks. To [Yaffle](https://github.com/Yaffle) for fixing benchmark.
