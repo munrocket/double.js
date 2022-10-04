@@ -1,15 +1,15 @@
 # double.js [![bundlephobia](https://badgen.net/bundlephobia/minzip/double.js)](https://bundlephobia.com/result?p=double.js) [![Codecov](https://img.shields.io/codecov/c/github/munrocket/double.js.svg)](https://codecov.io/gh/munrocket/double.js)
 
 Floating point expansion with 31 accurate decimal digits (106 bits), also known as double-double arithmetic or
-emulated float128. This library can be useful for fast calculation with extended precision. For example in orbital mechanics, computational geometry and numerically unstable algorithms such as performing triangulation, polygon clipping,
-inverting matrix and finding differentials.
+emulated float128. This library can be useful for fast calculation with extended precision. For example in orbital mechanics, computational geometry and numerically unstable algorithms such as high precision integration, differentiation, triangulation, raytracing on gpu, inversion of ill-conditioned matrix.
 
 ### Algorithm
 Number stored as unevaluated sum of two javascript float numbers and uses error-free arithmetic algorithms.
 This brings accuracy and significant increase in performance in comparison to
 digit-wise approach, because this float arithmetic is implemented in hardware. Note that there are no
-theoretical limitations to javascript language since ECMAScript uses 64 bit IEEE 754 with
-round-to-nearest-even after each operation.
+theoretical limitations to javascript since it uses 64 bit IEEE 754 with round-to-nearest-even
+after each operation. The only limitation that javasript not support FMA. GPU hardware sometimes not follow
+IEEE arithmetic and can produce artifacts, but CPU arithmetic is robust and browsers are well tested.
 
 ### Benchmark
 ![](https://i.imgur.com/dXeSYKO.png)
@@ -43,7 +43,7 @@ Further API details you can find in [wiki](https://github.com/munrocket/double.j
 I got x3 boost in Chrome, x3.5 in Safari and x7 in Firefox for mandelbrot set algo with hardcoded global variables. To get speed improvement with wasm, you need to write your entire algorithm with it, because Js<->Wasm interop is too heavy.
 
 ### WebGL/WebGPU versions
-Just copy/paste the code with MIT copyright, here [shadertoy](https://www.shadertoy.com/view/flyBWw).
+Just copy/paste the code with MIT copyright, here [shadertoy example](https://www.shadertoy.com/view/flyBWw).
 
 ### Special thanks
 To [Jeffrey Sarnoff](https://github.com/JeffreySarnoff) for help me with books and algorithms. [Sergey Yanovich](https://github.com/yanovich) for fixing issues with toExponential(). To [Max Graey](https://github.com/MaxGraey) for AssemblyScript remarks. To [Yaffle](https://github.com/Yaffle) for fixing benchmark.
@@ -51,7 +51,6 @@ To [Jeffrey Sarnoff](https://github.com/JeffreySarnoff) for help me with books a
 ### References
 1. J.-M. Muller, etc. *Tight and rigourous error bounds for basic building blocks of double-word arithmetic.*, 2017. [[PDF](https://hal.archives-ouvertes.fr/hal-01351529v3/document)]
 2. J.-M. Muller, N. Brisebarre, F. deDinechin, etc. *Handbook of Floating-Point Arithmetic*, Chapter 14, 2010.
-3. Theodorus Dekker. *A floating-point technique for extending the available precision*, 1971. [[Viewer](https://gdz.sub.uni-goettingen.de/id/PPN362160546_0018?tify={%22pages%22:[230],%22panX%22:0.306,%22panY%22:0.754,%22view%22:%22info%22,%22zoom%22:0.39})]
-4. David Monniaux *The pitfalls of verifying floating-point computations*, 2008 [[PDF](https://hal.archives-ouvertes.fr/hal-00128124/file/floating-point-article.pdf)]
-5. Yozo Hida, Xiaoye Li, David Bailey. *Library for Double-Double and Quad-Double Arithmetic*, 2000. [[PDF](http://web.mit.edu/tabbott/Public/quaddouble-debian/qd-2.3.4-old/docs/qd.pdf)]
-6. Christoph Lauter *Basic building blocks for a triple-double intermediate format*, 2006. [[PDF](https://hal.inria.fr/inria-00070314/document)]
+3. David Monniaux *The pitfalls of verifying floating-point computations*, 2008 [[PDF](https://hal.archives-ouvertes.fr/hal-00128124/file/floating-point-article.pdf)]
+4. Yozo Hida, Xiaoye Li, David Bailey. *Library for Double-Double and Quad-Double Arithmetic*, 2000. [[PDF](http://web.mit.edu/tabbott/Public/quaddouble-debian/qd-2.3.4-old/docs/qd.pdf)]
+5. Christoph Lauter *Basic building blocks for a triple-double intermediate format*, 2006. [[PDF](https://hal.inria.fr/inria-00070314/document)]
