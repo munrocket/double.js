@@ -52,5 +52,5 @@ To [Jeffrey Sarnoff](https://github.com/JeffreySarnoff) for help me with books a
 1. J.-M. Muller, etc. *Tight and rigourous error bounds for basic building blocks of double-word arithmetic.*, 2017. [[PDF](https://hal.archives-ouvertes.fr/hal-01351529v3/document)]
 2. J.-M. Muller, N. Brisebarre, F. deDinechin, etc. *Handbook of Floating-Point Arithmetic*, Chapter 14, 2010.
 3. David Monniaux *The pitfalls of verifying floating-point computations*, 2008 [[PDF](https://hal.archives-ouvertes.fr/hal-00128124/file/floating-point-article.pdf)]
-4. Yozo Hida, Xiaoye Li, David Bailey. *Library for Double-Double and Quad-Double Arithmetic*, 2000. [[PDF](http://web.mit.edu/tabbott/Public/quaddouble-debian/qd-2.3.4-old/docs/qd.pdf)]
+4. Yozo Hida, Xiaoye Li, David Bailey. *Algorithms for Quad-Double Precision Floating Point Arithmetic*, 2020. [[PDF](https://portal.nersc.gov/project/sparse/xiaoye-web/arith15.pdf)]
 5. Christoph Lauter *Basic building blocks for a triple-double intermediate format*, 2006. [[PDF](https://hal.inria.fr/inria-00070314/document)]
