@@ -176,7 +176,7 @@ const GPUConst = {
       } else {
         o = double_fractal(o, FragCoord.xy);
       }
-      return o + .02;
+      return o;
     }`;
 
     const canvas = document.getElementById('canvas')
@@ -228,6 +228,7 @@ const GPUConst = {
       size: 4 * 2,
       usage: GPUConst.BufferUsage.UNIFORM | GPUConst.BufferUsage.COPY_DST,
     });
+  
     //Create bind groups
     const uniformsBindGroup = device.createBindGroup({
       layout: pipeline.getBindGroupLayout(0),
@@ -246,57 +247,37 @@ const GPUConst = {
     uniformsArrayBuffer[0] = canvas.width;
     uniformsArrayBuffer[1] = canvas.height;
 
-    let screenshotCount = 0;
-    window.doScreenshot = false;
-    const link = document.createElement("a");
+    //function frame(t) {
+    const commandEncoder = device.createCommandEncoder();
+    const textureView = context.getCurrentTexture().createView();
 
-    function frame(t) {
+    const renderPassDescriptor = {
+      colorAttachments: [
+        {
+          view: textureView,
+          loadValue: { r: 0., g: 0., b: 0., a: 1. },
+          storeOp: 'store',
+        },
+      ],
+    };
 
-      const commandEncoder = device.createCommandEncoder();
-      const textureView = context.getCurrentTexture().createView();
+    device.queue.writeBuffer(
+      uniformsBuffer,
+      0,
+      uniformsArrayBuffer.buffer,
+      uniformsArrayBuffer.byteOffset,
+      uniformsArrayBuffer.byteLength
+    );
 
-      const renderPassDescriptor = {
-        colorAttachments: [
-          {
-            view: textureView,
-            loadValue: { r: 0., g: 0., b: 0., a: 1. },
-            storeOp: 'store',
-          },
-        ],
-      };
+    const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
+    passEncoder.setPipeline(pipeline);
+    passEncoder.setBindGroup(0, uniformsBindGroup);
+    passEncoder.draw(6, 1, 0, 0);
+    passEncoder.endPass();
 
-      device.queue.writeBuffer(
-        uniformsBuffer,
-        0,
-        uniformsArrayBuffer.buffer,
-        uniformsArrayBuffer.byteOffset,
-        uniformsArrayBuffer.byteLength
-      );
-
-      const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
-      passEncoder.setPipeline(pipeline);
-      passEncoder.setBindGroup(0, uniformsBindGroup);
-      passEncoder.draw(6, 1, 0, 0);
-      passEncoder.endPass();
-
-      device.queue.submit([commandEncoder.finish()]);
-
-      screenshotCount++;
-      if (window.doScreenshot) {
-        canvas.toBlob(
-          (blob) => {
-            link.download = "Screenshot a" + Date.now() + ".png";
-            link.href = URL.createObjectURL(blob);
-            link.dispatchEvent(new MouseEvent("click"));
-          },
-          "image/png",
-          1
-        );
-        window.doScreenshot = false;
-      }
-      //requestAnimationFrame(frame);
-    }
-    requestAnimationFrame(frame);
+    device.queue.submit([commandEncoder.finish()]);
+    //} requestAnimationFrame(frame);
+  
   })();
 </script>
 </body>
