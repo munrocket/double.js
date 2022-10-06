@@ -1,1 +1,521 @@
-(()=>{function u(s,t){let e=s+t,n=e-s;return{hi:e,lo:t-n+(s-(e-n))}}function d(s,t){let e=134217729*s,n=e+(s-e),r=s-n;e=134217729*t;let l=e+(t-e),h=t-l;return e=s*t,{hi:e,lo:n*l-e+n*h+r*l+r*h}}function g(s){let t=134217729*s,e=t+(s-t),n=s-e;t=s*s;let r=n*e;return{hi:t,lo:e*e-t+r+r+n*n}}var i=class{constructor(t){if(t instanceof i)this.hi=t.hi,this.lo=t.lo;else if(typeof t=="number")this.hi=t,this.lo=0;else if(typeof t=="string"){let e=i.fromString(t);this.hi=e.hi,this.lo=e.lo}else Array.isArray(t)?(this.hi=t[0],this.lo=t[1]):typeof t=="object"&&(this.hi=t.hi,this.lo=t.lo)}static clone(t){let e=new i;return e.hi=t.hi,e.lo=t.lo,e}static fromSum11(t,e){return new i(u(t,e))}static fromMul11(t,e){return new i(d(t,e))}static fromSqr1(t){return new i(g(t))}static fromString(t){let e=/^\s*-/.exec(t)===null;if(t=t.replace(/^\s*[+-]?/,""),/Infinity.*/.exec(t)!==null)return e?i.Infinity:i.neg2(i.Infinity);let n=/^([0-9]*\.?[0-9]+)(?:[eE]([-+]?[0-9]+))?/.exec(t);if(!n)return i.NaN;let r=n[1].replace(".",""),l=n[2]!==void 0?parseInt(n[2]):0,h=n[0].indexOf(".");if(h==-1&&(h=r.length),l+h-1<-300)return e?i.Zero:i.neg2(i.Zero);if(l+h-1>300)return e?i.Infinity:i.neg2(i.Infinity);let o,f,a=i.Zero;for(let c=0;c<r.length;c+=15)o=r.slice(c,c+15),f=i.pow2n(new i(10),l+h-c-o.length),i.add22(a,i.mul21(f,parseInt(o)));return e?a:i.neg2(a)}toNumber(){return this.hi+this.lo}toExponential(t){if(isNaN(this.hi))return"NaN";if(!isFinite(this.hi)||this.toNumber()==0)return this.hi.toExponential(t);let e=i.clone(this),n=e.hi.toExponential(t).split("e");n[0].length>16&&(n[0]=n[0].slice(0,16));let r=n[0],l=n[0].length-n[0].indexOf(".")-1;for(n[0].indexOf(".")<0&&l--,i.sub22(e,new i(r+"e"+n[1])),e.hi<0&&i.mul21(e,-1),t!==void 0&&t>33&&(t=33);;){let h;if(t===void 0){if(e.toNumber()<=0)break}else{if(l>=t)break;if(e.toNumber()<=0){r+="0",l++;continue}h=t-l,h>14&&(h=14)}let o=e.hi.toExponential(h).split("e"),f=o[0].replace(/^0\.|\./,""),a=f.length;if(a>15&&(a=15),t===void 0?a+l>33&&(a=33-l):a+l>t&&(a=t-l),f=f.slice(0,a),r+=f,l+=a,l>=33)break;let c=f[0]+"."+f.slice(1);i.sub22(e,new i(c+"e"+o[1]))}return r+"e"+n[1]}static add22(t,e){let n=u(t.hi,e.hi),r=u(t.lo,e.lo),l=n.lo+r.hi,h=n.hi+l;return l=l-(h-n.hi)+r.lo,t.hi=h+l,t.lo=l-(t.hi-h),t}static sub22(t,e){let n=u(t.hi,-e.hi),r=u(t.lo,-e.lo),l=n.lo+r.hi,h=n.hi+l;return l=l-(h-n.hi)+r.lo,t.hi=h+l,t.lo=l-(t.hi-h),t}static mul22(t,e){let n=d(t.hi,e.hi);return n.lo+=t.hi*e.lo+t.lo*e.hi,t.hi=n.hi+n.lo,t.lo=n.lo-(t.hi-n.hi),t}static div22(t,e){let n=t.hi/e.hi,r=d(n,e.hi),l=(t.hi-r.hi-r.lo+t.lo-n*e.lo)/e.hi;return t.hi=n+l,t.lo=l-(t.hi-n),t}static add21(t,e){let n=u(t.hi,e);return n.lo+=t.lo,t.hi=n.hi+n.lo,t.lo=n.lo-(t.hi-n.hi),t}static sub21(t,e){let n=u(t.hi,-e);return n.lo+=t.lo,t.hi=n.hi+n.lo,t.lo=n.lo-(t.hi-n.hi),t}static mul21(t,e){let n=d(t.hi,e),r=t.lo*e,l=n.hi+r;return t.lo=r-(l-n.hi),r=t.lo+n.lo,t.hi=l+r,t.lo=r-(t.hi-l),t}static div21(t,e){let n=t.hi/e,r=d(n,e),l=u(t.hi,-r.hi),h=(l.hi+(l.lo+(t.lo-r.lo)))/e;return t.hi=n+h,t.lo=h-(t.hi-n),t}static abs2(t){return t.hi<0&&(t.hi=-t.hi,t.lo=-t.lo),t}static neg2(t){return t.hi=-t.hi,t.lo=-t.lo,t}static inv2(t){var e=t.hi;let n=1/e;i.mul21(t,n);let r=(1-t.hi-t.lo)/e;return t.hi=n+r,t.lo=r-(t.hi-n),t}static sqr2(t){let e=g(t.hi),n=t.hi*t.lo;return e.lo+=n+n,t.hi=e.hi+e.lo,t.lo=e.lo-(t.hi-e.hi),t}static sqrt2(t){let e=Math.sqrt(t.hi),n=g(e),r=(t.hi-n.hi-n.lo+t.lo)*.5/e;return t.hi=e+r,t.lo=r-(t.hi-e),t}static eq22(t,e){return t.hi===e.hi&&t.lo===e.lo}static ne22(t,e){return t.hi!==e.hi||t.lo!==e.lo}static gt22(t,e){return t.hi>e.hi||t.hi===e.hi&&t.lo>e.lo}static lt22(t,e){return t.hi<e.hi||t.hi===e.hi&&t.lo<e.lo}static ge22(t,e){return t.hi>e.hi||t.hi===e.hi&&t.lo>=e.lo}static le22(t,e){return t.hi<e.hi||t.hi===e.hi&&t.lo<=e.lo}static eq21(t,e){return t.hi===e&&t.lo===0}static ne21(t,e){return t.hi!==e||t.lo!==0}static gt21(t,e){return t.hi>e||t.hi===e&&t.lo>0}static lt21(t,e){return t.hi<e||t.hi===e&&t.lo<0}static ge21(t,e){return t.hi>e||t.hi===e&&t.lo>=0}static le21(t,e){return t.hi<e||t.hi===e&&t.lo<=0}static get One(){let t=new i;return t.hi=1,t.lo=0,t}static get Zero(){let t=new i;return t.hi=0,t.lo=0,t}static get Infinity(){let t=new i;return t.hi=1/0,t.lo=1/0,t}static get MinusInfinity(){let t=new i;return t.hi=-1/0,t.lo=-1/0,t}static get NaN(){let t=new i;return t.hi=NaN,t.lo=NaN,t}static get Pi(){let t=new i;return t.hi=3.141592653589793,t.lo=12246467991473532e-32,t}static get X2Pi(){let t=new i;return t.hi=6.283185307179586,t.lo=24492935982947064e-32,t}static get E(){let t=new i;return t.hi=2.718281828459045,t.lo=14456468917292502e-32,t}static get Log2(){let t=new i;return t.hi=.6931471805599453,t.lo=2319046813846299e-32,t}static get Phi(){let t=new i;return t.hi=1.618033988749895,t.lo=-5432115203682505e-32,t}static exp2(t){if(i.eq21(t,0))return i.One;if(i.eq21(t,1))return i.E;let e=Math.floor(t.hi/i.Log2.hi+.5);i.sub22(t,i.mul21(i.Log2,e));let n=i.One,r=i.One,l=[1,272,36720,3255840,211629600,10666131840,430200650880,0xcdb19718d00,381649434566400,848109854592e4,0x22461f553a68820,0x1f8c2e4b8a202f00,2652116616205056e4,23665040575368187e4,15213240369879552e5,6288139352883548e6,12576278705767096e6];for(let h=0,o=l.length;h<o;h++)i.add21(i.mul22(n,t),l[h]);for(let h=0,o=l.length;h<o;h++)i.add21(i.mul22(r,t),l[h]*(h%2?-1:1));return t=i.mul21pow2(i.div22(n,r),e),t}static ln2(t){if(i.le21(t,0))return i.MinusInfinity;if(i.eq21(t,1))return i.Zero;let e=new i(Math.log(t.hi));return i.sub21(i.add22(i.mul22(t,i.exp2(i.neg2(i.clone(e)))),e),1),t}static sinh2(t){var e=i.exp2(t);return t=i.mul21pow2(i.sub22(new i(e),i.inv2(e)),-1),t}static cosh2(t){var e=i.exp2(t);return t=i.mul21pow2(i.add22(new i(e),i.inv2(e)),-1),t}static pow22(t,e){return i.exp2(i.mul22(i.ln2(t),e))}static mul21pow2(t,e){let n=1<<Math.abs(e);return e<0&&(n=1/n),t.hi=t.hi*n,t.lo=t.lo*n,t}static pow2n(t,e){if(e===0)return i.One;if(e==1)return t;let n=e>0;n||(e=-e);let r=31-Math.clz32(e|1),l=Math.floor(e-(1<<r)),h=i.clone(t);for(;r--;)i.sqr2(t);for(;l--;)i.mul22(t,h);return n?t:i.inv2(t)}add(t){if(t instanceof i)return i.add22(i.clone(this),t);if(typeof t=="number")return i.add21(i.clone(this),t)}sub(t){if(t instanceof i)return i.sub22(i.clone(this),t);if(typeof t=="number")return i.sub21(i.clone(this),t)}mul(t){if(t instanceof i)return i.mul22(i.clone(this),t);if(typeof t=="number")return i.mul21(i.clone(this),t)}div(t){if(t instanceof i)return i.div22(i.clone(this),t);if(typeof t=="number")return i.div21(i.clone(this),t)}eq(t){if(t instanceof i)return i.eq22(this,t);if(typeof t=="number")return i.eq21(this,t)}ne(t){if(t instanceof i)return i.ne22(this,t);if(typeof t=="number")return i.ne21(this,t)}gt(t){if(t instanceof i)return i.gt22(this,t);if(typeof t=="number")return i.gt21(this,t)}lt(t){if(t instanceof i)return i.lt22(this,t);if(typeof t=="number")return i.lt21(this,t)}ge(t){if(t instanceof i)return i.ge22(this,t);if(typeof t=="number")return i.ge21(this,t)}le(t){if(t instanceof i)return i.le22(this,t);if(typeof t=="number")return i.le21(this,t)}abs(){return i.abs2(i.clone(this))}neg(){return i.neg2(i.clone(this))}inv(){return i.inv2(i.clone(this))}sqr(){return i.sqr2(i.clone(this))}sqrt(){return i.sqrt2(i.clone(this))}exp(){return i.exp2(i.clone(this))}ln(){return i.ln2(i.clone(this))}sinh(){return i.sinh2(i.clone(this))}cosh(){return i.cosh2(i.clone(this))}pow(t){return i.pow22(i.clone(this),t)}pown(t){return i.pow2n(i.clone(this),t)}},p={Double:i};})();
+(() => {
+  // src/double.ts
+  var splitter = 134217729;
+  function twoSum(a, b) {
+    let s = a + b;
+    let b1 = s - a;
+    return { hi: s, lo: b - b1 + (a - (s - b1)) };
+  }
+  function twoProd(a, b) {
+    let t = splitter * a;
+    let ah = t + (a - t), al = a - ah;
+    t = splitter * b;
+    let bh = t + (b - t), bl = b - bh;
+    t = a * b;
+    return { hi: t, lo: ah * bh - t + ah * bl + al * bh + al * bl };
+  }
+  function oneSqr(a) {
+    let t = splitter * a;
+    let ah = t + (a - t), al = a - ah;
+    t = a * a;
+    let hl = al * ah;
+    return { hi: t, lo: ah * ah - t + hl + hl + al * al };
+  }
+  var Double = class {
+    constructor(obj) {
+      if (obj instanceof Double) {
+        this.hi = obj.hi;
+        this.lo = obj.lo;
+      } else if (typeof obj === "number") {
+        this.hi = obj;
+        this.lo = 0;
+      } else if (typeof obj === "string") {
+        let d = Double.fromString(obj);
+        this.hi = d.hi;
+        this.lo = d.lo;
+      } else if (Array.isArray(obj)) {
+        this.hi = obj[0];
+        this.lo = obj[1];
+      } else if (typeof obj === "object") {
+        this.hi = obj.hi;
+        this.lo = obj.lo;
+      }
+    }
+    static clone(X) {
+      let d = new Double();
+      d.hi = X.hi;
+      d.lo = X.lo;
+      return d;
+    }
+    static fromSum11(a, b) {
+      return new Double(twoSum(a, b));
+    }
+    static fromMul11(a, b) {
+      return new Double(twoProd(a, b));
+    }
+    static fromSqr1(a) {
+      return new Double(oneSqr(a));
+    }
+    static fromString(s) {
+      let isPositive = /^\s*-/.exec(s) === null;
+      s = s.replace(/^\s*[+-]?/, "");
+      if (/Infinity.*/.exec(s) !== null)
+        return isPositive ? Double.Infinity : Double.neg2(Double.Infinity);
+      let rex = /^([0-9]*\.?[0-9]+)(?:[eE]([-+]?[0-9]+))?/.exec(s);
+      if (!rex)
+        return Double.NaN;
+      let digits = rex[1].replace(".", "");
+      let exp = rex[2] !== void 0 ? parseInt(rex[2]) : 0;
+      let dotId = rex[0].indexOf(".");
+      if (dotId == -1)
+        dotId = digits.length;
+      if (exp + dotId - 1 < -300)
+        return isPositive ? Double.Zero : Double.neg2(Double.Zero);
+      if (exp + dotId - 1 > 300)
+        return isPositive ? Double.Infinity : Double.neg2(Double.Infinity);
+      let nextDigs, shift, result = Double.Zero;
+      for (let i = 0; i < digits.length; i += 15) {
+        nextDigs = digits.slice(i, i + 15);
+        shift = Double.pow2n(new Double(10), exp + dotId - i - nextDigs.length);
+        Double.add22(result, Double.mul21(shift, parseInt(nextDigs)));
+      }
+      return isPositive ? result : Double.neg2(result);
+    }
+    toNumber() {
+      return this.hi + this.lo;
+    }
+    toExponential(precision) {
+      if (isNaN(this.hi))
+        return "NaN";
+      if (!isFinite(this.hi) || this.toNumber() == 0)
+        return this.hi.toExponential(precision);
+      let remainder = Double.clone(this);
+      let str = remainder.hi.toExponential(precision).split("e");
+      if (str[0].length > 16)
+        str[0] = str[0].slice(0, 16);
+      let result = str[0];
+      let i = str[0].length - str[0].indexOf(".") - 1;
+      if (str[0].indexOf(".") < 0)
+        i--;
+      Double.sub22(remainder, new Double(result + "e" + str[1]));
+      if (remainder.hi < 0)
+        Double.mul21(remainder, -1);
+      if (precision !== void 0 && precision > 33)
+        precision = 33;
+      while (true) {
+        let nextPrecision = void 0;
+        if (precision === void 0) {
+          if (remainder.toNumber() <= 0)
+            break;
+        } else {
+          if (i >= precision)
+            break;
+          if (remainder.toNumber() <= 0) {
+            result += "0";
+            i++;
+            continue;
+          }
+          nextPrecision = precision - i;
+          if (nextPrecision > 14)
+            nextPrecision = 14;
+        }
+        let next = remainder.hi.toExponential(nextPrecision).split("e");
+        let nextDigs = next[0].replace(/^0\.|\./, "");
+        let nextLength = nextDigs.length;
+        if (nextLength > 15)
+          nextLength = 15;
+        if (precision === void 0) {
+          if (nextLength + i > 33)
+            nextLength = 33 - i;
+        } else {
+          if (nextLength + i > precision)
+            nextLength = precision - i;
+        }
+        nextDigs = nextDigs.slice(0, nextLength);
+        result += nextDigs;
+        i += nextLength;
+        if (i >= 33)
+          break;
+        let sub = nextDigs[0] + "." + nextDigs.slice(1);
+        Double.sub22(remainder, new Double(sub + "e" + next[1]));
+      }
+      return result + "e" + str[1];
+    }
+    static add22(X, Y) {
+      let S = twoSum(X.hi, Y.hi);
+      let E = twoSum(X.lo, Y.lo);
+      let c = S.lo + E.hi;
+      let vh = S.hi + c, vl = c - (vh - S.hi);
+      c = vl + E.lo;
+      X.hi = vh + c;
+      X.lo = c - (X.hi - vh);
+      return X;
+    }
+    static sub22(X, Y) {
+      let S = twoSum(X.hi, -Y.hi);
+      let E = twoSum(X.lo, -Y.lo);
+      let c = S.lo + E.hi;
+      let vh = S.hi + c, vl = c - (vh - S.hi);
+      c = vl + E.lo;
+      X.hi = vh + c;
+      X.lo = c - (X.hi - vh);
+      return X;
+    }
+    static mul22(X, Y) {
+      let S = twoProd(X.hi, Y.hi);
+      S.lo += X.hi * Y.lo + X.lo * Y.hi;
+      X.hi = S.hi + S.lo;
+      X.lo = S.lo - (X.hi - S.hi);
+      return X;
+    }
+    static div22(X, Y) {
+      let s = X.hi / Y.hi;
+      let T = twoProd(s, Y.hi);
+      let e = (X.hi - T.hi - T.lo + X.lo - s * Y.lo) / Y.hi;
+      X.hi = s + e;
+      X.lo = e - (X.hi - s);
+      return X;
+    }
+    static add21(X, f) {
+      let S = twoSum(X.hi, f);
+      S.lo += X.lo;
+      X.hi = S.hi + S.lo;
+      X.lo = S.lo - (X.hi - S.hi);
+      return X;
+    }
+    static sub21(X, f) {
+      let S = twoSum(X.hi, -f);
+      S.lo += X.lo;
+      X.hi = S.hi + S.lo;
+      X.lo = S.lo - (X.hi - S.hi);
+      return X;
+    }
+    static mul21(X, f) {
+      let C = twoProd(X.hi, f);
+      let cl = X.lo * f;
+      let th = C.hi + cl;
+      X.lo = cl - (th - C.hi);
+      cl = X.lo + C.lo;
+      X.hi = th + cl;
+      X.lo = cl - (X.hi - th);
+      return X;
+    }
+    static div21(X, f) {
+      let th = X.hi / f;
+      let P = twoProd(th, f);
+      let D = twoSum(X.hi, -P.hi);
+      let tl = (D.hi + (D.lo + (X.lo - P.lo))) / f;
+      X.hi = th + tl;
+      X.lo = tl - (X.hi - th);
+      return X;
+    }
+    static abs2(X) {
+      if (X.hi < 0) {
+        X.hi = -X.hi;
+        X.lo = -X.lo;
+      }
+      return X;
+    }
+    static neg2(X) {
+      X.hi = -X.hi;
+      X.lo = -X.lo;
+      return X;
+    }
+    static inv2(X) {
+      var xh = X.hi;
+      let s = 1 / xh;
+      Double.mul21(X, s);
+      let zl = (1 - X.hi - X.lo) / xh;
+      X.hi = s + zl;
+      X.lo = zl - (X.hi - s);
+      return X;
+    }
+    static sqr2(X) {
+      let S = oneSqr(X.hi);
+      let c = X.hi * X.lo;
+      S.lo += c + c;
+      X.hi = S.hi + S.lo;
+      X.lo = S.lo - (X.hi - S.hi);
+      return X;
+    }
+    static sqrt2(X) {
+      let s = Math.sqrt(X.hi);
+      let T = oneSqr(s);
+      let e = (X.hi - T.hi - T.lo + X.lo) * 0.5 / s;
+      X.hi = s + e;
+      X.lo = e - (X.hi - s);
+      return X;
+    }
+    static eq22(X, Y) {
+      return X.hi === Y.hi && X.lo === Y.lo;
+    }
+    static ne22(X, Y) {
+      return X.hi !== Y.hi || X.lo !== Y.lo;
+    }
+    static gt22(X, Y) {
+      return X.hi > Y.hi || X.hi === Y.hi && X.lo > Y.lo;
+    }
+    static lt22(X, Y) {
+      return X.hi < Y.hi || X.hi === Y.hi && X.lo < Y.lo;
+    }
+    static ge22(X, Y) {
+      return X.hi > Y.hi || X.hi === Y.hi && X.lo >= Y.lo;
+    }
+    static le22(X, Y) {
+      return X.hi < Y.hi || X.hi === Y.hi && X.lo <= Y.lo;
+    }
+    static eq21(X, f) {
+      return X.hi === f && X.lo === 0;
+    }
+    static ne21(X, f) {
+      return X.hi !== f || X.lo !== 0;
+    }
+    static gt21(X, f) {
+      return X.hi > f || X.hi === f && X.lo > 0;
+    }
+    static lt21(X, f) {
+      return X.hi < f || X.hi === f && X.lo < 0;
+    }
+    static ge21(X, f) {
+      return X.hi > f || X.hi === f && X.lo >= 0;
+    }
+    static le21(X, f) {
+      return X.hi < f || X.hi === f && X.lo <= 0;
+    }
+    static get One() {
+      let d = new Double();
+      d.hi = 1;
+      d.lo = 0;
+      return d;
+    }
+    static get Zero() {
+      let d = new Double();
+      d.hi = 0;
+      d.lo = 0;
+      return d;
+    }
+    static get Infinity() {
+      let d = new Double();
+      d.hi = Infinity;
+      d.lo = Infinity;
+      return d;
+    }
+    static get MinusInfinity() {
+      let d = new Double();
+      d.hi = -Infinity;
+      d.lo = -Infinity;
+      return d;
+    }
+    static get NaN() {
+      let d = new Double();
+      d.hi = NaN;
+      d.lo = NaN;
+      return d;
+    }
+    static get Pi() {
+      let d = new Double();
+      d.hi = 3.141592653589793;
+      d.lo = 12246467991473532e-32;
+      return d;
+    }
+    static get X2Pi() {
+      let d = new Double();
+      d.hi = 6.283185307179586;
+      d.lo = 24492935982947064e-32;
+      return d;
+    }
+    static get E() {
+      let d = new Double();
+      d.hi = 2.718281828459045;
+      d.lo = 14456468917292502e-32;
+      return d;
+    }
+    static get Log2() {
+      let d = new Double();
+      d.hi = 0.6931471805599453;
+      d.lo = 2319046813846299e-32;
+      return d;
+    }
+    static get Phi() {
+      let d = new Double();
+      d.hi = 1.618033988749895;
+      d.lo = -5432115203682505e-32;
+      return d;
+    }
+    static exp2(X) {
+      if (Double.eq21(X, 0))
+        return Double.One;
+      if (Double.eq21(X, 1))
+        return Double.E;
+      let n = Math.floor(X.hi / Double.Log2.hi + 0.5);
+      Double.sub22(X, Double.mul21(Double.Log2, n));
+      let U = Double.One, V = Double.One;
+      let padeCoef = [
+        1,
+        272,
+        36720,
+        3255840,
+        211629600,
+        10666131840,
+        430200650880,
+        14135164243200,
+        381649434566400,
+        848109854592e4,
+        154355993535744030,
+        2273242813890047700,
+        2652116616205056e4,
+        23665040575368187e4,
+        15213240369879552e5,
+        6288139352883548e6,
+        12576278705767096e6
+      ];
+      for (let i = 0, cLen = padeCoef.length; i < cLen; i++)
+        Double.add21(Double.mul22(U, X), padeCoef[i]);
+      for (let i = 0, cLen = padeCoef.length; i < cLen; i++)
+        Double.add21(Double.mul22(V, X), padeCoef[i] * (i % 2 ? -1 : 1));
+      X = Double.mul21pow2(Double.div22(U, V), n);
+      return X;
+    }
+    static ln2(X) {
+      if (Double.le21(X, 0))
+        return Double.MinusInfinity;
+      if (Double.eq21(X, 1))
+        return Double.Zero;
+      let Z = new Double(Math.log(X.hi));
+      Double.sub21(Double.add22(Double.mul22(X, Double.exp2(Double.neg2(Double.clone(Z)))), Z), 1);
+      return X;
+    }
+    static sinh2(X) {
+      var exp = Double.exp2(X);
+      X = Double.mul21pow2(Double.sub22(new Double(exp), Double.inv2(exp)), -1);
+      return X;
+    }
+    static cosh2(X) {
+      var exp = Double.exp2(X);
+      X = Double.mul21pow2(Double.add22(new Double(exp), Double.inv2(exp)), -1);
+      return X;
+    }
+    static pow22(base, exp) {
+      return Double.exp2(Double.mul22(Double.ln2(base), exp));
+    }
+    static mul21pow2(X, n) {
+      let c = 1 << Math.abs(n);
+      if (n < 0)
+        c = 1 / c;
+      X.hi = X.hi * c;
+      X.lo = X.lo * c;
+      return X;
+    }
+    static pow2n(X, n) {
+      if (n === 0)
+        return Double.One;
+      if (n == 1)
+        return X;
+      let isPositive = n > 0;
+      if (!isPositive)
+        n = -n;
+      let i = 31 - Math.clz32(n | 1);
+      let j = Math.floor(n - (1 << i));
+      let X0 = Double.clone(X);
+      while (i--)
+        Double.sqr2(X);
+      while (j--)
+        Double.mul22(X, X0);
+      return isPositive ? X : Double.inv2(X);
+    }
+    add(other) {
+      if (other instanceof Double)
+        return Double.add22(Double.clone(this), other);
+      else if (typeof other == "number")
+        return Double.add21(Double.clone(this), other);
+    }
+    sub(other) {
+      if (other instanceof Double)
+        return Double.sub22(Double.clone(this), other);
+      else if (typeof other == "number")
+        return Double.sub21(Double.clone(this), other);
+    }
+    mul(other) {
+      if (other instanceof Double)
+        return Double.mul22(Double.clone(this), other);
+      else if (typeof other == "number")
+        return Double.mul21(Double.clone(this), other);
+    }
+    div(other) {
+      if (other instanceof Double)
+        return Double.div22(Double.clone(this), other);
+      else if (typeof other == "number")
+        return Double.div21(Double.clone(this), other);
+    }
+    eq(other) {
+      if (other instanceof Double)
+        return Double.eq22(this, other);
+      else if (typeof other == "number")
+        return Double.eq21(this, other);
+    }
+    ne(other) {
+      if (other instanceof Double)
+        return Double.ne22(this, other);
+      else if (typeof other == "number")
+        return Double.ne21(this, other);
+    }
+    gt(other) {
+      if (other instanceof Double)
+        return Double.gt22(this, other);
+      else if (typeof other == "number")
+        return Double.gt21(this, other);
+    }
+    lt(other) {
+      if (other instanceof Double)
+        return Double.lt22(this, other);
+      else if (typeof other == "number")
+        return Double.lt21(this, other);
+    }
+    ge(other) {
+      if (other instanceof Double)
+        return Double.ge22(this, other);
+      else if (typeof other == "number")
+        return Double.ge21(this, other);
+    }
+    le(other) {
+      if (other instanceof Double)
+        return Double.le22(this, other);
+      else if (typeof other == "number")
+        return Double.le21(this, other);
+    }
+    abs() {
+      return Double.abs2(Double.clone(this));
+    }
+    neg() {
+      return Double.neg2(Double.clone(this));
+    }
+    inv() {
+      return Double.inv2(Double.clone(this));
+    }
+    sqr() {
+      return Double.sqr2(Double.clone(this));
+    }
+    sqrt() {
+      return Double.sqrt2(Double.clone(this));
+    }
+    exp() {
+      return Double.exp2(Double.clone(this));
+    }
+    ln() {
+      return Double.ln2(Double.clone(this));
+    }
+    sinh() {
+      return Double.sinh2(Double.clone(this));
+    }
+    cosh() {
+      return Double.cosh2(Double.clone(this));
+    }
+    pow(exp) {
+      return Double.pow22(Double.clone(this), exp);
+    }
+    pown(exp) {
+      return Double.pow2n(Double.clone(this), exp);
+    }
+  };
+  var double_default = Double;
+})();

@@ -30,7 +30,7 @@ function oneSqr(a: float) {
 
 /* Main class for double-word arithmetic */
 
-export class Double {
+class Double {
 
   hi: float;
   lo: float;
@@ -412,4 +412,5 @@ export class Double {
   pown(exp: float): Double { return Double.pow2n(Double.clone(this), exp); }
 }
 
-export default { Double };
+export default Double;
+export { Double };

@@ -30,7 +30,10 @@ vec2 add22(vec2 X, vec2 Y) {
 }
 
 vec2 sub22(vec2 X, vec2 Y) {
-  return add22(X, -Y);
+  vec2 S = twoSum(X[0], -Y[0]);
+  vec2 T = twoSum(X[1], -Y[1]);
+  vec2 V = fastTwoSum(S[0], add(S[1], T[0]));
+  return fastTwoSum(V[0], add(T[1], V[1]));
 }
 
 vec2 mul22(vec2 X, vec2 Y) {
@@ -41,8 +44,8 @@ vec2 mul22(vec2 X, vec2 Y) {
 }
 
 vec2 div22(vec2 X, vec2 Y) {
-  float s = X[0] / Y[0];
+  float s = div(X[0], Y[0]);
   vec2 T = twoProd(s, Y[0]);
-  float e = ((((X[0] - T[0]) - T[1]) + X[1]) - s * Y[1]) / Y[0];
-  return fastTwoSum(s, e);
+  float c = add(sub(sub(X[0], T[0]), T[1]), X[1]);
+  return fastTwoSum(s, div(sub(c, mul(s, Y[1])), Y[0]));
 }

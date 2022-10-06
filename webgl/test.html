@@ -17,6 +17,13 @@
 // Algorithm using fma for faster dd multimplication
 // More information: https://github.com/munrocket/double.js
 
+// MIT License. © 2022 munrocket
+//
+// Emulated double precision lib with mandelbrot set
+// Bottom is always pixelated, top is smooth with double
+// Algorithm using fma for faster dd multimplication
+// Additional information: https://github.com/munrocket/double.js
+
 float add(float a, float b) { return (b != 0.) ? a + b : a; }
 float sub(float a, float b) { return (b != 0.) ? a - b : a; }
 float mul(float a, float b) { return (b != 1.) ? a * b : a; }
@@ -47,7 +54,10 @@ vec2 add22(vec2 X, vec2 Y) {
 }
 
 vec2 sub22(vec2 X, vec2 Y) {
-  return add22(X, -Y);
+  vec2 S = twoSum(X[0], -Y[0]);
+  vec2 T = twoSum(X[1], -Y[1]);
+  vec2 V = fastTwoSum(S[0], add(S[1], T[0]));
+  return fastTwoSum(V[0], add(T[1], V[1]));
 }
 
 vec2 mul22(vec2 X, vec2 Y) {
@@ -58,11 +68,13 @@ vec2 mul22(vec2 X, vec2 Y) {
 }
 
 vec2 div22(vec2 X, vec2 Y) {
-  float s = X[0] / Y[0];
+  float s = div(X[0], Y[0]);
   vec2 T = twoProd(s, Y[0]);
-  float e = ((((X[0] - T[0]) - T[1]) + X[1]) - s * Y[1]) / Y[0];
-  return fastTwoSum(s, e);
+  float c = add(sub(sub(X[0], T[0]), T[1]), X[1]);
+  return fastTwoSum(s, div(sub(c, mul(s, Y[1])), Y[0]));
 }
+
+//////// end of the library, begin mandelbrot example /////////
 
 //////// end of the library, begin mandelbrot example /////////
 
@@ -87,38 +99,43 @@ vec4 fcmul(vec4 c, vec2 k) {
   return vec4(mul22(c.xy, k), mul22(c.zw, k));
 }
 
-const float zoom = 7.4e5;
+#define zoom 7.4e5
 const vec4 p0 = vec4(-0.2351255, -1e-8, 0.8272157, -1e-9);
-const vec4 color = vec4(1, 2, 2.9,0);
 vec2 d(float a) { return vec2(a, 0); }
 vec4 dc(vec2 c) { return vec4(c.x, 0, c.y, 0); }
+vec4 col(float i) {
+  return .1+.9*cos(log(i*i)*vec4(1, 2, 2.9,0));
+}
 
 vec4 single_fractal(vec4 o) {
   vec2 c = iResolution.xy, z = gl_FragCoord.xy;
-  c = z = (z-.5*c)/c.y/zoom + p0.xz;
+  c = z = (z-.5*c)/(zoom)/c.y + p0.xz;
   for (float i; i < 1.; i += 1e-3) {
-    dot(z = mat2(z,-z.y,z.x)*z + c, z) > 4. ? o = cos(color*log(i*i)) : o;
+    if(dot(z = mat2(z,-z.y,z.x)*z + c, z) > 4.)
+      o = col(i);
   }
   return o;
 }
 
 vec4 double_fractal(vec4 o) {
   vec2 c0 = iResolution.xy, z0 = gl_FragCoord.xy;
-  vec4 z, c = z = dcadd(
-    fcmul(dcsub(dc(z0), dc(.5*c0)), div22(d(1.), twoProd(c0.y, zoom))), p0);
+  vec4 z, c = z = dcadd(fcmul(dcsub(dc(z0), dc(.5*c0)),
+    div22(d(1.), twoProd(c0.y, zoom))), p0);
   for (float i; i < 1.; i += 1e-3) {
-    dclen(z = dcadd(dcmul(z, z), c)).x > 4. ? o = cos(color*log(i*i)) : o;
+    if(dclen(z = dcadd(dcmul(z, z), c)).x > 4.)
+      o = col(i);
   }
   return o;
 }
 
 void mainImage( out vec4 o, in vec2 fc ) {
-  if (fc.y / iResolution.y + fc.x / iResolution.x < 1.) {
+  vec2 uv = fc / iResolution.xy;
+  if (uv.x + uv.y < 1.) {
     o = single_fractal(o);
   } else {
     o = double_fractal(o);
   }
-  o += .02;
+  o -= smoothstep(.0025, .001, abs(uv.x+uv.y-1.))
 }
     `);
   </script>

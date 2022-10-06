@@ -19,7 +19,7 @@ function oneSqr(a) {
   let hl = al * ah;
   return { hi: t, lo: ah * ah - t + hl + hl + al * al };
 }
-export class Double {
+class Double {
   constructor(obj) {
     if (obj instanceof Double) {
       this.hi = obj.hi;
@@ -515,4 +515,5 @@ export class Double {
     return Double.pow2n(Double.clone(this), exp);
   }
 }
-export default { Double };
+export default Double;
+export { Double };

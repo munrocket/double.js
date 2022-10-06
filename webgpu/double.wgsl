@@ -28,8 +28,11 @@ fn add22(X: vec2<f32>, Y: vec2<f32>) -> vec2<f32> {
   return fastTwoSum(V[0], add(T[1], V[1]));
 }
 
-fn sub22(X: vec2<f32>, Y: vec2<f32>) -> vec2<f32> {
-  return add22(X, -Y);
+fn add22(X: vec2<f32>, Y: vec2<f32>) -> vec2<f32> {
+  let S = twoSum(X[0], -Y[0]);
+  let T = twoSum(X[1], -Y[1]);
+  let V = fastTwoSum(S[0], add(S[1], T[0]));
+  return fastTwoSum(V[0], add(T[1], V[1]));
 }
 
 fn mul22(X: vec2<f32>, Y: vec2<f32>) -> vec2<f32> {
@@ -41,6 +44,6 @@ fn mul22(X: vec2<f32>, Y: vec2<f32>) -> vec2<f32> {
 fn div22(X: vec2<f32>, Y: vec2<f32>) -> vec2<f32> {
   let s = div(X[0], Y[0]);
   let T = twoProd(s, Y[0]);
-  let e = div(sub(add(sub(sub(X[0], T[0]), T[1]), X[1]), mul(s, Y[1])), Y[0]);
-  return fastTwoSum(s, e);
+  let c = add(sub(sub(X[0], T[0]), T[1]), X[1]);
+  return fastTwoSum(s, div(sub(c, mul(s, Y[1])), Y[0]));
 }

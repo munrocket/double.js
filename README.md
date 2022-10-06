@@ -14,7 +14,7 @@ IEEE arithmetic and can produce artifacts, but CPU arithmetic is robust and brow
 ### Benchmark
 ![](https://i.imgur.com/dXeSYKO.png)
 
-You can check [quality/performance](https://munrocket.github.io/double.js/test/bench/bench.html) and [correctness](https://munrocket.github.io/double.js/test/e2e.html) of double.js library in your browser.
+You can check [quality / performance](https://munrocket.github.io/double.js/test/bench/bench.html) and [correctness](https://munrocket.github.io/double.js/test/e2e.html) of double.js library in your browser.
 
 ### Usage
 Include double.js script to webpage or install npm package. Here some basic examples
