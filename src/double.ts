@@ -62,10 +62,12 @@ class Double {
   static fromMul11(a: float, b: float): Double { return new Double(twoProd(a, b)); }
   static fromSqr1(a: float): Double { return new Double(oneSqr(a)); }
   static fromString(s: string): Double {
-    let isPositive = (/^\s*-/.exec(s) === null);
-    s = s.replace(/^\s*[+-]?/, '');
-    if (/Infinity.*/.exec(s) !== null) return (isPositive) ? Double.Infinity : Double.neg2(Double.Infinity);
-    let rex = /^([0-9]*\.?[0-9]+)(?:[eE]([-+]?[0-9]+))?/.exec(s);
+    s = s.trim();
+    let first = s[0]
+    let isPositive = first != '-';
+    if (first == '+' || first == '-') s = s.slice(1);
+    if (s.includes('Infinity')) return (isPositive) ? Double.Infinity : Double.neg2(Double.Infinity);
+    let rex = /^(\d*\.?\d+)(?:[eE]([-+]?\d+))?/.exec(s);
     if (!rex) return Double.NaN;
 
     let digits = rex[1].replace('.', '');
