@@ -9,7 +9,7 @@ const splitter: float = 134217729.;
 function twoSum(a: float, b: float): float {
   let s = a + b;
   let b1  = s - a;
-  let LO = (b - b1) + (a - (s - b1));
+  LO = (b - b1) + (a - (s - b1));
   return s;
 }
 
